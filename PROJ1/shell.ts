@@ -36,6 +36,14 @@ module TSOS {
                                   "- displays the users current location.");
             this.commandList[this.commandList.length] = sc;
 
+            //Sky
+
+            sc = new ShellCommand(this.shellSky,
+                                  "Sky",
+                                  "- displays the color of the sky.");
+            this.commandList[this.commandList.length] = sc;
+            
+
             // date
 
             sc = new ShellCommand(this.shellDate,
@@ -221,6 +229,10 @@ module TSOS {
 
         public shellWhereAmI(args: string[]){
             _StdOut.putText("You are on your computer!");
+        }
+
+        public shellSky(args: string[]){
+            _StdOut.putText("The sky is blue");
         }
 
         public shellDate(args: string[]){
