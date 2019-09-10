@@ -69,6 +69,12 @@ module TSOS {
                                   "- Clears the screen and resets the cursor position.");
             this.commandList[this.commandList.length] = sc;
 
+            // status <string>
+            sc = new ShellCommand(this.shellStatus,
+                                  "status",
+                                  "<string> - Displays the status message specified by the user.");
+            this.commandList[this.commandList.length] = sc;
+
             // man <topic>
             sc = new ShellCommand(this.shellMan,
                                   "man",
@@ -236,6 +242,8 @@ module TSOS {
         }
 
         public shellDate(args: string[]){
+            currentTime: Date;
+            currentTime: Date = new Date();
             _StdOut.putText("The date and time is " + Date());
         }
 
@@ -290,6 +298,9 @@ module TSOS {
                     case "rot13 <string>":
                         _StdOut.putText("rot13 does rot13 enxcryption on string");
                         break;
+                    case "status <string>":
+                        _StdOut.putText("status <string> sets status message specified by user.");
+                        break;
                     case "prompt <string>":
                         _StdOut.putText("Prompt sets the prompt");
                         break;
@@ -333,6 +344,11 @@ module TSOS {
             } else {
                 _StdOut.putText("Usage: rot13 <string>  Please supply a string.");
             }
+        }
+
+        public shellStatus(args: string[]){
+            _StdOut.putText("Enter your status here: ");
+            var status = args.length;
         }
 
         public shellPrompt(args: string[]) {
