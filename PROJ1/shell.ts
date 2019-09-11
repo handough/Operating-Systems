@@ -347,8 +347,12 @@ module TSOS {
         }
 
         public shellStatus(args: string[]){
-            _StdOut.putText("Enter your status here: ");
-            var status = args.length;
+            if(args.length > 0){
+                _OsShell.promptStr = args[0];
+            }else{
+                _StdOut.putText("Enter your status here: ");
+                var status = args.length;
+            }
         }
 
         public shellPrompt(args: string[]) {

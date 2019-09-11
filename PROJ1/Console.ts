@@ -40,7 +40,24 @@ module TSOS {
                     _OsShell.handleInput(this.buffer);
                     // ... and reset our buffer.
                     this.buffer = "";
-                } else {
+                } else if(chr === String.fromCharCode(9)){ // tab key
+                    // command completion with tab key
+                    _OsShell.handleInput(this.buffer);
+                    //reset the buffer
+                    this.buffer = "";
+                } 
+                else if(chr == String.fromCharCode(18)){ //alt key
+                    //This is a special character so draw it on the screen
+                    this.putText(chr);
+                    // and then add it to the buffer
+                    this.buffer += chr;
+                }else if(chr == String.fromCharCode(8)){ // backspace key
+
+                }else if(chr == String.fromCharCode(67)){
+                    // clear screen when Ctrl-C to break the current program and reset cursor
+                    _StdOut.clearScreen();     
+                    _StdOut.resetXY();
+                }else {
                     // This is a "normal" character, so ...
                     // ... draw it on the screen...
                     this.putText(chr);
