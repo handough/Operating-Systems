@@ -242,8 +242,8 @@ module TSOS {
         }
 
         public shellDate(args: string[]){
-            currentTime: Date;
-            currentTime: Date = new Date();
+            var d = new Date();
+            d = new Date();
             _StdOut.putText("The date and time is " + Date());
         }
 
