@@ -43,10 +43,8 @@ var TSOS;
             sc = new TSOS.ShellCommand(this.shellCls, "cls", "- Clears the screen and resets the cursor position.");
             this.commandList[this.commandList.length] = sc;
             // status <string>
-            // sc = new ShellCommand(this.shellStatus,
-            //                       "status",
-            //                     "<string> - Displays the status message specified by the user.");
-            //this.commandList[this.commandList.length] = sc;
+            sc = new TSOS.ShellCommand(this.shellStatus, "status", "<string> - Displays the status message specified by the user.");
+            this.commandList[this.commandList.length] = sc;
             // man <topic>
             sc = new TSOS.ShellCommand(this.shellMan, "man", "<topic> - Displays the MANual page for <topic>.");
             this.commandList[this.commandList.length] = sc;
@@ -193,6 +191,16 @@ var TSOS;
             var d = new Date();
             d = new Date();
             _StdOut.putText("The current date and time: " + Date());
+        };
+        Shell.prototype.shellStatus = function (args) {
+            if (args.length > 0) {
+                _OsShell.promptStr = args[0];
+            }
+            else {
+                _StdOut.putText("Enter your status here: ");
+                var status = args.length;
+            }
+            _StdOut.putText("status: " + status);
         };
         Shell.prototype.shellHelp = function (args) {
             _StdOut.putText("Commands:");

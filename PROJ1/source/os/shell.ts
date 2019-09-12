@@ -70,11 +70,10 @@ module TSOS {
             this.commandList[this.commandList.length] = sc;
 
             // status <string>
-           // sc = new ShellCommand(this.shellStatus,
-           //                       "status",
-             //                     "<string> - Displays the status message specified by the user.");
-            //this.commandList[this.commandList.length] = sc;
-
+            sc = new ShellCommand(this.shellStatus,
+                                 "status",
+                                 "<string> - Displays the status message specified by the user.");
+            this.commandList[this.commandList.length] = sc;
 
             // man <topic>
             sc = new ShellCommand(this.shellMan,
@@ -246,6 +245,16 @@ module TSOS {
             var d = new Date();
             d = new Date();
             _StdOut.putText("The current date and time: " + Date());
+        }
+
+        public shellStatus(args: string[]){
+            if(args.length > 0){
+                _OsShell.promptStr = args[0];
+            }else{
+                _StdOut.putText("Enter your status here: ");
+                var status = args.length;
+            }
+            _StdOut.putText("status: " + status);
         }
 
         public shellHelp(args: string[]) {

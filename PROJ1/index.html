@@ -88,13 +88,11 @@
    </div>
 
    <!-- date and time -->
-   <div id="divDate" style="margin-left:520px;">
-      <p>Date/Time: <span id = "datetime"></span></p>
-      <script>
-         var d = new Date();
-         document.getElementById("datetime").innerHTML = d.toLocaleString();
-      </script>
-   </div>
+   <p>Date/Time: <span id="datetime"></span></p>
+   <script>
+      var dt = new Date();
+      document.getElementById("datetime").innerHTML = dt.toLocaleString();
+   </script>
 
    <!-- scrolling function -->
    <script> 
