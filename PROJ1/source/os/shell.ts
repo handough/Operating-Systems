@@ -252,9 +252,8 @@ module TSOS {
                 _OsShell.promptStr = args[0];
             }else{
                 _StdOut.putText("Enter your status here: ");
-                var status = args.length;
             }
-            _StdOut.putText("status: " + status);
+            var status = args.length;
         }
 
         public shellHelp(args: string[]) {
@@ -296,8 +295,11 @@ module TSOS {
                     case "man <topic>":
                         _StdOut.putText("man <topic> displays the manual page for <topic>");
                         break;
-                    case "whereAmI":
+                    case "location":
                         _StdOut.putText("Displays the current location of the user.");
+                        break;
+                    case "sky":
+                        _StdOut.putText("Displays the color of the sky.");
                         break;
                     case "Date":
                         _StdOut.putText("Date displays the current date and time.");

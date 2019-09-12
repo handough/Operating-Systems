@@ -198,9 +198,8 @@ var TSOS;
             }
             else {
                 _StdOut.putText("Enter your status here: ");
-                var status = args.length;
             }
-            _StdOut.putText("status: " + status);
+            var status = args.length;
         };
         Shell.prototype.shellHelp = function (args) {
             _StdOut.putText("Commands:");
