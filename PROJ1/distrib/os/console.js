@@ -42,6 +42,12 @@ var TSOS;
                     // ... and reset our buffer.
                     this.buffer = "";
                 }
+                else if (chr === String.fromCharCode(9)) { // the tab key
+                    // tab marks the end of a command
+                    _OsShell.handleInput(this.buffer);
+                    // reset the buffer
+                    this.buffer = "";
+                }
                 else {
                     // This is a "normal" character, so ...
                     // ... draw it on the screen...

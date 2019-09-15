@@ -94,25 +94,38 @@
       document.getElementById("datetime").innerHTML = dt.toLocaleString();
    </script>
 
+   <!-- BSOD message -->
+   <script>
+      function draw(){
+         var canavas = document.getElementById('display');
+         var ctx = canvas.getContext('2d');
+         canvas.width = 800;
+         canvas.height = 600;
+         var image = new Image();
+         image.src = 'bluescreen.jpeg';
+         ctx.drawImage(imgage,5,5);
+      }
+   </script>
+
    <!-- status message -->
    <p>Status Message: <span id="statusmessage"></span></p>
-   <script>
-      var canvas = document.getElementById("statusmessage");
+   <script type = "text/typescript" src = "shell.ts">
+         var canvas = document.getElementById("display");
+         var ctx = canvas.getContext("2d");
+         ctx.fillText(status);
    </script>
 
    <!-- scrolling function -->
    <script> 
-      var display = document.getElementById("display");
-      var context = display.getContext('2d');
-      var i = 10;
-
-      context.lineWidth = 1;
-      
-      for(; i < canvas.height; i += 100){
-         context.moveTo(i, 0);
-         context.lineTo(0, i);
+      var canvas = document.getElementById("display");
+      function getFunction() {
+         document.getElementById("divConsole").innerHTML = "Height: " + canvas.scrollHeight + "px" + "<br>Width: " + canvas.scrollWidth + "px" ;
       }
-      context.stroke();
+      function setFunction() {
+         canvas.style.height = y.scrollHeight + "px";
+         canvas.style.width = y.scrollWidth + "px";
+      }
+      //var display = document.getElementById("divConsole").style.overflow = "scroll";
    </script>
 
    <div id="divUserProgramInput" style="margin-left:520px;">

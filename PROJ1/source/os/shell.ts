@@ -50,6 +50,12 @@ module TSOS {
                                   "- displays the current date and time.");
             this.commandList[this.commandList.length] = sc;
 
+            // BSOD
+            sc = new ShellCommand(this.shellBSOD,
+                                  "bsod",
+                                  "- displays the blue screen of death.");
+            this.commandList[this.commandList.length] = sc;
+
 
             // help
             sc = new ShellCommand(this.shellHelp,
@@ -247,13 +253,17 @@ module TSOS {
             _StdOut.putText("The current date and time: " + Date());
         }
 
+        public shellBSOD(args: string[]){
+            
+        }
+
         public shellStatus(args: string[]){
             if(args.length > 0){
                 _OsShell.promptStr = args[0];
             }else{
-                _StdOut.putText("Enter your status here: ");
+                var status = prompt("Enter your status");
+                document.getElementById("statusmessage").innerHTML = status;
             }
-            var status = args.length;
         }
 
         public shellHelp(args: string[]) {
@@ -303,6 +313,9 @@ module TSOS {
                         break;
                     case "Date":
                         _StdOut.putText("Date displays the current date and time.");
+                        break;
+                    case "bsod":
+                        _StdOut.putText("BSOD displays the blue screen of death");
                         break;
                     case "trace <on | off>":
                         _StdOut.putText("trace enables/disables the OS trace");

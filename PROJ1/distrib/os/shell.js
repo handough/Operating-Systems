@@ -33,6 +33,9 @@ var TSOS;
             // date and time
             sc = new TSOS.ShellCommand(this.shellDate, "date", "- displays the current date and time.");
             this.commandList[this.commandList.length] = sc;
+            // BSOD
+            sc = new TSOS.ShellCommand(this.shellBSOD, "bsod", "- displays the blue screen of death.");
+            this.commandList[this.commandList.length] = sc;
             // help
             sc = new TSOS.ShellCommand(this.shellHelp, "help", "- This is the help command. Seek help.");
             this.commandList[this.commandList.length] = sc;
@@ -192,14 +195,16 @@ var TSOS;
             d = new Date();
             _StdOut.putText("The current date and time: " + Date());
         };
+        Shell.prototype.shellBSOD = function (args) {
+        };
         Shell.prototype.shellStatus = function (args) {
             if (args.length > 0) {
                 _OsShell.promptStr = args[0];
             }
             else {
-                _StdOut.putText("Enter your status here: ");
+                var status = prompt("Enter your status");
+                document.getElementById("statusmessage").innerHTML = status;
             }
-            var status = args.length;
         };
         Shell.prototype.shellHelp = function (args) {
             _StdOut.putText("Commands:");
@@ -237,11 +242,17 @@ var TSOS;
                     case "man <topic>":
                         _StdOut.putText("man <topic> displays the manual page for <topic>");
                         break;
-                    case "whereAmI":
+                    case "location":
                         _StdOut.putText("Displays the current location of the user.");
+                        break;
+                    case "sky":
+                        _StdOut.putText("Displays the color of the sky.");
                         break;
                     case "Date":
                         _StdOut.putText("Date displays the current date and time.");
+                        break;
+                    case "bsod":
+                        _StdOut.putText("BSOD displays the blue screen of death");
                         break;
                     case "trace <on | off>":
                         _StdOut.putText("trace enables/disables the OS trace");
