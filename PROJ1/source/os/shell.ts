@@ -254,7 +254,11 @@ module TSOS {
         }
 
         public shellBSOD(args: string[]){
-            
+            _Canvas = <HTMLCanvasElement>document.getElementById('display');
+            _DrawingContext = _Canvas.getContext('2d');
+            _DrawingContext.fillStyle = "blue"; // setting color to blue
+            _DrawingContext.fillRect(0,0,500,500); // filling canvas
+
         }
 
         public shellStatus(args: string[]){

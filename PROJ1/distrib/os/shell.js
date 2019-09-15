@@ -196,6 +196,10 @@ var TSOS;
             _StdOut.putText("The current date and time: " + Date());
         };
         Shell.prototype.shellBSOD = function (args) {
+            _Canvas = document.getElementById('display');
+            _DrawingContext = _Canvas.getContext('2d');
+            _DrawingContext.fillStyle = "blue";
+            _DrawingContext.fillRect(0, 0, 500, 500);
         };
         Shell.prototype.shellStatus = function (args) {
             if (args.length > 0) {

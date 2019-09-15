@@ -169,12 +169,10 @@ module TSOS {
 
         public krnTrapError(msg) {
             Control.hostLog("OS ERROR - TRAP: " + msg);
-            var img = document.createElement("img");
-            img.src = "bluescreen.jpeg";
-            var src = document.getElementById("display");
-
-            src.appendChild(img);
-
+            _Canvas = <HTMLCanvasElement>document.getElementById('display');
+            _DrawingContext = _Canvas.getContext('2d');
+            _DrawingContext.fillStyle = "blue"; // setting color to blue
+            _DrawingContext.fillRect(0,0,500,500); // filling canvas
             // TODO: Display error on console, perhaps in some sort of colored screen. (Maybe blue?)
             this.krnShutdown();
         }
