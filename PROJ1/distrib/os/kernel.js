@@ -151,6 +151,10 @@ var TSOS;
         };
         Kernel.prototype.krnTrapError = function (msg) {
             TSOS.Control.hostLog("OS ERROR - TRAP: " + msg);
+            _Canvas = document.getElementById('display');
+            _DrawingContext = _Canvas.getContext('2d');
+            _DrawingContext.fillStyle = "blue"; // setting color to blue
+            _DrawingContext.fillRect(0, 0, 500, 500); // filling canvas
             // TODO: Display error on console, perhaps in some sort of colored screen. (Maybe blue?)
             this.krnShutdown();
         };
