@@ -79,7 +79,6 @@ module TSOS {
                 this.currentXPosition = this.currentXPosition + offset;
             }
          }
-
         public advanceLine(): void {
             this.currentXPosition = 0;
             /*
@@ -90,20 +89,32 @@ module TSOS {
             this.currentYPosition += _DefaultFontSize + 
                                      _DrawingContext.fontDescent(this.currentFont, this.currentFontSize) +
                                      _FontHeightMargin;
+            if(this.currentYPosition > _Canvas.height){
+                var move = this.currentYPosition - _Canvas.height + 4; // calculation to move the page up 
+                this.scrolling(move); // passes the currentYPosition - the canvas height + the additional space added to the font size to scrolling
+                this.currentYPosition = this.currentYPosition - move; // changes the current Y position to move page
+            }
+        }
 
-            // TODO: Handle scrolling. (iProject 1)
+        public scrolling(move){
+            var img = _Canvas.getContext("2d").getImageData(0, 0, _Canvas.width, this.currentYPosition + _FontHeightMargin); // records canvas state
+            this.clearScreen(); // clear canvas to move page up
+            _Canvas.getContext("2d").putImageData(img, 0, - move); // re prints canvas 
         }
 
         public backSpace(text): void{
-            var back = text.split('');
-            back.pop();
-            _OsShell.shellCls(text);
-            _OsShell.putPrompt();
-            this.buffer = back.join("");
+            var backSpace = text.split(''); // adds characters to an array of substrings
+            backSpace.pop(); // removes last char from array
+            _OsShell.shellCls(text); // clears screen and input - clears full screen still
+            _OsShell.putPrompt(); // shell prompt command to enter strings
+            this.buffer = backSpace.join(""); // returns array as a string
             _StdOut.putText(this.buffer);
         }
 
         public commandRecall(retVal): void{
+            _OsShell.shellCls(retVal);
+            _OsShell.putPrompt();
+            this.buffer = retVal.join("");
             _StdOut.putText(this.buffer);
         }
     }

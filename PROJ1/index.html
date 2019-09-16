@@ -94,28 +94,12 @@
       document.getElementById("datetime").innerHTML = dt.toLocaleString();
    </script>
 
-   <!-- BSOD message -->
-
-
    <!-- status message -->
    <p>Status Message: <span id="statusmessage"></span></p>
    <script type = "text/typescript" src = "shell.ts">
          var canvas = document.getElementById("display");
          var ctx = canvas.getContext("2d");
          ctx.fillText(status);
-   </script>
-
-   <!-- scrolling function -->
-   <script> 
-      var canvas = document.getElementById("display");
-      function getFunction() {
-         document.getElementById("divConsole").innerHTML = "Height: " + canvas.scrollHeight + "px" + "<br>Width: " + canvas.scrollWidth + "px" ;
-      }
-      function setFunction() {
-         canvas.style.height = y.scrollHeight + "px";
-         canvas.style.width = y.scrollWidth + "px";
-      }
-      //var display = document.getElementById("divConsole").style.overflow = "scroll";
    </script>
 
    <div id="divUserProgramInput" style="margin-left:520px;">

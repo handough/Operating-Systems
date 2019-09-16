@@ -90,17 +90,29 @@ var TSOS;
             this.currentYPosition += _DefaultFontSize +
                 _DrawingContext.fontDescent(this.currentFont, this.currentFontSize) +
                 _FontHeightMargin;
-            // TODO: Handle scrolling. (iProject 1)
+            if (this.currentYPosition > _Canvas.height) {
+                var move = this.currentYPosition - _Canvas.height + 4; // calculation to move the page up 
+                this.scrolling(move); // passes the currentYPosition - the canvas height + the additional space added to the font size to scrolling
+                this.currentYPosition = this.currentYPosition - move; // changes the current Y position to move page
+            }
         };
-        Console.prototype.backSpace = function (text) {
-            var back = text.split('');
-            back.pop();
-            _OsShell.shellCls(text);
-            _OsShell.putPrompt();
-            this.buffer = back.join("");
+        Console.prototype.scrolling = function (move) {
+            var img = _Canvas.getContext("2d").getImageData(0, 0, _Canvas.width, this.currentYPosition + _FontHeightMargin); // records canvas state
+            this.clearScreen(); // clear canvas to move page up
+            _Canvas.getContext("2d").putImageData(img, 0, -move); // re prints canvas 
+        };
+        Console.prototype.backSpace = function (uInput) {
+            var backSpace = uInput.split(''); // adds characters to an array of substrings
+            backSpace.pop(); // removes last char from array
+            _OsShell.shellCls(uInput); // clears screen and input - clears full screen still
+            _OsShell.putPrompt(); // shell prompt command to enter strings
+            this.buffer = backSpace.join(""); // returns array as a string
             _StdOut.putText(this.buffer);
         };
         Console.prototype.commandRecall = function (retVal) {
+            _OsShell.shellCls(retVal);
+            _OsShell.putPrompt();
+            this.buffer = retVal.join("");
             _StdOut.putText(this.buffer);
         };
         return Console;

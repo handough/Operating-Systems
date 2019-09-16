@@ -56,6 +56,11 @@ module TSOS {
                                   "- displays the blue screen of death.");
             this.commandList[this.commandList.length] = sc;
 
+            // load
+            sc = new ShellCommand(this.shellLoad,
+                                  "load",
+                                  "- validates the user code in the HTML5 text area.");
+            this.commandList[this.commandList.length] = sc;
 
             // help
             sc = new ShellCommand(this.shellHelp,
@@ -270,6 +275,18 @@ module TSOS {
             }
         }
 
+        public shellLoad(args: string[]){
+            var input = (<HTMLInputElement>document.getElementById("taProgramInput")).value;
+            var letterNum = /^[0-9a-zA-Z]+$/;  // makes sure input is hex digits or spaces
+            if(input == ""){ // invalid input error
+                _StdOut.putText("Invalid, please enter input");
+            }else if(letterNum.test(input)){ // valid hex digits or spaces
+                _StdOut.putText("Valid input!");
+            }else{ // no input error
+                _StdOut.putText("Invalid input. Try again.");
+            }
+        }
+
         public shellHelp(args: string[]) {
             _StdOut.putText("Commands:");
             for (var i in _OsShell.commandList) {
@@ -296,6 +313,9 @@ module TSOS {
                 switch (topic) {
                     case "help":
                         _StdOut.putText("Help displays a list of (hopefully) valid commands.");
+                        break;
+                    case "load":
+                        _StdOut.putText("Validates user code in the HTML5 text area");
                         break;
                     case "ver":
                         _StdOut.putText("Ver displays the current version");
