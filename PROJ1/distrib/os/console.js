@@ -42,11 +42,17 @@ var TSOS;
                     // ... and reset our buffer.
                     this.buffer = "";
                 }
+                else if (chr == String.fromCharCode(8)) { // backspace
+                    this.backSpace(this.buffer);
+                }
                 else if (chr === String.fromCharCode(9)) { // the tab key
                     // tab marks the end of a command
                     _OsShell.handleInput(this.buffer);
                     // reset the buffer
                     this.buffer = "";
+                }
+                else if (chr === String.fromCharCode(38)) {
+                    this.commandRecall(this.buffer);
                 }
                 else {
                     // This is a "normal" character, so ...
@@ -85,6 +91,17 @@ var TSOS;
                 _DrawingContext.fontDescent(this.currentFont, this.currentFontSize) +
                 _FontHeightMargin;
             // TODO: Handle scrolling. (iProject 1)
+        };
+        Console.prototype.backSpace = function (text) {
+            var back = text.split('');
+            back.pop();
+            _OsShell.shellCls(text);
+            _OsShell.putPrompt();
+            this.buffer = back.join("");
+            _StdOut.putText(this.buffer);
+        };
+        Console.prototype.commandRecall = function (retVal) {
+            _StdOut.putText(this.buffer);
         };
         return Console;
     }());

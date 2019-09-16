@@ -41,14 +41,20 @@ module TSOS {
                     _OsShell.handleInput(this.buffer);
                     // ... and reset our buffer.
                     this.buffer = "";
-                } else if(chr === String.fromCharCode(9)){ // the tab key
+                }else if(chr == String.fromCharCode(8)){ // backspace
+                    this.backSpace(this.buffer);
+                }
+                else if(chr === String.fromCharCode(9)){ // the tab key
                     // tab marks the end of a command
                     _OsShell.handleInput(this.buffer); 
                     // reset the buffer
                     this.buffer = ""; 
-                }else {
-                    // This is a "normal" character, so ...
-                    // ... draw it on the screen...
+                }else if(chr === String.fromCharCode(38)){
+                    this.commandRecall(this.buffer);
+                }
+                else {
+                // This is a "normal" character, so ...
+                // ... draw it on the screen...
                     this.putText(chr);
                     // ... and add it to our buffer.
                     this.buffer += chr;
@@ -86,6 +92,19 @@ module TSOS {
                                      _FontHeightMargin;
 
             // TODO: Handle scrolling. (iProject 1)
+        }
+
+        public backSpace(text): void{
+            var back = text.split('');
+            back.pop();
+            _OsShell.shellCls(text);
+            _OsShell.putPrompt();
+            this.buffer = back.join("");
+            _StdOut.putText(this.buffer);
+        }
+
+        public commandRecall(retVal): void{
+            _StdOut.putText(this.buffer);
         }
     }
  }
