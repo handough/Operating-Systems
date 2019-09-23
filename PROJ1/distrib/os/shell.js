@@ -214,17 +214,6 @@ var TSOS;
             }
         };
         Shell.prototype.shellLoad = function (args) {
-            var input = document.getElementById("taProgramInput").value;
-            var letterNum = /^[0-9a-zA-Z]+$/; // makes sure input is hex digits or spaces
-            if (input == "") { // invalid input error
-                _StdOut.putText("Invalid, please enter input");
-            }
-            else if (letterNum.test(input)) { // valid hex digits or spaces
-                _StdOut.putText("Valid input!");
-            }
-            else { // no input error
-                _StdOut.putText("Invalid input. Try again.");
-            }
         };
         Shell.prototype.shellHelp = function (args) {
             _StdOut.putText("Commands:");

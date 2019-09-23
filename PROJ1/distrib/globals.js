@@ -34,6 +34,12 @@ var _Kernel;
 var _KernelInterruptQueue = null;
 var _KernelInputQueue = null;
 var _KernelBuffers = null;
+// Hardware (host)
+var _CPU;
+var _Memory;
+var _MemoryAccessor;
+// Software (OS)
+var _MemoryManager = null;
 // Standard input and output
 var _StdIn = null;
 var _StdOut = null;

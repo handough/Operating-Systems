@@ -101,10 +101,10 @@ var TSOS;
             this.clearScreen(); // clear canvas to move page up
             _Canvas.getContext("2d").putImageData(img, 0, -move); // re prints canvas 
         };
-        Console.prototype.backSpace = function (uInput) {
-            var backSpace = uInput.split(''); // adds characters to an array of substrings
+        Console.prototype.backSpace = function (text) {
+            var backSpace = text.split(''); // adds characters to an array of substrings
             backSpace.pop(); // removes last char from array
-            _OsShell.shellCls(uInput); // clears screen and input - clears full screen still
+            _OsShell.shellCls(text); // clears screen and input - clears full screen still
             _OsShell.putPrompt(); // shell prompt command to enter strings
             this.buffer = backSpace.join(""); // returns array as a string
             _StdOut.putText(this.buffer);

@@ -13,7 +13,7 @@
 
 module TSOS {
 
-    export class Cpu {
+    export class cpu {
 
         constructor(public PC: number = 0,
                     public Acc: number = 0,
@@ -37,6 +37,51 @@ module TSOS {
             _Kernel.krnTrace('CPU cycle');
             // TODO: Accumulate CPU usage and profiling statistics here.
             // Do the real work here. Be sure to set this.isExecuting appropriately.
+        }
+        fetch(instruction){
+            switch (instruction){
+                case 0xA9:{
+                }
+                case 0xAD:{
+
+                }
+                case 0x8D:{
+
+                }
+                case 0x6D:{
+
+                }
+                case 0xA2:{
+
+                }
+                case 0xAE:{
+
+                }
+                case 0xA0:{
+
+                }
+                case 0xAC:{
+
+                }
+                case 0xEA:{
+                    break;
+                }
+                case 0x00:{
+
+                }
+                case 0xEC:{
+
+                }
+                case 0xD0:{
+
+                }
+                case 0xEE:{
+
+                }
+                case 0xFF:{
+
+                }
+            }
         }
     }
 }
