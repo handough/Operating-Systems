@@ -1,9 +1,7 @@
 /* ------------
    Globals.ts
-
    Global CONSTANTS and _Variables.
    (Global over both the OS and Hardware Simulation / Host.)
-
    This code references page numbers in our text book:
    Operating System Concepts 8th edition by Silberschatz, Galvin, and Gagne.  ISBN 978-0-470-12872-5
    ------------ */
@@ -25,7 +23,7 @@ const KEYBOARD_IRQ: number = 1;
 // Global Variables
 // TODO: Make a global object and use that instead of the "_" naming convention in the global namespace.
 //
-var _CPU: TSOS.cpu;  // Utilize TypeScript's type annotation system to ensure that _CPU is an instance of the Cpu class.
+var _CPU: TSOS.Cpu;  // Utilize TypeScript's type annotation system to ensure that _CPU is an instance of the Cpu class.
 
 var _OSclock: number = 0;  // Page 23.
 
@@ -45,14 +43,6 @@ var _KernelInterruptQueue: TSOS.Queue = null;
 var _KernelInputQueue: TSOS.Queue = null; 
 var _KernelBuffers = null; 
 
-// Hardware (host)
-var _CPU: TSOS.cpu;
-var _Memory: TSOS.memory;
-var _MemoryAccessor: TSOS.memoryAccessor;
-
-// Software (OS)
-var _MemoryManager: any = null;
-
 // Standard input and output
 var _StdIn:  TSOS.Console = null; 
 var _StdOut: TSOS.Console = null;
@@ -60,6 +50,14 @@ var _StdOut: TSOS.Console = null;
 // UI
 var _Console: TSOS.Console;
 var _OsShell: TSOS.Shell;
+
+// OS memory manager
+//var _MemoryManager = null;
+
+// hardware (host)
+var _CPU: TSOS.Cpu;
+var _Memory;
+var _MemoryAccessor;
 
 // At least this OS is not trying to kill you. (Yet.)
 var _SarcasticMode: boolean = false;

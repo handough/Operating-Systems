@@ -1,9 +1,9 @@
 var TSOS;
 (function (TSOS) {
-    var memoryAccessor = /** @class */ (function () {
-        function memoryAccessor() {
+    var MemoryAccessor = /** @class */ (function () {
+        function MemoryAccessor() {
         }
-        return memoryAccessor;
+        return MemoryAccessor;
     }());
-    TSOS.memoryAccessor = memoryAccessor;
+    TSOS.MemoryAccessor = MemoryAccessor;
 })(TSOS || (TSOS = {}));

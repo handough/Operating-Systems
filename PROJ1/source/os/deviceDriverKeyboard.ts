@@ -1,10 +1,9 @@
 /* ----------------------------------
    DeviceDriverKeyboard.ts
-
    The Kernel Keyboard Device Driver.
    ---------------------------------- */
 
-module TSOS {
+   module TSOS {
 
     // Extends DeviceDriver
     export class DeviceDriverKeyboard extends DeviceDriver {

@@ -1,5 +1,5 @@
-module TSOS{
-    export class memoryAccessor{
+module TSOS {
+    export class MemoryAccessor{
 
     }
 }

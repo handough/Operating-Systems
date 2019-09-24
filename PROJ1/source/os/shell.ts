@@ -1,8 +1,6 @@
 /* ------------
    Shell.ts
-
    The OS Shell - The "command line interface" (CLI) for the console.
-
     Note: While fun and learning are the primary goals of all enrichment center activities,
           serious injuries may occur when trying to write your own Operating System.
    ------------ */
@@ -276,7 +274,15 @@ module TSOS {
         }
 
         public shellLoad(args: string[]){
-
+            var input = (<HTMLInputElement>document.getElementById("taProgramInput")).value;
+            var letterNum = /^[0-9a-zA-Z]+$/;  // makes sure input is hex digits or spaces
+            if(input == ""){ // invalid input error
+                _StdOut.putText("Invalid, please enter input");
+            }else if(letterNum.test(input)){ // valid hex digits or spaces
+                _StdOut.putText("Valid input!");
+            }else{ // no input error
+                _StdOut.putText("Invalid input. Try again.");
+            }
         }
 
         public shellHelp(args: string[]) {

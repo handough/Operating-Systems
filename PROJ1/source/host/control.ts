@@ -1,16 +1,13 @@
 /* ------------
      Control.ts
-
      Routines for the hardware simulation, NOT for our client OS itself.
      These are static because we are never going to instantiate them, because they represent the hardware.
      In this manner, it's A LITTLE BIT like a hypervisor, in that the Document environment inside a browser
      is the "bare metal" (so to speak) for which we write code that hosts our client OS.
      But that analogy only goes so far, and the lines are blurred, because we are using TypeScript/JavaScript
      in both the host and client environments.
-
      This (and other host/simulation scripts) is the only place that we should see "web" code, such as
      DOM manipulation and event handling, and so on.  (Index.html is -- obviously -- the only place for markup.)
-
      This code references page numbers in the text book:
      Operating System Concepts 8th edition by Silberschatz, Galvin, and Gagne.  ISBN 978-0-470-12872-5
      ------------ */
@@ -85,13 +82,12 @@ module TSOS {
             document.getElementById("display").focus();
 
             // ... Create and initialize the CPU (because it's part of the hardware)  ...
-            _CPU = new TSOS.cpu();  // Note: We could simulate multi-core systems by instantiating more than one instance of the CPU here.
+            _CPU = new Cpu();  // Note: We could simulate multi-core systems by instantiating more than one instance of the CPU here.
             _CPU.init();       //       There's more to do, like dealing with scheduling and such, but this would be a start. Pretty cool.
 
-            // set up memory
-            _Memory = new memory();
-            _Memory.init();
-            _MemoryAccessor = new memoryAccessor();
+            //_Memory = new Memory();
+            //_Memory.init();
+            //_MemoryAccessor = new MemoryAccessor();
 
             // ... then set the host clock pulse ...
             _hardwareClockID = setInterval(Devices.hostClockPulse, CPU_CLOCK_INTERVAL);

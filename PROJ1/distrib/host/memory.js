@@ -1,11 +1,14 @@
-var TSOS;
 (function (TSOS) {
-    var memory = /** @class */ (function () {
-        function memory() {
+    var Memory = (function () {
+        function Memory() {
         }
-        memory.prototype.init = function () {
+        Memory.prototype.init = function () {
+            this.memoryArray = new Array(256);
+            for (var i = 0; i < this.memoryArray.length; i++) {
+                this.memoryArray[i] = "00";
+            }
         };
-        return memory;
-    }());
-    TSOS.memory = memory;
-})(TSOS || (TSOS = {}));
+        return Memory;
+    });
+    TSOS.Memory = Memory;
+});

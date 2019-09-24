@@ -1,9 +1,7 @@
 /* ------------
    Globals.ts
-
    Global CONSTANTS and _Variables.
    (Global over both the OS and Hardware Simulation / Host.)
-
    This code references page numbers in our text book:
    Operating System Concepts 8th edition by Silberschatz, Galvin, and Gagne.  ISBN 978-0-470-12872-5
    ------------ */
@@ -34,18 +32,18 @@ var _Kernel;
 var _KernelInterruptQueue = null;
 var _KernelInputQueue = null;
 var _KernelBuffers = null;
-// Hardware (host)
-var _CPU;
-var _Memory;
-var _MemoryAccessor;
-// Software (OS)
-var _MemoryManager = null;
 // Standard input and output
 var _StdIn = null;
 var _StdOut = null;
 // UI
 var _Console;
 var _OsShell;
+// OS memory manager
+//var _MemoryManager = null;
+// hardware (host)
+var _CPU;
+var _Memory;
+var _MemoryAccessor;
 // At least this OS is not trying to kill you. (Yet.)
 var _SarcasticMode = false;
 // Global Device Driver Objects - page 12

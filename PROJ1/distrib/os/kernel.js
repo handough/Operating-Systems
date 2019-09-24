@@ -1,8 +1,6 @@
 /* ------------
      Kernel.ts
-
      Routines for the Operating System, NOT the host.
-
      This code references page numbers in the text book:
      Operating System Concepts 8th edition by Silberschatz, Galvin, and Gagne.  ISBN 978-0-470-12872-5
      ------------ */
@@ -31,7 +29,8 @@ var TSOS;
             _krnKeyboardDriver = new TSOS.DeviceDriverKeyboard(); // Construct it.
             _krnKeyboardDriver.driverEntry(); // Call the driverEntry() initialization routine.
             this.krnTrace(_krnKeyboardDriver.status);
-            _MemoryManager = new TSOS.MemoryManager();
+            // load the memory manager 
+            //_MemoryManager = new MemoryManager();
             //
             // ... more?
             //

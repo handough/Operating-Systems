@@ -1,24 +1,40 @@
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-var TSOS;
 (function (TSOS) {
-    var MemoryManager = /** @class */ (function (_super) {
-        __extends(MemoryManager, _super);
+    var MemoryManager = (function () {
         function MemoryManager() {
-            return _super !== null && _super.apply(this, arguments) || this;
+            this.globalLimit = 256;
+            this.partitions = [
+                { "base": 0, "limit": this.globalLimit, "isEmpty": true },
+                { "base": 256, "limit": this.globalLimit, "isEmpty": true }
+            ];
         }
-        return MemoryManager;
-    }(TSOS.memory));
+        // loading program into 00 position in memory 
+        MemoryManager.prototype.loadMemory = function (opCode, partition) {
+            var load = this.partitions[partition].base;
+            for (var i = 0, firstOp = opCode; i < firstOp.length; i++) {
+                var opCodes = firstOp[i];
+                _Memory.memoryArray[load] = opCodes;
+                load++;
+            }
+        };
+        // checking for available memory space
+        MemoryManager.prototype.checkMemory = function (codeLength) {
+            // search through the partition 
+            for (var i = 0; i < this.partitions.length; i++) {
+                // if the partition is empty and hasnt hit the space limit return true 
+                if (this.partitions[i].isEmpty && this.partitions[i].limit > codeLength) {
+                    return true;
+                }
+            }
+        };
+        MemoryManager.prototype.freePartition = function (codeLength) {
+            // search through the partition
+            for (var i = 0; i < this.partitions.length; i++) {
+                // if the partion is empty and hasnt hit the space limit return the empty space
+                if (this.partitions[i].isEmpty && this.partitions[i].limit > codeLength) {
+                    return i;
+                }
+            }
+        };
+    }());
     TSOS.MemoryManager = MemoryManager;
-})(TSOS || (TSOS = {}));
+});
