@@ -34,7 +34,7 @@
                 this.krnTrace(_krnKeyboardDriver.status);
 
                 // load the memory manager 
-                //_MemoryManager = new MemoryManager();
+                _MemoryManager = new MemoryManager();
     
                 //
                 // ... more?

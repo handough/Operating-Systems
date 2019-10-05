@@ -62,46 +62,32 @@ var TSOS;
                 chr = String.fromCharCode(keyCode - 16);
                 _KernelInputQueue.enqueue(chr);
             }
-            else if (keyCode == 50) { // @
-                if (isShifted == true) {
-                    chr = String.fromCharCode(keyCode + 14);
-                }
+            else if (keyCode == 50 && (isShifted == true)) { // @
+                chr = String.fromCharCode(keyCode + 14);
                 _KernelInputQueue.enqueue(chr);
             }
-            else if ((keyCode >= 51) && (keyCode <= 53)) { // #
-                if (isShifted == true) {
-                    chr = String.fromCharCode(keyCode - 16);
-                }
+            else if ((keyCode >= 51) && (isShifted == true)) { // #
+                chr = String.fromCharCode(keyCode - 16);
                 _KernelInputQueue.enqueue(chr);
             }
-            else if (keyCode == 54) { // $
-                if (isShifted == true) {
-                    chr = String.fromCharCode(keyCode + 40);
-                }
+            else if (keyCode == 54 && (isShifted == true)) { // $
+                chr = String.fromCharCode(keyCode + 40);
                 _KernelInputQueue.enqueue(chr);
             }
-            else if (keyCode == 55) { // &
-                if (isShifted == true) {
-                    chr = String.fromCharCode(keyCode - 17);
-                }
+            else if (keyCode == 55 && (isShifted == true)) { // &
+                chr = String.fromCharCode(keyCode - 17);
                 _KernelInputQueue.enqueue(chr);
             }
-            else if (keyCode == 56) { // *
-                if (isShifted == true) {
-                    chr = String.fromCharCode(keyCode - 14);
-                }
+            else if (keyCode == 56 && (isShifted == true)) { // *
+                chr = String.fromCharCode(keyCode - 14);
                 _KernelInputQueue.enqueue(chr);
             }
-            else if (keyCode == 57) { // (
-                if (isShifted == true) {
-                    chr = String.fromCharCode(keyCode - 17);
-                }
+            else if (keyCode == 57 && (isShifted == true)) { // (
+                chr = String.fromCharCode(keyCode - 17);
                 _KernelInputQueue.enqueue(chr);
             }
-            else if (keyCode == 48) { // )
-                if (isShifted == true) {
-                    chr = String.fromCharCode(keyCode - 7);
-                }
+            else if (keyCode == 48 && (isShifted == true)) { // )
+                chr = String.fromCharCode(keyCode - 7);
                 _KernelInputQueue.enqueue(chr);
             }
             else if (keyCode == 186) { // ;:

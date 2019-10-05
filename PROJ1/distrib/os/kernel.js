@@ -30,7 +30,7 @@ var TSOS;
             _krnKeyboardDriver.driverEntry(); // Call the driverEntry() initialization routine.
             this.krnTrace(_krnKeyboardDriver.status);
             // load the memory manager 
-            //_MemoryManager = new MemoryManager();
+            _MemoryManager = new TSOS.MemoryManager();
             //
             // ... more?
             //

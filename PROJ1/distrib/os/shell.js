@@ -37,6 +37,9 @@ var TSOS;
             // load
             sc = new TSOS.ShellCommand(this.shellLoad, "load", "- validates the user code in the HTML5 text area.");
             this.commandList[this.commandList.length] = sc;
+            // run
+            sc = new TSOS.ShellCommand(this.shellRun, "run", "- runs the user input program.");
+            this.commandList[this.commandList.length] = sc;
             // help
             sc = new TSOS.ShellCommand(this.shellHelp, "help", "- This is the help command. Seek help.");
             this.commandList[this.commandList.length] = sc;
@@ -211,17 +214,58 @@ var TSOS;
                 document.getElementById("statusmessage").innerHTML = status;
             }
         };
+        Shell.prototype.shellRun = function (args) {
+            _StdOut.putText("This works. PID run: " + _CPU.PID);
+            _Console.putText(_OsShell.promptStr);
+            var pID = '';
+            for (var i = 0; i < args.length; i++) {
+                pID = pID + args[i];
+            }
+            if (pID = '') {
+                _StdOut.putText("Please enter a PID with run command");
+                _Console.putText(_OsShell.promptStr);
+            }
+            else {
+                _PCB.state = "Ready";
+                _PCB.insertPCBRows();
+                _PCB.pcbDisplay();
+                _CPU.isExecuting = true;
+                _Console.putText(_OsShell.promptStr);
+                _CPU.endProgram();
+            }
+        };
         Shell.prototype.shellLoad = function (args) {
             var input = document.getElementById("taProgramInput").value;
-            var letterNum = /^[0-9a-zA-Z]+$/; // makes sure input is hex digits or spaces
-            if (input == "") { // invalid input error
-                _StdOut.putText("Invalid, please enter input");
+            var letterNum = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', ' ']; // instead of checking for a regular expression
+            // error when there is no user input
+            if (input == '') {
+                _StdOut.putText("No input, please enter valid characters");
+                _Console.putText(_OsShell.promptStr);
             }
-            else if (letterNum.test(input)) { // valid hex digits or spaces
-                _StdOut.putText("Valid input!");
+            else if (index == -1) {
+                // loop through all possible characters and compare to user input 
+                var count = 0;
+                for (var i = 0; i < input.length; i++) {
+                    var letter = input.charAt(i);
+                    for (var x = 0; x < letterNum.length; x++) {
+                        if (letter == letterNum[x]) {
+                            count++;
+                        }
+                    }
+                }
+                if (count == input.length) {
+                    _StdOut.putText("Memory full!");
+                    _Console.putText(_OsShell.promptStr);
+                }
             }
-            else { // no input error
-                _StdOut.putText("Invalid input. Try again.");
+            else {
+                // if the count of characters equals the input length, then user input valid
+                // loop through all possible characters and compare to user input 
+                _CPU.PID++;
+                _StdOut.putText("PID: " + _CPU.PID);
+                var op = document.getElementById("taProgramInput").value;
+                var index = _MemoryManager.displayBlock(op);
+                _MemoryManager.writeMem(index, op);
             }
         };
         Shell.prototype.shellHelp = function (args) {
@@ -250,6 +294,9 @@ var TSOS;
                         break;
                     case "load":
                         _StdOut.putText("Validates user code in the HTML5 text area");
+                        break;
+                    case "run":
+                        _StdOut.putText("Runs user inputed program");
                         break;
                     case "ver":
                         _StdOut.putText("Ver displays the current version");
