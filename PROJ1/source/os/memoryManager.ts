@@ -1,15 +1,13 @@
 module TSOS {
     export class MemoryManager {
-        constructor(public mem = [0,0,0], public pid = [-1,-1,-1], public pidList = [], public opIndex = 0, public executePid = []){
+        constructor(public pidList = [], public opIndex = 0, public executePid = []){
   
         }
         public clear(){
-            this.mem = [0,0,0];
-            this.pid = [-1,-1,-1];
             _Memory.eraseAll();
             this.clearDisplay();
-            for(var i = 0; i < this.pid.length; i++){
-                var pid = this.pid[i]; // comparing the pids
+            for(var i = 0; i < this.pidList.length; i++){
+                var pid = this.pidList[i]; // comparing the pids
                 var count = 0;
                 for(var x = 0; x < this.executePid.length; x++){
                     if(pid != this.executePid[i]){
@@ -21,67 +19,14 @@ module TSOS {
                 }
             }
         }
-        public displayBlock(op){
-            // change process
-            var table = document.getElementById("processMemTable");
-            var count = 0; // spot for 3 segments of memory
-            var index = -1;
-            for(var i = 0; i < this.mem.length; i++){
-                if(this.mem[i] == 0){
-                    if(i == 0){
-                        index = i;
-                        var opCount = 0;
-                        for(var j = 0; j <= 32; j++){
-                            var row = (<HTMLTableRowElement>table.getElementsByTagName("tr")[j]);
-                            for(var x = 0; x  < 9; x++){
-                                if(opCount + 2 > op.length){
-                                    row.getElementsByTagName("td")[x].innerHTML = '0';
-                                }else{
-                                    if(j == 0){
-                                        for(var i = 0; i <= 256; i+=8){
-                                            var rows = (<HTMLTableRowElement>table.getElementsByTagName("tr")[i]);
-                                            var cell = 0;
-                                            var cell1 = rows.insertCell(1);
-                                            var hexRow = i.toString(16);
-                                            if(i != 0){
-                                                cell1.innerHTML = "0x";
-                                                if(hexRow.length == 1){
-                                                  cell1.innerHTML += "00" + hexRow;
-                                                }else if(hexRow.length == 2){
-                                                  cell1.innerHTML += "0" + hexRow;
-                                                }else{
-                                                  cell1.innerHTML += hexRow;
-                                                }
-                                            }
-                                            var opCounts = 0;
-                                            for(var j = 0; j <= 256; j++){
-                                                var rowss = (<HTMLTableRowElement>table.getElementsByTagName("tr")[j]);
-                                                for(var x = 0; x < 8; x++){
-                                                    rowss.getElementsByTagName("td")[x+1].innerHTML = op.substring(opCounts, opCounts + 2);
-                                                    opCounts += 3;
-                                                }
-                                            }
-                                            cell++;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        this.mem[0] = 1; // first segment of memory used 
-                    }break;
-                }else{
-                    count = count + 1;
-                }
-            }
-            return index;
-        }
+
         public clearBlock(pID){
             var index = -1;
-            for(var i = 0; i < this.pid.length; i++){
-                if(this.pid[i] == pID){
+            for(var i = 0; i < this.pidList.length; i++){
+                if(this.pidList[i] == pID){
                     var table = document.getElementById("processMemTable");
                     if(i ==0){
-                        this.pid[0] = -1;
+                        this.pidList[0] = -1;
                         index = 0;
                         for(var i = 0; i < 32; i++){
                             var row = table.getElementsByTagName("tr")[i];
@@ -124,8 +69,8 @@ module TSOS {
         }
 
         public memIndex(PID){
-            for(var i =0; i < this.pid.length; i++){
-                if(this.pid[i] == PID){
+            for(var i =0; i < this.pidList.length; i++){
+                if(this.pidList[i] == PID){
                     return i;
                 }
             }
@@ -140,7 +85,7 @@ module TSOS {
         }
         
         public getOp(index){
-            return _Memory.read(index);
+            return _MemoryAccessor.read(index);
         }
 
         public writeOpCode(constant, addr){
@@ -153,7 +98,7 @@ module TSOS {
 
         // write memory from the memory manager
         public writeMem(index, op){
-            _Memory.write(index, op);
+            _MemoryAccessor.write(index, op);
         }
 
         public endianAddress(addrB, addrE){
@@ -171,6 +116,10 @@ module TSOS {
             }
             addr = this.hexDecimal(str);
             return addr;
+        }
+
+        public incPID(){
+
         }
     }
 }

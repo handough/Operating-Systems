@@ -18,6 +18,35 @@ var TSOS;
         function MemoryAccessor() {
             return _super !== null && _super.apply(this, arguments) || this;
         }
+        MemoryAccessor.prototype.write = function (memSlot, op) {
+            var opArray = op.split(" ");
+            var opCount = 0;
+            if (memSlot == 0) {
+                for (var i = 0; i < 256; i++) {
+                    if (i == opArray.length) {
+                        this.memory[i] = -1;
+                        break;
+                    }
+                    this.memory[i] = opArray[opCount];
+                    opCount++;
+                }
+            }
+        };
+        MemoryAccessor.prototype.read = function (memSlot) {
+            var opArray = [];
+            if (memSlot == 0) {
+                for (var i = 0; i < 256; i++) {
+                    if (this.memory[i] != -1) {
+                        opArray.push(this.memory[i]);
+                    }
+                    else {
+                        this.memory[i] = 0;
+                        break;
+                    }
+                }
+            }
+            return opArray;
+        };
         return MemoryAccessor;
     }(TSOS.Memory));
     TSOS.MemoryAccessor = MemoryAccessor;

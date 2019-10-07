@@ -5,22 +5,21 @@ module TSOS{
                     public X: number = 0, 
                     public Y: number = 0, 
                     public Z: number = 0,
-                    public pid: number = 0, 
-                    public IR: number = 0, 
-                    public base: number = 0, 
+                    public base: number = 0,
                     public limit: number = 0,
+                    public part: number = 0,
+                    public pid: number = 0, 
+                    public IR: string = '', 
                     public curState: number = 0, 
                     public prior: number = 0, 
                     public local: number = 0,
                     public rowNum: number = 0,
-                    public state: number = 0){
+                    public state: string = ''){
                         if(rowNum == void 0){rowNum = 1;}
         }   
         
         public init(pid){
             this.pid = pid;
-            this.base = this.getBase(_MemoryManager.PIDList[_MemoryManager.PIDList.length -1]);
-            this.limit = this.getLimit(_MemoryManager.PIDList[_MemoryManager.PIDList.length -1])
         }
 
         public pcbDisplay(){
@@ -36,8 +35,6 @@ module TSOS{
             rows.getElementsByTagName("td")[6].innerHTML = this.Y + '';
             rows.getElementsByTagName("td")[7].innerHTML = this.Z + '';
             rows.getElementsByTagName("td")[8].innerHTML = 'Memory';
-            this.getBase(_PCB.pid);
-            this.getLimit(_PCB.pid);
         }
 
         public insertPCBRows(){
@@ -61,8 +58,16 @@ module TSOS{
             cell7.innerHTML = _PCB.Y + '';
             cell8.innerHTML = _PCB.Z + '';
             cell9.innerHTML = 'Memory';
-            _PCB.getBase(_PCB.pid);
-            _PCB.getLimit(_PCB.pid);
+        }
+
+        public clearPCB(){
+            // clearPCB terminates the cpu scheduler process
+            this.state = 'TERMINATED';
+            var table = <HTMLTableElement>document.getElementById("pcbTable");
+            table.deleteRow(this.rowNum);
+            if(_processManager.RR){
+                _processManager.unIncRowNum();
+            }
         }
 
         public getPID(){
@@ -80,7 +85,7 @@ module TSOS{
             return _CPU.Acc;
         }
 
-        public getIR(){
+        public getIR(IR){
             this.IR = _CPU.IR;
         }
 
@@ -99,8 +104,8 @@ module TSOS{
             return _CPU.Zflag;
         }
 
-        public getBase(PID){
-            var index = _MemoryManager.memIndex(PID);
+        public getBase(pid){
+            var index = _MemoryManager.memIndex(pid);
             if(index == 0){
                 this.base = 0;
                 return 0;
@@ -110,14 +115,19 @@ module TSOS{
             }
         }
 
-        public getLimit(PID){
-            var index = _MemoryManager.memIndex(PID);
+        public getLimit(pid){
+            var index = _MemoryManager.memIndex(pid);
             if(index == 0){
-                this.base = 0;
-                return 0;
-            }else if(index == 1){
-                this.base = 256;
+                this.limit = 256;
                 return 256;
+            }
+        }
+
+        public getPart(pid){
+            var index = _MemoryManager.memIndex(pid);
+            if(index == 0){
+                this.part = 1;
+                return 1;
             }
         }
     }

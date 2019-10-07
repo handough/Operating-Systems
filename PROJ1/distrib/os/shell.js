@@ -214,58 +214,79 @@ var TSOS;
                 document.getElementById("statusmessage").innerHTML = status;
             }
         };
-        Shell.prototype.shellRun = function (args) {
-            _StdOut.putText("This works. PID run: " + _CPU.PID);
-            _Console.putText(_OsShell.promptStr);
-            var pID = '';
-            for (var i = 0; i < args.length; i++) {
-                pID = pID + args[i];
+        Shell.prototype.shellRun = function (params) {
+            // determines if program can run with given PID
+            var canExecute = true;
+            // inputed program PID
+            var ppid = '';
+            //sets the inputed program PID to ppid variable
+            for (var i = 0; i < params.length; i++) {
+                ppid = ppid + params[i];
             }
-            if (pID = '') {
-                _StdOut.putText("Please enter a PID with run command");
-                _Console.putText(_OsShell.promptStr);
+            // checks if PID exists in memory manager by comparing ppid to the executePID array
+            for (var i = 0; i < _MemoryManager.executePid.length; i++) {
+                if (parseInt(ppid) == _MemoryManager.executePid[i]) {
+                    _StdOut.putText("PID: " + ppid + " is not in the memory manager.");
+                    canExecute = false;
+                }
+                else {
+                    canExecute = true;
+                }
             }
-            else {
-                _PCB.state = "Ready";
-                _PCB.insertPCBRows();
-                _PCB.pcbDisplay();
-                _CPU.isExecuting = true;
-                _Console.putText(_OsShell.promptStr);
-                _CPU.endProgram();
-            }
-        };
-        Shell.prototype.shellLoad = function (args) {
-            var input = document.getElementById("taProgramInput").value;
-            var letterNum = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', ' ']; // instead of checking for a regular expression
-            // error when there is no user input
-            if (input == '') {
-                _StdOut.putText("No input, please enter valid characters");
-                _Console.putText(_OsShell.promptStr);
-            }
-            else if (index == -1) {
-                // loop through all possible characters and compare to user input 
-                var count = 0;
-                for (var i = 0; i < input.length; i++) {
-                    var letter = input.charAt(i);
-                    for (var x = 0; x < letterNum.length; x++) {
-                        if (letter == letterNum[x]) {
-                            count++;
-                        }
+            if (canExecute == true) {
+                _StdOut.putText("This working !!!");
+                // change the current PCB to the PCB from the resident list
+                for (var i = 0; i < _processManager.residentList.length; i++) {
+                    if (_processManager.residentList[i].pid == parseInt(ppid)) {
+                        _PCB = _processManager.residentList[i];
+                        break;
                     }
                 }
-                if (count == input.length) {
-                    _StdOut.putText("Memory full!");
-                    _Console.putText(_OsShell.promptStr);
+                _PCB.state = "Ready"; // set the PCBs current state to ready
+                _PCB.insertPCBRows(); // insert a row into the PCB table
+                _PCB.pcbDisplay(); // display the PCB data
+                _CPU.isExecuting = true; // set isExecuting to true to run CPU
+            }
+            else { // if input cannot be validated send error
+                _StdOut.putText("Input not validated");
+            }
+        };
+        Shell.prototype.shellLoad = function () {
+            var input = document.getElementById("taProgramInput").value;
+            var letterNum = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', ' ']; // instead of checking for a regular expression
+            var validInput = 0;
+            for (var i = 0; i < input.length; i++) {
+                var position = input.charAt(i);
+                for (var x = 0; x < letterNum.length; x++) {
+                    if (position == letterNum[x]) {
+                        validInput++;
+                    }
                 }
             }
-            else {
-                // if the count of characters equals the input length, then user input valid
-                // loop through all possible characters and compare to user input 
-                _CPU.PID++;
-                _StdOut.putText("PID: " + _CPU.PID);
+            // check for valid input 
+            if (input == '') {
+                // if there is no user input display error
+                _StdOut.putText("No input, please enter valid characters");
+            }
+            else if (validInput == input.length) {
                 var op = document.getElementById("taProgramInput").value;
-                var index = _MemoryManager.displayBlock(op);
+                // index of block being displayed
+                var index = TSOS.Control.displayProcMem(op);
+                _StdOut.putText("kill me now");
+                // write the operation to the memory manager
                 _MemoryManager.writeMem(index, op);
+                // increment the current PID
+                _MemoryManager.returnpID();
+                // sets the PIDs memory location to the current pid in memory
+                //_MemoryManager.pid[index] = _MemoryManager.pidList[_MemoryManager.pidList - 1];
+                // create a new process control block
+                var createPCB = new TSOS.ProcessControlBlock();
+                // set the new PCB pid to the pid in memory
+                createPCB.init(_MemoryManager.pidList[_MemoryManager.pidList.length - 1]);
+                // push the new PCB to the resident list 
+                _processManager.residentList.push(createPCB);
+                // print out the PID for the new program in the memory manager
+                _StdOut.putText("New program loaded. PID: " + (_MemoryManager.pidList[_MemoryManager.pidList.length - 1]));
             }
         };
         Shell.prototype.shellHelp = function (args) {

@@ -18,6 +18,8 @@ const TIMER_IRQ: number = 0;  // Pages 23 (timer), 9 (interrupts), and 561 (inte
                               // NOTE: The timer is different from hardware/host clock pulses. Don't confuse these.
 const KEYBOARD_IRQ: number = 1;
 
+var KIRQ = 6;
+
 var _EXIT = 2;
 var _ERROR = 0;
 
@@ -33,7 +35,6 @@ var _OSclock: number = 0;  // Page 23.
 var _Mode: number = 0;     // (currently unused)  0 = Kernel Mode, 1 = User Mode.  See page 21.
 
 var _PID = 0;
-var _ProcessManager: any = null;
 
 var _Canvas: HTMLCanvasElement;          // Initialized in Control.hostInit().
 var _DrawingContext: any;                // = _Canvas.getContext("2d");  // Assigned here for type safety, but re-initialized in Control.hostInit() for OCD and logic.
@@ -51,7 +52,6 @@ var _KernelBuffers = null;
 
 var _ResiList = [];
 var _IR = null;
-var _PCB;
 var _Mem;
 
 // Standard input and output
@@ -64,9 +64,10 @@ var _OsShell: TSOS.Shell;
 
 // OS memory manager
 var _MemoryManager: any = null;
+var _PCB: TSOS.ProcessControlBlock;
+var _processManager: TSOS.ProcessManager;
 
 // hardware (host)
-var _CPU: TSOS.Cpu;
 var _Memory: TSOS.Memory;
 var _MemoryAccessor: TSOS.MemoryAccessor;
 

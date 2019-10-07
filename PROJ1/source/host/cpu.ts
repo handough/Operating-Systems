@@ -19,7 +19,7 @@
                         public Yreg: number = 0,
                         public Zflag: number = 0,
                         public isExecuting: boolean = false,
-                        public IR: number = 0,
+                        public IR: string = '',
                         public PID: number = 0) {
     
             }
@@ -31,7 +31,6 @@
                 this.Yreg = 0;
                 this.Zflag = 0;
                 this.isExecuting = false;
-                this.PID = -1;
             }
     
             public cycle(): void{
@@ -91,10 +90,10 @@
                         this.endProgram();
                     }
                     if(_PCB.state != "TERMINATED"){
-                        _PCB.displayPCB();
+                        _PCB.pcbDisplay();
                     }
-                    _MemoryManager.updateBlock(_PCB.PID);
-                    _PCB.setIR(op[i]);
+                    _MemoryManager.updateBlock(_PCB.pid);
+                    _PCB.getIR(op[i]);
                     this.updateCPU();
                     this.displayCPU();
                 }
@@ -185,7 +184,7 @@
                     _Console.advanceLine();
                 }else if(_PCB.X == 2){
                     var term = false;
-                    var loc = +_PCB.Y + _PCB.base;
+                    var loc = + _PCB.Y + _PCB.base;
                     var str = "";
                     while(!term){
                         var char = _MemoryManager.getVariable(loc);
@@ -215,7 +214,7 @@
                 var table = document.getElementById("cpuTable");
                 table.getElementsByTagName("tr")[1].getElementsByTagName("td")[2].innerHTML = '00';
                 _MemoryManager.clearBlock(this.PID);
-                _MemoryManager.executePID.push(this.PID);
+                _MemoryManager.executePid.push(this.PID);
                 _StdOut.putText("PID: " + this.PID + " done.");
                 _Console.advanceLine();
                 _PCB.clearPCB();
@@ -224,7 +223,7 @@
             }
 
             public updateCPU(){
-                this.PID = _PCB.PID;
+                this.PID = _PCB.pid;
                 this.PC = _PCB.PC;
                 this.Acc = _PCB.Acc;
                 this.Xreg = _PCB.X;
