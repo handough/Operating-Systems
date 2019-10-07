@@ -1,12 +1,12 @@
 var TSOS;
 (function (TSOS) {
     var MemoryManager = /** @class */ (function () {
-        function MemoryManager(newPID, pidList, opIndex, executePid) {
-            if (newPID === void 0) { newPID = 0; }
+        function MemoryManager(PID, pidList, opIndex, executePid) {
+            if (PID === void 0) { PID = -1; }
             if (pidList === void 0) { pidList = []; }
             if (opIndex === void 0) { opIndex = 0; }
             if (executePid === void 0) { executePid = []; }
-            this.newPID = newPID;
+            this.PID = PID;
             this.pidList = pidList;
             this.opIndex = opIndex;
             this.executePid = executePid;
@@ -46,20 +46,6 @@ var TSOS;
             }
             _Memory.eraseBlock(index); // erase memory
         };
-        MemoryManager.prototype.updateBlock = function (pid) {
-            var memIndex = this.memIndex(pid);
-            var opIndex = 0;
-            var table = document.getElementById("processMemTable");
-            if (memIndex == 0) {
-                for (var i = 0; i < 32; i++) {
-                    var row = table.getElementsByTagName("tr")[i];
-                    for (var x = 0; x < 9; x++) {
-                        row.getElementsByTagName("td")[x].innerHTML = this.getVar(opIndex);
-                        opIndex++;
-                    }
-                }
-            }
-        };
         MemoryManager.prototype.clearDisplay = function () {
             var table = document.getElementById("processMemTable");
             for (var i = 0; i < 96; i++) {
@@ -72,32 +58,15 @@ var TSOS;
         MemoryManager.prototype.hexDecimal = function (input) {
             return parseInt(input, 16);
         };
-        MemoryManager.prototype.memIndex = function (PID) {
-            for (var i = 0; i < this.pidList.length; i++) {
-                if (this.pidList[i] == PID) {
-                    PID++;
-                    return i;
-                }
+        MemoryManager.prototype.memIndex = function () {
+            if (this.PID < 3) {
+                this.pidList.push(this.PID);
             }
-        };
-        MemoryManager.prototype.getVar = function (location) {
-            if ((location > _PCB.limit || location < _PCB.base)) {
-                _StdOut.putText("Memory violation");
-            }
-            else {
-                return _Memory.memory[location];
-            }
+            this.PID++;
+            return this.PID;
         };
         MemoryManager.prototype.getOp = function (index) {
             return _MemoryAccessor.read(index);
-        };
-        MemoryManager.prototype.writeOpCode = function (constant, addr) {
-            if (addr > _PCB.limit || addr < _PCB.base) {
-                _StdOut.putText("Memory violation");
-            }
-            else {
-                _Memory.memory[addr] = constant;
-            }
         };
         // write memory from the memory manager
         MemoryManager.prototype.writeMem = function (index, op) {
@@ -118,9 +87,6 @@ var TSOS;
             }
             addr = this.hexDecimal(str);
             return addr;
-        };
-        MemoryManager.prototype.incPID = function (newPID) {
-            return newPID++;
         };
         return MemoryManager;
     }());

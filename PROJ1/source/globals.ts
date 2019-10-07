@@ -50,9 +50,7 @@ var _KernelInterruptQueue: TSOS.Queue = null;
 var _KernelInputQueue: TSOS.Queue = null; 
 var _KernelBuffers = null; 
 
-var _ResiList = [];
 var _IR = null;
-var _Mem;
 
 // Standard input and output
 var _StdIn:  TSOS.Console = null; 

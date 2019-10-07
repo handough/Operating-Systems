@@ -90,7 +90,7 @@
                         this.endProgram();
                     }
                     if(_PCB.state != "TERMINATED"){
-                        _PCB.pcbDisplay();
+                        TSOS.Control.displayPCBTable();
                     }
                     _MemoryManager.updateBlock(_PCB.pid);
                     _PCB.getIR(op[i]);

@@ -107,29 +107,6 @@ var TSOS;
                     _krnKeyboardDriver.isr(params); // Kernel mode device driver
                     _StdIn.handleInput();
                     break;
-                case KIRQ:
-                    var PID = params;
-                    if (_CPU.isExecuting == false) {
-                        _StdOut.putText("Nothing is running");
-                    }
-                    else if (PID == _PCB.pid) {
-                        _CPU.endProgram();
-                    }
-                    else {
-                        for (var i = 0; i < _processManager.readyQueue.getSize(); i++) {
-                            if (_processManager.readyQueue.q[i].pid == PID) {
-                                // clear memory block
-                                _MemoryManager.clearBlock(PID);
-                                _MemoryManager.executePid.push(PID);
-                                _StdOut.putText("PID: " + PID + " ran");
-                                _processManager.readyQueue.q[i].clearPCB();
-                                // process done, remove from ready queue
-                                _processManager.readyQueue.q.splice(i, 1);
-                                _Console.advanceLine();
-                                break;
-                            }
-                        }
-                    }
                 default:
                     this.krnTrapError("Invalid Interrupt Request. irq=" + irq + " params=[" + params + "]");
             }

@@ -129,6 +129,34 @@ var TSOS;
                 }
             }
         };
+        Control.displayPCBTable = function () {
+            var table = document.getElementById("pcbTable");
+            if (table.rows.length == 1) {
+                //Display current PCB
+                var row = table.insertRow(1);
+                var cell1 = row.insertCell(0);
+                var cell2 = row.insertCell(1);
+                var cell3 = row.insertCell(2);
+                var cell4 = row.insertCell(3);
+                var cell5 = row.insertCell(4);
+                var cell6 = row.insertCell(5);
+                var cell7 = row.insertCell(6);
+                var cell8 = row.insertCell(7);
+                var cell9 = row.insertCell(8);
+                cell1.innerHTML = _MemoryManager.PID;
+                cell2.innerHTML = "Running";
+                cell3.innerHTML = _CPU.PC + '';
+                cell4.innerHTML = _CPU.Acc + '';
+                cell5.innerHTML = _CPU.IR + '';
+                cell6.innerHTML = _CPU.Xreg + '';
+                cell7.innerHTML = _CPU.Yreg + '';
+                cell8.innerHTML = _CPU.Zflag + '';
+                cell9.innerHTML = "Memory";
+                //_PCB.getBase(_PCB.pid);
+                //_PCB.getLimit(_PCB.pid);
+                //_PCB.getPart(_PCB.pid);
+            }
+        };
         return Control;
     }());
     TSOS.Control = Control;

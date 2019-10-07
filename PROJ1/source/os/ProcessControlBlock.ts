@@ -14,50 +14,12 @@ module TSOS{
                     public prior: number = 0, 
                     public local: number = 0,
                     public rowNum: number = 0,
-                    public state: string = ''){
+                    public state: string = 'running'){
                         if(rowNum == void 0){rowNum = 1;}
         }   
         
         public init(pid){
             this.pid = pid;
-        }
-
-        public pcbDisplay(){
-            var table = document.getElementById("pcbTable");
-            var rows;
-            rows = table.getElementsByTagName("tr")[this.rowNum];
-            rows.getElementsByTagName("td")[0].innerHTML = this.pid + '';
-            rows.getElementsByTagName("td")[1].innerHTML = this.state;
-            rows.getElementsByTagName("td")[2].innerHTML = (this.PC + this.base) + '';
-            rows.getElementsByTagName("td")[3].innerHTML = this.Acc + '';
-            rows.getElementsByTagName("td")[4].innerHTML = this.IR;
-            rows.getElementsByTagName("td")[5].innerHTML = this.X + '';
-            rows.getElementsByTagName("td")[6].innerHTML = this.Y + '';
-            rows.getElementsByTagName("td")[7].innerHTML = this.Z + '';
-            rows.getElementsByTagName("td")[8].innerHTML = 'Memory';
-        }
-
-        public insertPCBRows(){
-            var table = (<HTMLTableElement>document.getElementById("pcbTable"));
-            var rows = table.insertRow(this.rowNum);
-            var cell1 = rows.insertCell(0);
-            var cell2 = rows.insertCell(1);
-            var cell3 = rows.insertCell(2);
-            var cell4 = rows.insertCell(3);
-            var cell5 = rows.insertCell(4);
-            var cell6 = rows.insertCell(5);
-            var cell7 = rows.insertCell(6);
-            var cell8 = rows.insertCell(7);
-            var cell9 = rows.insertCell(8);
-            cell1.innerHTML = _PCB.pid + '';
-            cell2.innerHTML = _PCB.state;
-            cell3.innerHTML = _PCB.PC + '';
-            cell4.innerHTML = _PCB.Acc + '';
-            cell5.innerHTML = _PCB.IR;
-            cell6.innerHTML = _PCB.X + '';
-            cell7.innerHTML = _PCB.Y + '';
-            cell8.innerHTML = _PCB.Z + '';
-            cell9.innerHTML = 'Memory';
         }
 
         public clearPCB(){
@@ -87,6 +49,7 @@ module TSOS{
 
         public getIR(IR){
             this.IR = _CPU.IR;
+            return _CPU.IR;
         }
 
         public getX(){

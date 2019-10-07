@@ -279,39 +279,11 @@ module TSOS {
             }
         }
 
-        public shellRun(params){
-            // determines if program can run with given PID
-            var canExecute = true;
-            // inputed program PID
-            var ppid = '';
-            //sets the inputed program PID to ppid variable
-            for(var i = 0; i < params.length; i++){
-                ppid = ppid + params[i];
-            }
-            // checks if PID exists in memory manager by comparing ppid to the executePID array
-            for(var i = 0; i < _MemoryManager.executePid.length; i++){
-                if(parseInt(ppid) == _MemoryManager.executePid[i]){
-                    _StdOut.putText("PID: " + ppid + " is not in the memory manager.");
-                    canExecute = false;
-                }else{
-                    canExecute = true;
-                }
-            }
-            if(canExecute == true){
-                _StdOut.putText("This working !!!");
-                // change the current PCB to the PCB from the resident list
-                for(var i = 0; i < _processManager.residentList.length; i++){
-                    if(_processManager.residentList[i].pid == parseInt(ppid)){
-                        _PCB = _processManager.residentList[i];
-                        break;
-                    }
-                }
-                _PCB.state = "Ready"; // set the PCBs current state to ready
-                _PCB.insertPCBRows(); // insert a row into the PCB table
-                _PCB.pcbDisplay(); // display the PCB data
-                _CPU.isExecuting = true; // set isExecuting to true to run CPU
-            }else{ // if input cannot be validated send error
-                _StdOut.putText("Input not validated");
+        public shellRun(args: string[]){
+            if(args.length > 0){
+               TSOS.Control.displayPCBTable();
+            }else{
+                _StdOut.putText("Please enter valid input!");
             }
         }
 
@@ -332,7 +304,6 @@ module TSOS {
                 // if there is no user input display error
                 _StdOut.putText("No input, please enter valid characters");
             }else if(validInput == input.length){
-                var newPID = 0;
                 var op = (<HTMLInputElement>document.getElementById("taProgramInput")).value;
                 // index of block being displayed
                 var index = TSOS.Control.displayProcMem(op);
@@ -341,13 +312,13 @@ module TSOS {
                 // increment the current PID
                 _MemoryManager.memIndex();
                 // create a new process control block
-                //var createPCB = new TSOS.ProcessControlBlock();
+                var createPCB = new TSOS.ProcessControlBlock();
                 // set the new PCB pid to the pid in memory
-                //createPCB.init(_MemoryManager.pidList[_MemoryManager.pidList.length - 1]);
+                createPCB.init(_MemoryManager.pidList[_MemoryManager.pidList.length]);
                 // push the new PCB to the resident list 
-               // _processManager.residentList.push(createPCB);
+                //_processManager.residentList.push(createPCB);
                 // print out the PID for the new program in the memory manager
-                _StdOut.putText("New program loaded. PID: " + (_PID));
+                _StdOut.putText("New program loaded. PID: " + (_MemoryManager.PID));
             } 
         }
 
