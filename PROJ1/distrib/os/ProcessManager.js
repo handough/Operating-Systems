@@ -18,11 +18,13 @@ var TSOS;
             }
         }
         ProcessManager.prototype.runProcess = function (pid) {
+            // add pid to the ready queue from the resident list 
+            // and set executing to true 
             this.readyQueue.enqueue(this.residentList[pid]);
             _CPU.isExecuting = true;
         };
         ProcessManager.prototype.clearMem = function () {
-            // clear mem is used in the clear memory command to clear memory in the scheduler
+            // clears memory by creating new array 
             this.readyQueue.q = new Array();
             this.count = 1;
         };
@@ -45,7 +47,8 @@ var TSOS;
             TSOS.Control.displayPCBTable();
         };
         ProcessManager.prototype.unIncRowNum = function () {
-            for (var i = 0; i < this.readyQueue.getSize(); i++) {
+            // un increments the row num if it is greater than one
+            for (var i = 0; i < this.readyQueue.length; i++) {
                 if (this.readyQueue.q[i].rowNum > 1) {
                     this.readyQueue.q[i].rowNum -= 1;
                 }

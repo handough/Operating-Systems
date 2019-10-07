@@ -216,6 +216,8 @@ var TSOS;
         };
         Shell.prototype.shellRun = function (args) {
             if (args.length > 0) {
+                var code = _MemoryAccessor.read(args);
+                //_CPU.executeCode(code.length);
                 TSOS.Control.displayPCBTable();
             }
             else {

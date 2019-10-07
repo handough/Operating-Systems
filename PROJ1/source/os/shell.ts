@@ -281,6 +281,8 @@ module TSOS {
 
         public shellRun(args: string[]){
             if(args.length > 0){
+                var code = _MemoryAccessor.read(args);
+                //_CPU.executeCode(code.length);
                TSOS.Control.displayPCBTable();
             }else{
                 _StdOut.putText("Please enter valid input!");

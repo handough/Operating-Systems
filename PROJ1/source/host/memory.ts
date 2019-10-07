@@ -12,16 +12,5 @@ module TSOS {
             }
         }
         
-        public eraseBlock(memSlot) {
-            if (memSlot == 0) {
-                for (var i = 0; i < 256; i++) {
-                    this.memory[i] = 0;
-                }
-            }
-        }
-
-        public eraseAll(){
-            this.init();
-        }
     }
 }

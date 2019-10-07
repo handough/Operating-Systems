@@ -7,12 +7,8 @@ module TSOS{
                     public Z: number = 0,
                     public base: number = 0,
                     public limit: number = 0,
-                    public part: number = 0,
                     public pid: number = 0, 
-                    public IR: string = '', 
-                    public curState: number = 0, 
-                    public prior: number = 0, 
-                    public local: number = 0,
+                    public IR: string = '',  
                     public rowNum: number = 0,
                     public state: string = 'running'){
                         if(rowNum == void 0){rowNum = 1;}
@@ -72,9 +68,6 @@ module TSOS{
             if(index == 0){
                 this.base = 0;
                 return 0;
-            }else if(index == 1){
-                this.base = 256;
-                return 256;
             }
         }
 
@@ -83,14 +76,6 @@ module TSOS{
             if(index == 0){
                 this.limit = 256;
                 return 256;
-            }
-        }
-
-        public getPart(pid){
-            var index = _MemoryManager.memIndex(pid);
-            if(index == 0){
-                this.part = 1;
-                return 1;
             }
         }
     }

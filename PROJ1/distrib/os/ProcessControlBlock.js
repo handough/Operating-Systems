@@ -1,7 +1,7 @@
 var TSOS;
 (function (TSOS) {
     var ProcessControlBlock = /** @class */ (function () {
-        function ProcessControlBlock(PC, Acc, X, Y, Z, base, limit, part, pid, IR, curState, prior, local, rowNum, state) {
+        function ProcessControlBlock(PC, Acc, X, Y, Z, base, limit, pid, IR, rowNum, state) {
             if (PC === void 0) { PC = 0; }
             if (Acc === void 0) { Acc = 0; }
             if (X === void 0) { X = 0; }
@@ -9,12 +9,8 @@ var TSOS;
             if (Z === void 0) { Z = 0; }
             if (base === void 0) { base = 0; }
             if (limit === void 0) { limit = 0; }
-            if (part === void 0) { part = 0; }
             if (pid === void 0) { pid = 0; }
             if (IR === void 0) { IR = ''; }
-            if (curState === void 0) { curState = 0; }
-            if (prior === void 0) { prior = 0; }
-            if (local === void 0) { local = 0; }
             if (rowNum === void 0) { rowNum = 0; }
             if (state === void 0) { state = 'running'; }
             this.PC = PC;
@@ -24,12 +20,8 @@ var TSOS;
             this.Z = Z;
             this.base = base;
             this.limit = limit;
-            this.part = part;
             this.pid = pid;
             this.IR = IR;
-            this.curState = curState;
-            this.prior = prior;
-            this.local = local;
             this.rowNum = rowNum;
             this.state = state;
             if (rowNum == void 0) {
@@ -82,23 +74,12 @@ var TSOS;
                 this.base = 0;
                 return 0;
             }
-            else if (index == 1) {
-                this.base = 256;
-                return 256;
-            }
         };
         ProcessControlBlock.prototype.getLimit = function (pid) {
             var index = _MemoryManager.memIndex(pid);
             if (index == 0) {
                 this.limit = 256;
                 return 256;
-            }
-        };
-        ProcessControlBlock.prototype.getPart = function (pid) {
-            var index = _MemoryManager.memIndex(pid);
-            if (index == 0) {
-                this.part = 1;
-                return 1;
             }
         };
         return ProcessControlBlock;

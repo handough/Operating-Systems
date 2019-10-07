@@ -152,10 +152,18 @@ var TSOS;
                 cell7.innerHTML = _CPU.Yreg + '';
                 cell8.innerHTML = _CPU.Zflag + '';
                 cell9.innerHTML = "Memory";
-                //_PCB.getBase(_PCB.pid);
-                //_PCB.getLimit(_PCB.pid);
-                //_PCB.getPart(_PCB.pid);
             }
+        };
+        Control.displayCPU = function () {
+            // displays the CPU table
+            var table = "";
+            table += "<td>" + (_CPU.PC + _PCB.base) + "</td>";
+            table += "<td>" + _CPU.Acc + "</td>";
+            table += "<td>" + _CPU.IR + "</td>";
+            table += "<td>" + _CPU.Xreg + "</td>";
+            table += "<td>" + _CPU.Yreg + "</td>";
+            table += "<td>" + _CPU.Zflag + "</td>";
+            document.getElementById("cpuTableBody").innerHTML = table;
         };
         return Control;
     }());

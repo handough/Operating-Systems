@@ -95,7 +95,7 @@
                     _MemoryManager.updateBlock(_PCB.pid);
                     _PCB.getIR(op[i]);
                     this.updateCPU();
-                    this.displayCPU();
+                    TSOS.Control.displayCPU();
                 }
             }
 
@@ -213,8 +213,7 @@
             public endProgram(){
                 var table = document.getElementById("cpuTable");
                 table.getElementsByTagName("tr")[1].getElementsByTagName("td")[2].innerHTML = '00';
-                _MemoryManager.clearBlock(this.PID);
-                _MemoryManager.executePid.push(this.PID);
+                _MemoryManager.executePID.push(this.PID);
                 _StdOut.putText("PID: " + this.PID + " done.");
                 _Console.advanceLine();
                 _PCB.clearPCB();
@@ -230,17 +229,6 @@
                 this.Yreg = _PCB.Y;
                 this.Zflag = _PCB.Z;
                 this.IR = _PCB.IR;
-            }
-
-            public displayCPU(){
-                var table = "";
-                table += "<td>" + (this.PC + _PCB.base) + "</td>";
-                table += "<td>" + this.Acc + "</td>";
-                table += "<td>" + this.IR + "</td>";
-                table += "<td>" + this.Xreg + "</td>";
-                table += "<td>" + this.Yreg + "</td>";
-                table += "<td>" + this.Zflag + "</td>";
-                document.getElementById("cpuTableBody").innerHTML = table;
             }
     }
 }
