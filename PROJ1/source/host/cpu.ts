@@ -43,60 +43,65 @@
             }
 
             public executeCode(op){
-                if(this.PC + 1 >= op.length){
-                    this.endProgram();
-                }else{
-                    var i = this.PC;
-                    if(op[i] == 'A9'){
+                var i = _MemoryManager.getOP(op).toUpperCase();
+                switch(i){
+                    case "A9":
                         this.loadAccumulator(op[i+1]);
-                    }else if(op[i] == 'AD'){
+                        break;
+                    case "AD":
                         var loc = _MemoryManager.endianAddress(op[i+1], op[i+2]);
                         loc += _PCB.base;
-                        this.loadAccMem(loc);
-                    }else if(op[i] == 'A2'){
-                        this.loadXReg(op[i+1]);
-                    }else if(op[i] == 'A0'){
-                        this.loadYReg(op[i+1]);
-                    }else if(op[i] == '8D'){
+                        this.loadAccMem(loc);  
+                        break;
+                    case "8D":
                         var loc = _MemoryManager.endianAddress(op[i+1], op[i+2]);
                         loc += _PCB.base;
                         this.storeAcc(loc);
-                    }else if(op[i] == 'AE'){
+                        break;
+                    case "A2":
+                        this.loadXReg(op[i+1]); 
+                        break;
+                    case "A0":
+                        this.loadYReg(op[i+1]);
+                        break;
+                    case "AE":
                         var loc = _MemoryManager.endianAddress(op[i+1], op[i+2]);
                         loc += _PCB.base;
-                        this.loadXReg(loc);
-                    }else if(op[i] == 'AC'){
+                        this.loadXReg(loc);  
+                        break;
+                    case "AC":
                         var loc = _MemoryManager.endianAddress(op[i+1], op[i+2]);
                         loc += _PCB.base;
-                        this.loadYReg(loc);
-                    }else if(op[i] == '6D'){
+                        this.loadYReg(loc); 
+                        break;  
+                    case "6D":
                         var loc = _MemoryManager.endianAddress(op[i+1], op[i+2]);
                         loc += _PCB.base;
-                        this.addCarry(loc);
-                    }else if(op[i] == 'EC'){
+                        this.addCarry(loc);     
+                        break; 
+                    case "EC":
                         var loc = _MemoryManager.endianAddress(op[i+1], op[i+2]);
                         loc += _PCB.base;
-                        this.zFlag(loc);
-                    }else if(op[i] == 'D0'){
-                        this.branchNotEqual(op[i+1], _PCB.limit, op);
-                    }else if(op[i] == 'FF'){
+                        this.zFlag(loc); 
+                        break;
+                    case "D0":
+                        this.branchNotEqual(op[i+1], _PCB.limit, op); 
+                        break;
+                    case "FF":
                         //_KernelInterruptQueue.enqueue(new TSOS.Interrupt(irq, ''));
-                        this.systemCall();
-                    }else if(op[i] == 'EE'){
+                        this.systemCall();  
+                        break;   
+                    case "EE":
                         var loc = _MemoryManager.endianAddress(op[i+1], op[i+2]);
                         loc += _PCB.base;
-                        this.incrementByte(loc);
-                    }else if(op[i] == '00'){
-                        this.endProgram();
+                        this.incrementByte(loc);   
+                        break;   
+                    default:
+                        break;   
                     }
-                    if(_PCB.state != "TERMINATED"){
-                        TSOS.Control.displayPCBTable();
-                    }
-                    _MemoryManager.updateBlock(_PCB.pid);
-                    _PCB.getIR(op[i]);
-                    this.updateCPU();
-                    TSOS.Control.displayCPU();
-                }
+                    //_PCB.getIR(op[i]);
+                    //this.updateCPU();
+                    //TSOS.Control.displayCPU();
             }
 
             public loadAccumulator(loc){

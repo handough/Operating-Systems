@@ -279,11 +279,12 @@ module TSOS {
             }
         }
 
-        public shellRun(args: string[]){
-            if(args.length > 0){
-                var code = _MemoryAccessor.read(args);
-                //_CPU.executeCode(code.length);
-               TSOS.Control.displayPCBTable();
+        public shellRun(params){
+            if(params.length > 0){
+                var code = _MemoryManager.getOp[params];
+                TSOS.Control.displayPCBTable();
+                TSOS.Control.displayCPU();
+                _CPU.executeCode(code);
             }else{
                 _StdOut.putText("Please enter valid input!");
             }
