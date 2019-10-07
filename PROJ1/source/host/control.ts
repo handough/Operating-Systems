@@ -117,40 +117,30 @@ module TSOS {
         public static displayProcMem(op){
             // change the data in the process memory table
             var table = document.getElementById("processMemTable");
-            var opCount = 0; // holds operation position 
+            var opCount = 0; // holds operation position
             for(var j = 0; j < 32; j++){ // while j < 32 to make 256 positions in memory
                 var row = (<HTMLTableRowElement>table.getElementsByTagName("tr")[j]);
-                for(var x = 0; x < 9; x++){ // while x < 9 so that there are 8 cells per row 
-                    if(opCount + 2 > op.length){
-                        row.getElementsByTagName("td")[x].innerHTML = '0';
+                var cell1 = row.insertCell(1);
+                var hexRow = j.toString(16);
+                if(j != 0){
+                    cell1.innerHTML = "0x";
+                    if(hexRow.length == 1){
+                        cell1.innerHTML += "00" + hexRow;
+                    }else if(hexRow.length == 2){
+                        cell1.innerHTML += "0" + hexRow;
                     }else{
-                        if(j == 0){
-                            for(var i = 0; i <= 256; i+=8){
-                                var rows = (<HTMLTableRowElement>table.getElementsByTagName("tr")[i]);
-                                var cell1 = rows.insertCell(1);
-                                var hexRow = i.toString(16);
-                                if(i != 0){
-                                    cell1.innerHTML = "0x";
-                                    if(hexRow.length == 1){
-                                        cell1.innerHTML += "00" + hexRow;
-                                    }else if(hexRow.length == 2){
-                                        cell1.innerHTML += "0" + hexRow;
-                                    }else{
-                                        cell1.innerHTML += hexRow;
-                                    }
-                                }
-                                var opCounts = 0;
-                                for(var j = 0; j < 256; j++){
-                                    var rowss = (<HTMLTableRowElement>table.getElementsByTagName("tr")[j]);
-                                    for(var x = 0; x < 8; x++){
-                                        rowss.getElementsByTagName("td")[x+1].innerHTML = op.substring(opCounts, opCounts + 2);
-                                        opCounts += 3;
-                                    }
-                                }
-                            }
-                        }else{
-                            _StdOut.putText("Cant load program");
-                        }
+                        cell1.innerHTML += hexRow;
+                    }
+                }
+                for(var i = 0; i < 9; i++){
+                    var rowss = (<HTMLTableRowElement>table.getElementsByTagName("tr")[j]);
+                    if(opCount + 2 > op.length){
+                        rowss.getElementsByTagName("td")[j].innerHTML = '0';
+                    }else if(opCount < 96){
+                        rowss.getElementsByTagName("td")[i+1].innerHTML = op.substring(opCount, opCount + 2);
+                        opCount += 3;
+                    }else{
+                        opCount = 0;
                     }
                 }
             }

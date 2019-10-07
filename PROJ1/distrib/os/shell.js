@@ -269,24 +269,22 @@ var TSOS;
                 _StdOut.putText("No input, please enter valid characters");
             }
             else if (validInput == input.length) {
+                var newPID = 0;
                 var op = document.getElementById("taProgramInput").value;
                 // index of block being displayed
                 var index = TSOS.Control.displayProcMem(op);
-                _StdOut.putText("kill me now");
                 // write the operation to the memory manager
                 _MemoryManager.writeMem(index, op);
                 // increment the current PID
-                _MemoryManager.returnpID();
-                // sets the PIDs memory location to the current pid in memory
-                //_MemoryManager.pid[index] = _MemoryManager.pidList[_MemoryManager.pidList - 1];
+                _MemoryManager.memIndex();
                 // create a new process control block
-                var createPCB = new TSOS.ProcessControlBlock();
+                //var createPCB = new TSOS.ProcessControlBlock();
                 // set the new PCB pid to the pid in memory
-                createPCB.init(_MemoryManager.pidList[_MemoryManager.pidList.length - 1]);
+                //createPCB.init(_MemoryManager.pidList[_MemoryManager.pidList.length - 1]);
                 // push the new PCB to the resident list 
-                _processManager.residentList.push(createPCB);
+                // _processManager.residentList.push(createPCB);
                 // print out the PID for the new program in the memory manager
-                _StdOut.putText("New program loaded. PID: " + (_MemoryManager.pidList[_MemoryManager.pidList.length - 1]));
+                _StdOut.putText("New program loaded. PID: " + (_PID));
             }
         };
         Shell.prototype.shellHelp = function (args) {

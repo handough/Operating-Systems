@@ -1,6 +1,6 @@
 module TSOS {
     export class MemoryManager {
-        constructor(public pidList = [], public opIndex = 0, public executePid = []){
+        constructor(public newPID: number = 0, public pidList = [], public opIndex = 0, public executePid = []){
   
         }
         public clear(){
@@ -71,6 +71,7 @@ module TSOS {
         public memIndex(PID){
             for(var i =0; i < this.pidList.length; i++){
                 if(this.pidList[i] == PID){
+                    PID++;
                     return i;
                 }
             }
@@ -118,8 +119,8 @@ module TSOS {
             return addr;
         }
 
-        public incPID(){
-
+        public incPID(newPID){
+            return newPID++;
         }
     }
 }

@@ -1,10 +1,12 @@
 var TSOS;
 (function (TSOS) {
     var MemoryManager = /** @class */ (function () {
-        function MemoryManager(pidList, opIndex, executePid) {
+        function MemoryManager(newPID, pidList, opIndex, executePid) {
+            if (newPID === void 0) { newPID = 0; }
             if (pidList === void 0) { pidList = []; }
             if (opIndex === void 0) { opIndex = 0; }
             if (executePid === void 0) { executePid = []; }
+            this.newPID = newPID;
             this.pidList = pidList;
             this.opIndex = opIndex;
             this.executePid = executePid;
@@ -73,6 +75,7 @@ var TSOS;
         MemoryManager.prototype.memIndex = function (PID) {
             for (var i = 0; i < this.pidList.length; i++) {
                 if (this.pidList[i] == PID) {
+                    PID++;
                     return i;
                 }
             }
@@ -116,7 +119,8 @@ var TSOS;
             addr = this.hexDecimal(str);
             return addr;
         };
-        MemoryManager.prototype.incPID = function () {
+        MemoryManager.prototype.incPID = function (newPID) {
+            return newPID++;
         };
         return MemoryManager;
     }());
