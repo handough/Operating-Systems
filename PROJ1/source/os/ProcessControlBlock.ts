@@ -10,7 +10,8 @@ module TSOS{
                     public pid: number = 0, 
                     public IR: string = '',  
                     public rowNum: number = 0,
-                    public state: string = 'running'){
+                    public state: string = "Running",
+                    public clockTicks: number = 0){
                         if(rowNum == void 0){rowNum = 1;}
         }   
         

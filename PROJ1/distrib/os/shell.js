@@ -214,25 +214,25 @@ var TSOS;
                 document.getElementById("statusmessage").innerHTML = status;
             }
         };
-        Shell.prototype.shellRun = function (params) {
-            if (params.length > 0) {
-                var code = _MemoryManager.getOp[params];
-                TSOS.Control.displayPCBTable();
-                TSOS.Control.displayCPU();
-                _CPU.executeCode(code);
+        Shell.prototype.shellRun = function (args) {
+            if (args.length > 0) {
+                _StdOut.putText("Running PID: " + args);
+                _StdOut.advanceLine();
+                _CPU.isExecuting = true;
             }
             else {
                 _StdOut.putText("Please enter valid input!");
             }
+            TSOS.Control.updateMemoryTable();
         };
         Shell.prototype.shellLoad = function () {
             var input = document.getElementById("taProgramInput").value;
             var letterNum = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', ' ']; // instead of checking for a regular expression
             var validInput = 0;
             for (var i = 0; i < input.length; i++) {
-                var position = input.charAt(i);
+                var charInput = input.charAt(i);
                 for (var x = 0; x < letterNum.length; x++) {
-                    if (position == letterNum[x]) {
+                    if (charInput == letterNum[x]) {
                         validInput++;
                     }
                 }
@@ -251,11 +251,9 @@ var TSOS;
                 // increment the current PID
                 _MemoryManager.memIndex();
                 // create a new process control block
-                var createPCB = new TSOS.ProcessControlBlock();
+                //var createPCB = new TSOS.ProcessControlBlock();
                 // set the new PCB pid to the pid in memory
-                createPCB.init(_MemoryManager.pidList[_MemoryManager.pidList.length]);
-                // push the new PCB to the resident list 
-                //_processManager.residentList.push(createPCB);
+                //createPCB.init(_MemoryManager.pidList[_MemoryManager.pidList.length]);
                 // print out the PID for the new program in the memory manager
                 _StdOut.putText("New program loaded. PID: " + (_MemoryManager.PID));
             }

@@ -44,7 +44,7 @@ var TSOS;
             // set the current PCB to the first item in the ready queue
             _PCB = this.readyQueue.dequeue();
             _PCB.state = "Running";
-            TSOS.Control.displayPCBTable();
+            //TSOS.Control.displayPCBTable();
         };
         ProcessManager.prototype.unIncRowNum = function () {
             // un increments the row num if it is greater than one

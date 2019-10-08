@@ -1,7 +1,7 @@
 var TSOS;
 (function (TSOS) {
     var ProcessControlBlock = /** @class */ (function () {
-        function ProcessControlBlock(PC, Acc, X, Y, Z, base, limit, pid, IR, rowNum, state) {
+        function ProcessControlBlock(PC, Acc, X, Y, Z, base, limit, pid, IR, rowNum, state, clockTicks) {
             if (PC === void 0) { PC = 0; }
             if (Acc === void 0) { Acc = 0; }
             if (X === void 0) { X = 0; }
@@ -12,7 +12,8 @@ var TSOS;
             if (pid === void 0) { pid = 0; }
             if (IR === void 0) { IR = ''; }
             if (rowNum === void 0) { rowNum = 0; }
-            if (state === void 0) { state = 'running'; }
+            if (state === void 0) { state = "Running"; }
+            if (clockTicks === void 0) { clockTicks = 0; }
             this.PC = PC;
             this.Acc = Acc;
             this.X = X;
@@ -24,6 +25,7 @@ var TSOS;
             this.IR = IR;
             this.rowNum = rowNum;
             this.state = state;
+            this.clockTicks = clockTicks;
             if (rowNum == void 0) {
                 rowNum = 1;
             }

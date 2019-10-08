@@ -20,7 +20,8 @@
                         public Zflag: number = 0,
                         public isExecuting: boolean = false,
                         public IR: string = '',
-                        public PID: number = 0) {
+                        public PID: number = 0,
+                        public currentPCB: number = 0) {
     
             }
     
@@ -35,128 +36,134 @@
     
             public cycle(): void{
                 _Kernel.krnTrace('CPU cycle');
-                this.updateCPU();
-                _PCB.state = "Running";
-                var index = _MemoryManager.memIndex(this.PID);
-                var op = _MemoryManager.getOp(index);
-                this.executeCode(op);
+                if(this.isExecuting){
+                    this.updateCPU();
+                    //TSOS.Control.updateMemoryTable();
+                    this.runCode();
+                    this.PC++;
+                    //this.currentPCB.clockTicks++;
+                }
+                //this.end();
+                //TSOS.Control.updateMemoryTable();
             }
 
-            public executeCode(op){
-                var i = _MemoryManager.getOP(op).toUpperCase();
-                switch(i){
+            public end(){
+                this.isExecuting = false;
+            }
+
+            public runCode(){
+                this.IR = _Memory.memory[this.currentPCB].toUpperCase();
+                //_PCB.state = "Running";
+                switch(this.IR){
                     case "A9":
-                        this.loadAccumulator(op[i+1]);
+                        this.loadAccumulator();
                         break;
                     case "AD":
-                        var loc = _MemoryManager.endianAddress(op[i+1], op[i+2]);
-                        loc += _PCB.base;
-                        this.loadAccMem(loc);  
+                        this.loadAccMem();
                         break;
                     case "8D":
-                        var loc = _MemoryManager.endianAddress(op[i+1], op[i+2]);
-                        loc += _PCB.base;
-                        this.storeAcc(loc);
+                        _Memory.memory[this.PID] = this.Acc.toString(16);
+                        break;
+                    case "6D":
+                        this.loadAccMem();
                         break;
                     case "A2":
-                        this.loadXReg(op[i+1]); 
-                        break;
-                    case "A0":
-                        this.loadYReg(op[i+1]);
+                        this.loadXReg();
                         break;
                     case "AE":
-                        var loc = _MemoryManager.endianAddress(op[i+1], op[i+2]);
-                        loc += _PCB.base;
-                        this.loadXReg(loc);  
+                        this.loadXRegMem();
+                        break;
+                    case "A0":
+                        this.loadXRegMem();
                         break;
                     case "AC":
-                        var loc = _MemoryManager.endianAddress(op[i+1], op[i+2]);
-                        loc += _PCB.base;
-                        this.loadYReg(loc); 
-                        break;  
-                    case "6D":
-                        var loc = _MemoryManager.endianAddress(op[i+1], op[i+2]);
-                        loc += _PCB.base;
-                        this.addCarry(loc);     
-                        break; 
+                        this.loadYReg();
+                        break;
+                    case "00":
+                        break;
                     case "EC":
-                        var loc = _MemoryManager.endianAddress(op[i+1], op[i+2]);
-                        loc += _PCB.base;
-                        this.zFlag(loc); 
+                        this.zFlag();
                         break;
                     case "D0":
-                        this.branchNotEqual(op[i+1], _PCB.limit, op); 
+                        if(this.Zflag == 0){
+                            this.loadAccMem();
+                        }else{
+                            this.PC++;
+                        }
+                        break;
+                    case "EE":
+                        this.IR = _PCB.base.toString();
                         break;
                     case "FF":
-                        //_KernelInterruptQueue.enqueue(new TSOS.Interrupt(irq, ''));
-                        this.systemCall();  
-                        break;   
-                    case "EE":
-                        var loc = _MemoryManager.endianAddress(op[i+1], op[i+2]);
-                        loc += _PCB.base;
-                        this.incrementByte(loc);   
-                        break;   
+                        if(this.Xreg == 1){
+                            _StdOut.putText(this.Yreg.toString());
+                        }else if(this.Xreg == 2){
+                            var index = this.Yreg + this.currentPCB;
+                            while(_Memory.memory[index] != "00"){
+                                _StdOut.putText(String.fromCharCode(parseInt(_Memory.memory[index++], 16)));
+                            }
+                        }
+                        break;
                     default:
-                        break;   
-                    }
-                    //_PCB.getIR(op[i]);
-                    //this.updateCPU();
-                    //TSOS.Control.displayCPU();
+                            _PCB.state = "TERMINATED";
+                        break;
+                }
+                this.isExecuting = false;
             }
 
-            public loadAccumulator(loc){
+
+            public loadAccumulator(){
                 _PCB.PC += 2;
-                _PCB.IR = 'A9';
-                _PCB.Acc = _MemoryManager.hexDecimal(loc);
+                _PCB.Acc = _MemoryManager.hexDecimal(_PCB.PC);
             }
 
-            public loadAccMem(loc){
+            public loadAccMem(){
                 _PCB.PC += 3;
                 _PCB.IR = 'AD';
-                _PCB.Acc = _MemoryManager.getVar(loc);   
+                _PCB.Acc = _MemoryManager.getVar(_PCB.PC);   
             }
 
-            public loadXReg(loc){
+            public loadXReg(){
                 _PCB.PC += 2;
                 _PCB.IR = 'A2';
-                _PCB.Acc = _MemoryManager.hexDecimal(loc);   
+                _PCB.Acc = _MemoryManager.hexDecimal(_PCB.PC);   
             }
 
-            public loadYReg(memLoc){
+            public loadYReg(){
                 _PCB.PC += 3;
                 _PCB.IR = '8D';
-                _MemoryManager.writeOpCode(_PCB.Acc, memLoc);   
+                _MemoryManager.writeOpCode(_PCB.Acc, this.PID);  
             }
 
-            public storeAcc(loc){
+            public storeAcc(){
                 _PCB.PC += 2;
                 _PCB.IR = 'A2';
-                _PCB.Acc = _MemoryManager.hexDecimal(loc);   
+                _PCB.Acc = _MemoryManager.hexDecimal(this.PID);   
             }
 
-            public loadXRegMem(loc){
+            public loadXRegMem(){
                 _PCB.PC += 3;
                 _PCB.IR = 'AE';
-                _PCB.X = _MemoryManager.getVar(loc);   
+                _PCB.X = _MemoryManager.getVar(this.PID);   
             }
 
-            public loadYRegMem(loc){
+            public loadYRegMem(){
                 _PCB.PC += 3;
                 _PCB.IR = 'AC';
-                _PCB.Y = _MemoryManager.getVar(loc);   
+                _PCB.Y = _MemoryManager.getVar(this.PID);   
             }
 
-            public addCarry(loc){
+            public addCarry(){
                 _PCB.PC += 3;
                 _PCB.IR = '6D';
-                var variable = _MemoryManager.getVar(loc)
+                var variable = _MemoryManager.getVar(this.PID)
                 _PCB.Acc += parseInt(variable);  
             }
 
-            public zFlag(loc){
+            public zFlag(){
                 _PCB.PC += 3;
                 _PCB.IR = 'EC';
-                var byte = _MemoryManager.getVar(loc)
+                var byte = _MemoryManager.getVar(this.PID)
                 if(parseInt(byte) != _PCB.X){
                     _PCB.Z = 0;
                 }else{

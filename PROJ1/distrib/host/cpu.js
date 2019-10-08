@@ -11,7 +11,7 @@
 var TSOS;
 (function (TSOS) {
     var Cpu = /** @class */ (function () {
-        function Cpu(PC, Acc, Xreg, Yreg, Zflag, isExecuting, IR, PID) {
+        function Cpu(PC, Acc, Xreg, Yreg, Zflag, isExecuting, IR, PID, currentPCB) {
             if (PC === void 0) { PC = 0; }
             if (Acc === void 0) { Acc = 0; }
             if (Xreg === void 0) { Xreg = 0; }
@@ -20,6 +20,7 @@ var TSOS;
             if (isExecuting === void 0) { isExecuting = false; }
             if (IR === void 0) { IR = ''; }
             if (PID === void 0) { PID = 0; }
+            if (currentPCB === void 0) { currentPCB = 0; }
             this.PC = PC;
             this.Acc = Acc;
             this.Xreg = Xreg;
@@ -28,6 +29,7 @@ var TSOS;
             this.isExecuting = isExecuting;
             this.IR = IR;
             this.PID = PID;
+            this.currentPCB = currentPCB;
         }
         Cpu.prototype.init = function () {
             this.PC = 0;
@@ -39,118 +41,124 @@ var TSOS;
         };
         Cpu.prototype.cycle = function () {
             _Kernel.krnTrace('CPU cycle');
-            this.updateCPU();
-            _PCB.state = "Running";
-            var index = _MemoryManager.memIndex(this.PID);
-            var op = _MemoryManager.getOp(index);
-            this.executeCode(op);
+            if (this.isExecuting) {
+                this.updateCPU();
+                //TSOS.Control.updateMemoryTable();
+                this.runCode();
+                this.PC++;
+                //this.currentPCB.clockTicks++;
+            }
+            //this.end();
+            //TSOS.Control.updateMemoryTable();
         };
-        Cpu.prototype.executeCode = function (op) {
-            var i = _MemoryManager.getOP(op).toUpperCase();
-            switch (i) {
+        Cpu.prototype.end = function () {
+            this.isExecuting = false;
+        };
+        Cpu.prototype.runCode = function () {
+            this.IR = _Memory.memory[this.currentPCB].toUpperCase();
+            //_PCB.state = "Running";
+            switch (this.IR) {
                 case "A9":
-                    this.loadAccumulator(op[i + 1]);
+                    this.loadAccumulator();
                     break;
                 case "AD":
-                    var loc = _MemoryManager.endianAddress(op[i + 1], op[i + 2]);
-                    loc += _PCB.base;
-                    this.loadAccMem(loc);
+                    this.loadAccMem();
                     break;
                 case "8D":
-                    var loc = _MemoryManager.endianAddress(op[i + 1], op[i + 2]);
-                    loc += _PCB.base;
-                    this.storeAcc(loc);
-                    break;
-                case "A2":
-                    this.loadXReg(op[i + 1]);
-                    break;
-                case "A0":
-                    this.loadYReg(op[i + 1]);
-                    break;
-                case "AE":
-                    var loc = _MemoryManager.endianAddress(op[i + 1], op[i + 2]);
-                    loc += _PCB.base;
-                    this.loadXReg(loc);
-                    break;
-                case "AC":
-                    var loc = _MemoryManager.endianAddress(op[i + 1], op[i + 2]);
-                    loc += _PCB.base;
-                    this.loadYReg(loc);
+                    _Memory.memory[this.PID] = this.Acc.toString(16);
                     break;
                 case "6D":
-                    var loc = _MemoryManager.endianAddress(op[i + 1], op[i + 2]);
-                    loc += _PCB.base;
-                    this.addCarry(loc);
+                    this.loadAccMem();
+                    break;
+                case "A2":
+                    this.loadXReg();
+                    break;
+                case "AE":
+                    this.loadXRegMem();
+                    break;
+                case "A0":
+                    this.loadXRegMem();
+                    break;
+                case "AC":
+                    this.loadYReg();
+                    break;
+                case "00":
                     break;
                 case "EC":
-                    var loc = _MemoryManager.endianAddress(op[i + 1], op[i + 2]);
-                    loc += _PCB.base;
-                    this.zFlag(loc);
+                    this.zFlag();
                     break;
                 case "D0":
-                    this.branchNotEqual(op[i + 1], _PCB.limit, op);
-                    break;
-                case "FF":
-                    //_KernelInterruptQueue.enqueue(new TSOS.Interrupt(irq, ''));
-                    this.systemCall();
+                    if (this.Zflag == 0) {
+                        this.loadAccMem();
+                    }
+                    else {
+                        this.PC++;
+                    }
                     break;
                 case "EE":
-                    var loc = _MemoryManager.endianAddress(op[i + 1], op[i + 2]);
-                    loc += _PCB.base;
-                    this.incrementByte(loc);
+                    this.IR = _PCB.base.toString();
+                    break;
+                case "FF":
+                    if (this.Xreg == 1) {
+                        _StdOut.putText(this.Yreg.toString());
+                    }
+                    else if (this.Xreg == 2) {
+                        var index = this.Yreg + this.currentPCB;
+                        while (_Memory.memory[index] != "00") {
+                            _StdOut.putText(String.fromCharCode(parseInt(_Memory.memory[index++], 16)));
+                        }
+                    }
                     break;
                 default:
+                    _PCB.state = "TERMINATED";
                     break;
             }
-            //_PCB.getIR(op[i]);
-            //this.updateCPU();
-            //TSOS.Control.displayCPU();
+            this.isExecuting = false;
         };
-        Cpu.prototype.loadAccumulator = function (loc) {
+        Cpu.prototype.loadAccumulator = function () {
             _PCB.PC += 2;
-            _PCB.IR = 'A9';
-            _PCB.Acc = _MemoryManager.hexDecimal(loc);
+            _PCB.Acc = _MemoryManager.hexDecimal(_PCB.PC);
         };
-        Cpu.prototype.loadAccMem = function (loc) {
+        Cpu.prototype.loadAccMem = function () {
             _PCB.PC += 3;
             _PCB.IR = 'AD';
-            _PCB.Acc = _MemoryManager.getVar(loc);
+            _PCB.Acc = _MemoryManager.getVar(_PCB.PC);
         };
-        Cpu.prototype.loadXReg = function (loc) {
+        Cpu.prototype.loadXReg = function () {
             _PCB.PC += 2;
             _PCB.IR = 'A2';
-            _PCB.Acc = _MemoryManager.hexDecimal(loc);
+            _PCB.Acc = _MemoryManager.hexDecimal(_PCB.PC);
         };
-        Cpu.prototype.loadYReg = function (memLoc) {
+        Cpu.prototype.loadYReg = function () {
             _PCB.PC += 3;
             _PCB.IR = '8D';
-            _MemoryManager.writeOpCode(_PCB.Acc, memLoc);
+            _MemoryManager.writeOpCode(_PCB.Acc, this.PID);
         };
-        Cpu.prototype.storeAcc = function (loc) {
+        Cpu.prototype.storeAcc = function () {
             _PCB.PC += 2;
             _PCB.IR = 'A2';
-            _PCB.Acc = _MemoryManager.hexDecimal(loc);
+            _PCB.Acc = _MemoryManager.hexDecimal(this.PID);
         };
-        Cpu.prototype.loadXRegMem = function (loc) {
+        Cpu.prototype.loadXRegMem = function () {
             _PCB.PC += 3;
             _PCB.IR = 'AE';
-            _PCB.X = _MemoryManager.getVar(loc);
+            _PCB.X = _MemoryManager.getVar(this.PID);
         };
-        Cpu.prototype.loadYRegMem = function (loc) {
+        Cpu.prototype.loadYRegMem = function () {
             _PCB.PC += 3;
             _PCB.IR = 'AC';
-            _PCB.Y = _MemoryManager.getVar(loc);
+            _PCB.Y = _MemoryManager.getVar(this.PID);
         };
-        Cpu.prototype.addCarry = function (loc) {
+        Cpu.prototype.addCarry = function () {
             _PCB.PC += 3;
             _PCB.IR = '6D';
-            var variable = _MemoryManager.getVar(loc);
+            var variable = _MemoryManager.getVar(this.PID);
             _PCB.Acc += parseInt(variable);
         };
-        Cpu.prototype.zFlag = function (loc) {
+        Cpu.prototype.zFlag = function () {
             _PCB.PC += 3;
             _PCB.IR = 'EC';
-            var byte = _MemoryManager.getVar(loc);
+            var byte = _MemoryManager.getVar(this.PID);
             if (parseInt(byte) != _PCB.X) {
                 _PCB.Z = 0;
             }
