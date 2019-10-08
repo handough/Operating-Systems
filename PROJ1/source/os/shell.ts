@@ -59,6 +59,12 @@ module TSOS {
                                   "load",
                                   "- validates the user code in the HTML5 text area.");
             this.commandList[this.commandList.length] = sc;
+            
+            // clear mem
+            sc = new ShellCommand(this.shellClearMem,
+                "clearmem",
+                "- clears memory");
+            this.commandList[this.commandList.length] = sc;
 
             // run
             sc = new ShellCommand(this.shellRun,
@@ -250,6 +256,20 @@ module TSOS {
 
         public shellLocation(args: string[]){
             _StdOut.putText("You are on your computer!");
+        }
+
+        public shellClearMem(args: string[]){
+            if(_CPU.isExecuting){
+                _StdOut.putText("The cpu is still executing, sorry man");
+            }else{
+                _MemoryManager.clearAll();
+                _cpuScheduler.clearMem();
+                for(var i = 0; i < _cpuScheduler.residentList.length; i++){
+                    _MemoryManager.executePID.push(_cpuScheduler.residentList[i].PID);
+                    _cpuScheduler.residentList[i].state = "TERMINATED";
+                }
+            }
+
         }
 
         public shellSky(args: string[]){

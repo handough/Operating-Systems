@@ -19,6 +19,10 @@ module TSOS{
             this.pid = pid;
         }
 
+        public displayPCB(){
+            
+        }
+
         public clearPCB(){
             // clearPCB terminates the cpu scheduler process
             this.state = 'TERMINATED';
