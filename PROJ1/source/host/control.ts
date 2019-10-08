@@ -148,6 +148,8 @@ module TSOS {
  
         public static updateMemoryTable(){
             var table = <HTMLTableElement>document.getElementById("pcbTable");
+            var input = (<HTMLInputElement>document.getElementById("taProgramInput")).value;
+            _CPU.IR = input.substring(0,3);
             //Display current PCB
             var row = <HTMLTableRowElement>table.insertRow(1);
             var cell1 = row.insertCell(0);

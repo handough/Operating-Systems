@@ -38,7 +38,6 @@
                 _Kernel.krnTrace('CPU cycle');
                 if(this.isExecuting){
                     this.updateCPU();
-                    //TSOS.Control.updateMemoryTable();
                     this.runCode(_currentPCB);
                     this.PC++;
                 }
@@ -48,7 +47,7 @@
                 this.IR = _Memory.memory[this.currentPCB].toUpperCase();
                 switch(this.IR){
                     case "A9":
-                        this.loadAccumulator();
+                        this.loadAccumulator((_MemoryManager.endianAddress(pcb)));
                         console.log("A9 Accumulator: " + this.Acc);
                         break;
                     case "AD":
@@ -112,9 +111,8 @@
             }
 
 
-            public loadAccumulator(){
-                _PCB.PC += 2;
-                _PCB.Acc = _MemoryManager.hexDecimal(_PCB.PC);
+            public loadAccumulator(addr){
+                this.Acc= _MemoryManager.hexDecimal(addr);
             }
 
             public loadAccMem(addr){

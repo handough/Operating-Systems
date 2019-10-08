@@ -131,6 +131,8 @@ var TSOS;
         };
         Control.updateMemoryTable = function () {
             var table = document.getElementById("pcbTable");
+            var input = document.getElementById("taProgramInput").value;
+            _CPU.IR = input.substring(0, 3);
             //Display current PCB
             var row = table.insertRow(1);
             var cell1 = row.insertCell(0);
