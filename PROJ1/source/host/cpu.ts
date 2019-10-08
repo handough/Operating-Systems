@@ -39,46 +39,45 @@
                 if(this.isExecuting){
                     this.updateCPU();
                     //TSOS.Control.updateMemoryTable();
-                    this.runCode();
+                    this.runCode(_currentPCB);
                     this.PC++;
-                    //this.currentPCB.clockTicks++;
                 }
-                //this.end();
-                //TSOS.Control.updateMemoryTable();
             }
 
-            public end(){
-                this.isExecuting = false;
-            }
-
-            public runCode(){
+            public runCode(pcb){
                 this.IR = _Memory.memory[this.currentPCB].toUpperCase();
-                //_PCB.state = "Running";
                 switch(this.IR){
                     case "A9":
-                        _CPU.IR = "A9";
                         this.loadAccumulator();
+                        console.log("A9 Accumulator: " + this.Acc);
                         break;
                     case "AD":
-                        this.loadAccMem();
+                        this.loadAccMem(_MemoryManager.endianAddress(pcb));
+                        console.log("AD Accumulator: " + this.Acc);
                         break;
                     case "8D":
-                        _Memory.memory[this.PID] = this.Acc.toString(16);
+                        _Memory.memory[_MemoryManager.endianAddress(pcb)];
+                        console.log("8D Accumulator stored");
                         break;
                     case "6D":
-                        this.loadAccMem();
+                        this.addCarry((_MemoryManager.endianAddress(pcb)));
+                        console.log("6D added to Acc " + this.Acc);
                         break;
                     case "A2":
-                        this.loadXReg();
+                        this.loadXReg((_MemoryManager.endianAddress(pcb)));
+                        console.log("A2 added to XReg " + this.Xreg);
                         break;
                     case "AE":
-                        this.loadXRegMem();
+                        this.loadXRegMem((_MemoryManager.endianAddress(pcb)));
+                        console.log("AE added to XReg memory " + this.Xreg);
                         break;
                     case "A0":
-                        this.loadXRegMem();
+                        this.loadYReg((_MemoryManager.endianAddress(pcb)));
+                        console.log("A0 added to YReg  " + this.Yreg);
                         break;
                     case "AC":
-                        this.loadYReg();
+                        this.loadYRegMem((_MemoryManager.endianAddress(pcb)));
+                        console.log("AC added to Yreg memory " + this.Yreg);
                         break;
                     case "00":
                         break;
@@ -87,7 +86,7 @@
                         break;
                     case "D0":
                         if(this.Zflag == 0){
-                            this.loadAccMem();
+                            this.loadAccMem((_MemoryManager.endianAddress(pcb)));
                         }else{
                             this.PC++;
                         }
@@ -118,47 +117,45 @@
                 _PCB.Acc = _MemoryManager.hexDecimal(_PCB.PC);
             }
 
-            public loadAccMem(){
-                _PCB.PC += 3;
+            public loadAccMem(addr){
+                addr += _currentPCB.base;
                 _PCB.IR = 'AD';
-                _PCB.Acc = _MemoryManager.getVar(_PCB.PC);   
+                this.Acc = _MemoryManager.writeOpCode(addr, _currentPCB);
             }
 
-            public loadXReg(){
-                _PCB.PC += 2;
+            public loadXReg(addr){
+                addr += _currentPCB.base;
                 _PCB.IR = 'A2';
-                _PCB.Acc = _MemoryManager.hexDecimal(_PCB.PC);   
+                this.Xreg = _MemoryManager.hexDecimal(addr);   
             }
 
-            public loadYReg(){
-                _PCB.PC += 3;
+            public loadYReg(addr){
+                 addr += _currentPCB.base;
                 _PCB.IR = '8D';
-                _MemoryManager.writeOpCode(_PCB.Acc, this.PID);  
+                this.Yreg = _MemoryManager.hexDecimal(addr);  
             }
 
             public storeAcc(){
-                _PCB.PC += 2;
                 _PCB.IR = 'A2';
-                _PCB.Acc = _MemoryManager.hexDecimal(this.PID);   
+                this.Acc = _MemoryManager.hexDecimal(this.PID);   
             }
 
-            public loadXRegMem(){
-                _PCB.PC += 3;
+            public loadXRegMem(addr){
+                addr += _currentPCB.base;
                 _PCB.IR = 'AE';
-                _PCB.X = _MemoryManager.getVar(this.PID);   
+                this.Xreg = _MemoryManager.writeOpCode(addr, _currentPCB);   
             }
 
-            public loadYRegMem(){
-                _PCB.PC += 3;
+            public loadYRegMem(addr){
+                addr += _currentPCB.base;
                 _PCB.IR = 'AC';
-                _PCB.Y = _MemoryManager.getVar(this.PID);   
+                this.Yreg = _MemoryManager.writeOpCode(addr, _currentPCB);   
             }
 
-            public addCarry(){
-                _PCB.PC += 3;
+            public addCarry(addr){
+                addr += _currentPCB.base;
                 _PCB.IR = '6D';
-                var variable = _MemoryManager.getVar(this.PID)
-                _PCB.Acc += parseInt(variable);  
+                this.Acc = this.Acc + _MemoryManager.writeOpCode(addr, _currentPCB);
             }
 
             public zFlag(){

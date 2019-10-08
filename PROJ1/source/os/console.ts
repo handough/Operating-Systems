@@ -109,6 +109,12 @@
                 this.buffer = backSpace.join(""); // returns array as a string
                 _StdOut.putText(this.buffer);
             }
+
+            public lineWrap(){
+                _wrap.pus({ X: this.currentXPosition, Y: this.currentYPosition});
+                this.advanceLine();
+                this.currentXPosition = 0;
+            }
     
             public commandRecall(retVal): void{
                 _OsShell.shellCls(retVal);

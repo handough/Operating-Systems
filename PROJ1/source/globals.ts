@@ -52,9 +52,13 @@ var _KernelBuffers = null;
 
 var _IR = null;
 
+var _wrap;
+
 // Standard input and output
 var _StdIn:  TSOS.Console = null; 
 var _StdOut: TSOS.Console = null;
+
+var _currentPCB = null;
 
 // UI
 var _Console: TSOS.Console;

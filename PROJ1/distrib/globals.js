@@ -37,9 +37,11 @@ var _KernelInterruptQueue = null;
 var _KernelInputQueue = null;
 var _KernelBuffers = null;
 var _IR = null;
+var _wrap;
 // Standard input and output
 var _StdIn = null;
 var _StdOut = null;
+var _currentPCB = null;
 // UI
 var _Console;
 var _OsShell;

@@ -108,6 +108,11 @@ var TSOS;
             this.buffer = backSpace.join(""); // returns array as a string
             _StdOut.putText(this.buffer);
         };
+        Console.prototype.lineWrap = function () {
+            _wrap.pus({ X: this.currentXPosition, Y: this.currentYPosition });
+            this.advanceLine();
+            this.currentXPosition = 0;
+        };
         Console.prototype.commandRecall = function (retVal) {
             _OsShell.shellCls(retVal);
             _OsShell.putPrompt();
