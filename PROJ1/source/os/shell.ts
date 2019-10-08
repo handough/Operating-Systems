@@ -283,6 +283,8 @@ module TSOS {
             if(args.length > 0){
                 _StdOut.putText("Running PID: " + args);
                 _StdOut.advanceLine();
+                _CPU.PID = args;
+                _CPU.PC++;
                 _CPU.isExecuting = true;
             }else{
                 _StdOut.putText("Please enter valid input!");

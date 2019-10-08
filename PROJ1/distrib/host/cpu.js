@@ -59,6 +59,7 @@ var TSOS;
             //_PCB.state = "Running";
             switch (this.IR) {
                 case "A9":
+                    _CPU.IR = "A9";
                     this.loadAccumulator();
                     break;
                 case "AD":
