@@ -19,10 +19,30 @@ var TSOS;
             return _super !== null && _super.apply(this, arguments) || this;
         }
         MemoryAccessor.prototype.write = function (memSlot, op) {
-            var opArray = op.split(" ");
+            var opArray = new Array(op.split(" "));
             var opCount = 0;
             if (memSlot == 0) {
                 for (var i = 0; i < 256; i++) {
+                    if (i == opArray.length) {
+                        this.memory[i] = -1;
+                        break;
+                    }
+                    this.memory[i] = opArray[opCount];
+                    opCount++;
+                }
+            }
+            else if (memSlot == 1) {
+                for (var i = 256; i < 512; i++) {
+                    if (i == opArray.length) {
+                        this.memory[i] = -1;
+                        break;
+                    }
+                    this.memory[i] = opArray[opCount];
+                    opCount++;
+                }
+            }
+            else if (memSlot == 2) {
+                for (var i = 512; i < 768; i++) {
                     if (i == opArray.length) {
                         this.memory[i] = -1;
                         break;
@@ -38,6 +58,28 @@ var TSOS;
                 for (var i = 0; i < 256; i++) {
                     if (this.memory[i] != -1) {
                         opArray.push(this.memory[i]);
+                    }
+                    else {
+                        this.memory[i] = 0;
+                        break;
+                    }
+                }
+            }
+            else if (memSlot == 1) {
+                for (var i = 256; i < 512; i++) {
+                    if (this.memory[i] != -1) {
+                        opArray.push[this.memory[i]];
+                    }
+                    else {
+                        this.memory[i] = 0;
+                        break;
+                    }
+                }
+            }
+            else if (memSlot == 2) {
+                for (var i = 512; i < 768; i++) {
+                    if (this.memory[i] != -1) {
+                        opArray.push[this.memory[i]];
                     }
                     else {
                         this.memory[i] = 0;

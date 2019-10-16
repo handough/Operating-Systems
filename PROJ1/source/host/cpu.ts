@@ -38,81 +38,29 @@
                 _Kernel.krnTrace('CPU cycle');
                 if(this.isExecuting){
                     this.updateCPU();
-                    this.runCode(_currentPCB);
+                    var index = _MemoryManager.memIndex(this.PID);
+                    var op = _MemoryManager.getOp(index);
+                    this.runCode(op);
                     this.PC++;
                 }
             }
 
-            public runCode(pcb){
-                this.IR = _Memory.memory[this.currentPCB].toUpperCase();
-                switch(this.IR){
-                    case "A9":
-                        this.loadAccumulator((_MemoryManager.endianAddress(pcb)));
-                        console.log("A9 Accumulator: " + this.Acc);
-                        break;
-                    case "AD":
-                        this.loadAccMem(_MemoryManager.endianAddress(pcb));
-                        console.log("AD Accumulator: " + this.Acc);
-                        break;
-                    case "8D":
-                        _Memory.memory[_MemoryManager.endianAddress(pcb)];
-                        console.log("8D Accumulator stored");
-                        break;
-                    case "6D":
-                        this.addCarry((_MemoryManager.endianAddress(pcb)));
-                        console.log("6D added to Acc " + this.Acc);
-                        break;
-                    case "A2":
-                        this.loadXReg((_MemoryManager.endianAddress(pcb)));
-                        console.log("A2 added to XReg " + this.Xreg);
-                        break;
-                    case "AE":
-                        this.loadXRegMem((_MemoryManager.endianAddress(pcb)));
-                        console.log("AE added to XReg memory " + this.Xreg);
-                        break;
-                    case "A0":
-                        this.loadYReg((_MemoryManager.endianAddress(pcb)));
-                        console.log("A0 added to YReg  " + this.Yreg);
-                        break;
-                    case "AC":
-                        this.loadYRegMem((_MemoryManager.endianAddress(pcb)));
-                        console.log("AC added to Yreg memory " + this.Yreg);
-                        break;
-                    case "00":
-                        break;
-                    case "EC":
-                        this.zFlag();
-                        break;
-                    case "D0":
-                        if(this.Zflag == 0){
-                            this.loadAccMem((_MemoryManager.endianAddress(pcb)));
-                        }else{
-                            this.PC++;
-                        }
-                        break;
-                    case "EE":
-                        this.IR = _PCB.base.toString();
-                        break;
-                    case "FF":
-                        if(this.Xreg == 1){
-                            _StdOut.putText(this.Yreg.toString());
-                        }else if(this.Xreg == 2){
-                            var index = this.Yreg + this.currentPCB;
-                            while(_Memory.memory[index] != "00"){
-                                _StdOut.putText(String.fromCharCode(parseInt(_Memory.memory[index++], 16)));
-                            }
-                        }
-                        break;
-                    default:
-                            _PCB.state = "TERMINATED";
-                        break;
+            public runCode(op){ 
+                if(this.PC + 1 >= op.length){
+                    this.endProgram();
+                }else{
+                    var i = this.PC;
+                    if(op[i] == 'A9'){
+                        this.loadAccumulator(op[i+1]);
+                    }
                 }
-                this.isExecuting = false;
             }
 
 
             public loadAccumulator(addr){
                 this.Acc= _MemoryManager.hexDecimal(addr);
+                this.IR = 'A9';
+                return this.Acc;
             }
 
             public loadAccMem(addr){

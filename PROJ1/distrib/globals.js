@@ -42,6 +42,7 @@ var _wrap;
 var _StdIn = null;
 var _StdOut = null;
 var _currentPCB = null;
+var _cpuScheduler;
 // UI
 var _Console;
 var _OsShell;

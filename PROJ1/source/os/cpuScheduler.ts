@@ -1,5 +1,4 @@
 module TSOS {
-
     export class cpuScheduler {
         public constructor(public quantum: number = 0, 
                            public residentList = [],
@@ -27,7 +26,7 @@ module TSOS {
             }else{
                 if(_PCB.state != "TERMINATED"){
                     _PCB.state = "Ready";
-                    _PCB.displayPCB();
+                   // _PCB.displayPCB();
                     this.readyQueue.enqueue(_PCB);
                 }
                 _PCB = this.readyQueue.dequeue();

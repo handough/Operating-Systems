@@ -7,6 +7,7 @@ module TSOS{
                     public Z: number = 0,
                     public base: number = 0,
                     public limit: number = 0,
+                    public part: number = 0,
                     public pid: number = 0, 
                     public IR: string = '',  
                     public rowNum: number = 0,
@@ -17,10 +18,10 @@ module TSOS{
         
         public init(pid){
             this.pid = pid;
-        }
+            this.base = this.getBase(_MemoryManager.pidList[_MemoryManager.pidList.length - 1]);
+            this.limit = this.getLimit(_MemoryManager.pidList[_MemoryManager.pidList.length - 1]);
+            this.part = this.getPart(_MemoryManager.pidList[_MemoryManager.pidList.length - 1]);
 
-        public displayPCB(){
-            
         }
 
         public clearPCB(){
@@ -49,8 +50,7 @@ module TSOS{
         }
 
         public getIR(IR){
-            this.IR = _CPU.IR;
-            return _CPU.IR;
+            this.IR = IR;
         }
 
         public getX(){
@@ -73,6 +73,12 @@ module TSOS{
             if(index == 0){
                 this.base = 0;
                 return 0;
+            }else if(index == 1){
+                this.base = 256;
+                return 256;
+            }else if(index == 2){
+                this.base = 512;
+                return 512;
             }
         }
 
@@ -81,6 +87,26 @@ module TSOS{
             if(index == 0){
                 this.limit = 256;
                 return 256;
+            }else if(index == 1){
+                this.limit = 512;
+                return 512;
+            }else if(index == 2){
+                this.limit = 768;
+                return 768;
+            }
+        }
+
+        public getPart(pid){
+            var index = _MemoryManager.memIndex(pid);
+            if(index == 0){
+                this.part = 1;
+                return 1;
+            }else if(index == 1){
+                this.part = 2;
+                return 2;
+            }else if(index == 2){
+                this.part = 3;
+                return 3;
             }
         }
     }

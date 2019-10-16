@@ -59,12 +59,6 @@ module TSOS {
                                   "load",
                                   "- validates the user code in the HTML5 text area.");
             this.commandList[this.commandList.length] = sc;
-            
-            // clear mem
-            sc = new ShellCommand(this.shellClearMem,
-                "clearmem",
-                "- clears memory");
-            this.commandList[this.commandList.length] = sc;
 
             // run
             sc = new ShellCommand(this.shellRun,
@@ -258,20 +252,6 @@ module TSOS {
             _StdOut.putText("You are on your computer!");
         }
 
-        public shellClearMem(args: string[]){
-            if(_CPU.isExecuting){
-                _StdOut.putText("The cpu is still executing, sorry man");
-            }else{
-                _MemoryManager.clearAll();
-                _cpuScheduler.clearMem();
-                for(var i = 0; i < _cpuScheduler.residentList.length; i++){
-                    _MemoryManager.executePID.push(_cpuScheduler.residentList[i].PID);
-                    _cpuScheduler.residentList[i].state = "TERMINATED";
-                }
-            }
-
-        }
-
         public shellSky(args: string[]){
             _StdOut.putText("The sky is blue");
         }
@@ -331,17 +311,17 @@ module TSOS {
             }else if(validInput == input.length){
                 var op = (<HTMLInputElement>document.getElementById("taProgramInput")).value;
                 // index of block being displayed
-                var index = TSOS.Control.displayProcMem(op);
-                // write the operation to the memory manager
-                _MemoryManager.writeMem(index, op);
-                // increment the current PID
-                _MemoryManager.memIndex();
-                // create a new process control block
-                //var createPCB = new TSOS.ProcessControlBlock();
-                // set the new PCB pid to the pid in memory
-                //createPCB.init(_MemoryManager.pidList[_MemoryManager.pidList.length]);
-                // print out the PID for the new program in the memory manager
-                _StdOut.putText("New program loaded. PID: " + (_MemoryManager.PID));
+                var index = _MemoryManager.displayBlock(op);
+                // writes op codes to memory
+                _MemoryManager.writeToMemory(index, op);
+                //increment current PID
+                _MemoryManager.pidReturn();
+                _MemoryManager.pidLoc[index] = _MemoryManager.pidList[_MemoryManager.pidList.length - 1];
+                // create new PCB object
+                var newPCB = new TSOS.ProcessControlBlock();
+                // push new process control block to resident list
+                _cpuScheduler.residentList.push(newPCB);
+                _StdOut.putText("Program loaded. PID " + (_MemoryManager.PIDList[_MemoryManager.PIDList.length - 1]));
             } 
         }
 

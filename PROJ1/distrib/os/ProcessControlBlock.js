@@ -1,7 +1,7 @@
 var TSOS;
 (function (TSOS) {
     var ProcessControlBlock = /** @class */ (function () {
-        function ProcessControlBlock(PC, Acc, X, Y, Z, base, limit, pid, IR, rowNum, state, clockTicks) {
+        function ProcessControlBlock(PC, Acc, X, Y, Z, base, limit, part, pid, IR, rowNum, state, clockTicks) {
             if (PC === void 0) { PC = 0; }
             if (Acc === void 0) { Acc = 0; }
             if (X === void 0) { X = 0; }
@@ -9,6 +9,7 @@ var TSOS;
             if (Z === void 0) { Z = 0; }
             if (base === void 0) { base = 0; }
             if (limit === void 0) { limit = 0; }
+            if (part === void 0) { part = 0; }
             if (pid === void 0) { pid = 0; }
             if (IR === void 0) { IR = ''; }
             if (rowNum === void 0) { rowNum = 0; }
@@ -21,6 +22,7 @@ var TSOS;
             this.Z = Z;
             this.base = base;
             this.limit = limit;
+            this.part = part;
             this.pid = pid;
             this.IR = IR;
             this.rowNum = rowNum;
@@ -32,6 +34,9 @@ var TSOS;
         }
         ProcessControlBlock.prototype.init = function (pid) {
             this.pid = pid;
+            this.base = this.getBase(_MemoryManager.pidList[_MemoryManager.pidList.length - 1]);
+            this.limit = this.getLimit(_MemoryManager.pidList[_MemoryManager.pidList.length - 1]);
+            this.part = this.getPart(_MemoryManager.pidList[_MemoryManager.pidList.length - 1]);
         };
         ProcessControlBlock.prototype.clearPCB = function () {
             // clearPCB terminates the cpu scheduler process
@@ -55,8 +60,7 @@ var TSOS;
             return _CPU.Acc;
         };
         ProcessControlBlock.prototype.getIR = function (IR) {
-            this.IR = _CPU.IR;
-            return _CPU.IR;
+            this.IR = IR;
         };
         ProcessControlBlock.prototype.getX = function () {
             this.X = _CPU.Xreg;
@@ -76,12 +80,43 @@ var TSOS;
                 this.base = 0;
                 return 0;
             }
+            else if (index == 1) {
+                this.base = 256;
+                return 256;
+            }
+            else if (index == 2) {
+                this.base = 512;
+                return 512;
+            }
         };
         ProcessControlBlock.prototype.getLimit = function (pid) {
             var index = _MemoryManager.memIndex(pid);
             if (index == 0) {
                 this.limit = 256;
                 return 256;
+            }
+            else if (index == 1) {
+                this.limit = 512;
+                return 512;
+            }
+            else if (index == 2) {
+                this.limit = 768;
+                return 768;
+            }
+        };
+        ProcessControlBlock.prototype.getPart = function (pid) {
+            var index = _MemoryManager.memIndex(pid);
+            if (index == 0) {
+                this.part = 1;
+                return 1;
+            }
+            else if (index == 1) {
+                this.part = 2;
+                return 2;
+            }
+            else if (index == 2) {
+                this.part = 3;
+                return 3;
             }
         };
         return ProcessControlBlock;
