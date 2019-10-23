@@ -49,6 +49,9 @@ var TSOS;
             // cls
             sc = new TSOS.ShellCommand(this.shellCls, "cls", "- Clears the screen and resets the cursor position.");
             this.commandList[this.commandList.length] = sc;
+            // kill
+            sc = new TSOS.ShellCommand(this.shellKill, "kill", "- kills the current running process");
+            this.commandList[this.commandList.length] = sc;
             // status <string>
             sc = new TSOS.ShellCommand(this.shellStatus, "status", "<string> - Displays the status message specified by the user.");
             this.commandList[this.commandList.length] = sc;
@@ -214,6 +217,19 @@ var TSOS;
                 document.getElementById("statusmessage").innerHTML = status;
             }
         };
+        // run all processes 
+        Shell.prototype.shellRunAll = function () {
+            // round robin scheduling 
+            _cpuScheduler.RR = true;
+            _cpuScheduler.quantum = 6;
+            // if it is one, just perform a single run
+            var singleRun = 0;
+            var index = 0;
+            for (var i = 0; i < _cpuScheduler.residentList.length; i++) {
+                if (_cpuScheduler.residentList[i].state) {
+                }
+            }
+        };
         Shell.prototype.shellRun = function (args) {
             if (args.length > 0) {
                 _StdOut.putText("Running PID: " + args);
@@ -259,6 +275,21 @@ var TSOS;
                 _cpuScheduler.residentList.push(newPCB);
                 _StdOut.putText("Program loaded. PID " + (_MemoryManager.PIDList[_MemoryManager.PIDList.length - 1]));
             }
+        };
+        // change the quantum for round robin scheduling 
+        Shell.prototype.shellQuantum = function (params) {
+            if (params == '') {
+                _StdOut.putText("please provide a quantum");
+            }
+            else {
+                _cpuScheduler.quantum = parseInt(params); // get PID as an integer
+                _StdOut.putText("Quantum set to " + params);
+            }
+        };
+        // kill all active processes
+        Shell.prototype.shellKill = function (params) {
+            var PID = parseInt(params);
+            _KernelInputQueue.enqueue(new TSOS.Interrupt(KILL_IRQ, params));
         };
         Shell.prototype.shellHelp = function (args) {
             _StdOut.putText("Commands:");
@@ -313,6 +344,9 @@ var TSOS;
                         break;
                     case "bsod":
                         _StdOut.putText("BSOD displays the blue screen of death");
+                        break;
+                    case "kill":
+                        _StdOut.putText("Kills the current running process");
                         break;
                     case "trace <on | off>":
                         _StdOut.putText("trace enables/disables the OS trace");

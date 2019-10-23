@@ -50,7 +50,8 @@ var _KernelInterruptQueue: TSOS.Queue = null;
 var _KernelInputQueue: TSOS.Queue = null; 
 var _KernelBuffers = null; 
 
-var _IR = null;
+var KILL_IRQ = 6;
+var CONTEXT_SWITCH_IRQ;
 
 var _wrap;
 
@@ -59,7 +60,7 @@ var _StdIn:  TSOS.Console = null;
 var _StdOut: TSOS.Console = null;
 
 var _currentPCB = null;
-var _cpuScheduler: TSOS.cpuScheduler;
+var _cpuScheduler: TSOS.CpuScheduler;
 
 // UI
 var _Console: TSOS.Console;
@@ -68,7 +69,7 @@ var _OsShell: TSOS.Shell;
 // OS memory manager
 var _MemoryManager: any = null;
 var _PCB: TSOS.ProcessControlBlock;
-var _processManager: TSOS.ProcessManager;
+
 
 // hardware (host)
 var _Memory: TSOS.Memory;

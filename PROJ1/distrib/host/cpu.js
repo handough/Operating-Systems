@@ -42,7 +42,7 @@ var TSOS;
         Cpu.prototype.cycle = function () {
             _Kernel.krnTrace('CPU cycle');
             if (this.isExecuting) {
-                this.updateCPU();
+                //this.updateCPU();
                 var index = _MemoryManager.memIndex(this.PID);
                 var op = _MemoryManager.getOp(index);
                 this.runCode(op);
@@ -56,7 +56,16 @@ var TSOS;
             else {
                 var i = this.PC;
                 if (op[i] == 'A9') {
-                    this.loadAccumulator(op[i + 1]);
+                    _StdOut.putText("i hate this");
+                    //this.loadAccumulator(op[i+1]);
+                }
+                else if (op[i] == 'AD') {
+                    var loc = _MemoryManager.endianAddress(op[i + 1], op[i + 2]);
+                    loc += _PCB.base;
+                    this.loadAccumulator(loc);
+                }
+                else {
+                    _StdOut.putText("this trash doesnt work");
                 }
             }
         };
@@ -137,7 +146,7 @@ var TSOS;
             }
             else if (_PCB.X == 2) {
                 var term = false;
-                var loc = +_PCB.Y + _PCB.base;
+                var loc = _PCB.Y + _PCB.base;
                 var str = "";
                 while (!term) {
                     var char = _MemoryManager.getVariable(loc);

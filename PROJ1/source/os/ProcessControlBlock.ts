@@ -29,9 +29,8 @@ module TSOS{
             this.state = 'TERMINATED';
             var table = <HTMLTableElement>document.getElementById("pcbTable");
             table.deleteRow(this.rowNum);
-            if(_processManager.RR){
-                _processManager.unIncRowNum();
-            }
+            _cpuScheduler.RR
+            _cpuScheduler.deIncrementRowNum();
         }
 
         public getPID(){

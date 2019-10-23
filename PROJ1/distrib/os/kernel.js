@@ -107,6 +107,32 @@ var TSOS;
                     _krnKeyboardDriver.isr(params); // Kernel mode device driver
                     _StdIn.handleInput();
                     break;
+                case KILL_IRQ:
+                    var PID = params;
+                    //If nothing is running then print no active process
+                    if (_CPU.isExecuting == false) {
+                        _StdOut.putText("No Active Processes");
+                    }
+                    else if (PID == _PCB.pid) {
+                        _CPU.endProgram();
+                    }
+                    else {
+                        for (var i = 0; i < _cpuScheduler.readyQueue.getSize(); i++) {
+                            if (_cpuScheduler.readyQueue.q[i].PID == PID) {
+                                _MemoryManager.clearBlock(PID); //Clear memory block
+                                _MemoryManager.executedPID.push(PID); //Increment that this PID has been executed
+                                _StdOut.putText("PID: " + PID + " done. Turnaround Time = " + _cpuScheduler.turnAroundTime + ". Wait Time = " + (_cpuScheduler.turnAroundTime - _cpuScheduler.readyQueue.q[i].waitTime));
+                                _cpuScheduler.readyQueue.q[i].clearPCB(); //Clear the PCB
+                                _cpuScheduler.readyQueue.q.splice(i, 1); //Remove this PCB from the ready queue
+                                _Console.advanceLine();
+                                break;
+                            }
+                        }
+                    }
+                    break;
+                case CONTEXT_SWITCH_IRQ:
+                    _cpuScheduler.contextSwitch();
+                    break;
                 default:
                     this.krnTrapError("Invalid Interrupt Request. irq=" + irq + " params=[" + params + "]");
             }

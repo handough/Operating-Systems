@@ -84,6 +84,12 @@ module TSOS {
                                   "- Clears the screen and resets the cursor position.");
             this.commandList[this.commandList.length] = sc;
 
+            // kill
+            sc = new ShellCommand(this.shellKill,
+                            "kill",
+                            "- kills the current running process");
+            this.commandList[this.commandList.length] = sc;
+
             // status <string>
             sc = new ShellCommand(this.shellStatus,
                                  "status",
@@ -279,6 +285,21 @@ module TSOS {
             }
         }
 
+        // run all processes 
+        public shellRunAll(){
+            // round robin scheduling 
+            _cpuScheduler.RR = true;
+            _cpuScheduler.quantum = 6;
+            // if it is one, just perform a single run
+            var singleRun = 0;
+            var index = 0;
+            for(var i = 0; i < _cpuScheduler.residentList.length; i++){
+                if(_cpuScheduler.residentList[i].state){
+
+                }
+            }
+        }
+
         public shellRun(args){   
             if(args.length > 0){
                 _StdOut.putText("Running PID: " + args);
@@ -323,6 +344,22 @@ module TSOS {
                 _cpuScheduler.residentList.push(newPCB);
                 _StdOut.putText("Program loaded. PID " + (_MemoryManager.PIDList[_MemoryManager.PIDList.length - 1]));
             } 
+        }
+
+        // change the quantum for round robin scheduling 
+        public shellQuantum(params){
+            if(params == ''){
+                _StdOut.putText("please provide a quantum");
+            }else{
+                _cpuScheduler.quantum = parseInt(params); // get PID as an integer
+                _StdOut.putText("Quantum set to " + params);
+            }
+        }
+
+        // kill all active processes
+        public shellKill(params){
+            var PID = parseInt(params);
+            _KernelInputQueue.enqueue(new TSOS.Interrupt(KILL_IRQ, params));
         }
 
         public shellHelp(args: string[]) {
@@ -381,6 +418,9 @@ module TSOS {
                         break;
                     case "bsod":
                         _StdOut.putText("BSOD displays the blue screen of death");
+                        break;
+                    case "kill":
+                        _StdOut.putText("Kills the current running process");
                         break;
                     case "trace <on | off>":
                         _StdOut.putText("trace enables/disables the OS trace");

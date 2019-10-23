@@ -36,7 +36,8 @@ var _Kernel;
 var _KernelInterruptQueue = null;
 var _KernelInputQueue = null;
 var _KernelBuffers = null;
-var _IR = null;
+var KILL_IRQ = 6;
+var CONTEXT_SWITCH_IRQ;
 var _wrap;
 // Standard input and output
 var _StdIn = null;
@@ -49,7 +50,6 @@ var _OsShell;
 // OS memory manager
 var _MemoryManager = null;
 var _PCB;
-var _processManager;
 // hardware (host)
 var _Memory;
 var _MemoryAccessor;
