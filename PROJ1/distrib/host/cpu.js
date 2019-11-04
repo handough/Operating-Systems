@@ -11,7 +11,7 @@
 var TSOS;
 (function (TSOS) {
     var Cpu = /** @class */ (function () {
-        function Cpu(PC, Acc, Xreg, Yreg, Zflag, isExecuting, IR, PID) {
+        function Cpu(PC, Acc, Xreg, Yreg, Zflag, isExecuting, IR, PID, quantum) {
             if (PC === void 0) { PC = 0; }
             if (Acc === void 0) { Acc = 0; }
             if (Xreg === void 0) { Xreg = 0; }
@@ -20,6 +20,7 @@ var TSOS;
             if (isExecuting === void 0) { isExecuting = false; }
             if (IR === void 0) { IR = ''; }
             if (PID === void 0) { PID = 0; }
+            if (quantum === void 0) { quantum = 0; }
             this.PC = PC;
             this.Acc = Acc;
             this.Xreg = Xreg;
@@ -28,6 +29,7 @@ var TSOS;
             this.isExecuting = isExecuting;
             this.IR = IR;
             this.PID = PID;
+            this.quantum = quantum;
         }
         Cpu.prototype.init = function () {
             this.PC = 0;

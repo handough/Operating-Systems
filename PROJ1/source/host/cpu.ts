@@ -20,7 +20,8 @@
                         public Zflag: number = 0,
                         public isExecuting: boolean = false,
                         public IR: string = '',
-                        public PID: number = 0) {
+                        public PID: number = 0,
+                        public quantum: number = 0) {
     
             }
     

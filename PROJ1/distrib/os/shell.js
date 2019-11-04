@@ -336,8 +336,9 @@ var TSOS;
                 _Console.advanceLine();
             }
             else {
-                _cpuScheduler.quantum = parseInt(params); // get PID as an integer
-                _StdOut.putText("Quantum set to " + params);
+                _CPU.quantum = params;
+                //_cpuScheduler.quantum = parseInt(params); // get PID as an integer
+                _StdOut.putText("Quantum set to " + _CPU.quantum);
             }
         };
         // kill all active processes

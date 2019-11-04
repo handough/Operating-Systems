@@ -413,8 +413,9 @@ module TSOS {
                 _StdOut.putText("please provide a quantum");
                 _Console.advanceLine();
             }else{
-                _cpuScheduler.quantum = parseInt(params); // get PID as an integer
-                _StdOut.putText("Quantum set to " + params);
+                _CPU.quantum = params;
+                //_cpuScheduler.quantum = parseInt(params); // get PID as an integer
+                _StdOut.putText("Quantum set to " + _CPU.quantum);
             }
         }
 
