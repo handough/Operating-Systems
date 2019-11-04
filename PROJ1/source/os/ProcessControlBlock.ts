@@ -11,8 +11,7 @@ module TSOS{
                     public pid: number = 0, 
                     public IR: string = '',  
                     public rowNum: number = 0,
-                    public state: string = "Running",
-                    public clockTicks: number = 0){
+                    public state: string = ""){
                         if(rowNum == void 0){rowNum = 1;}
         }   
         
@@ -29,8 +28,9 @@ module TSOS{
             this.state = 'TERMINATED';
             var table = <HTMLTableElement>document.getElementById("pcbTable");
             table.deleteRow(this.rowNum);
-            _cpuScheduler.RR
-            _cpuScheduler.deIncrementRowNum();
+            if(_cpuScheduler.RR){
+                _cpuScheduler.deIncrementRowNum();
+            }
         }
 
         public getPID(){

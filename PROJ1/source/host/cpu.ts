@@ -20,8 +20,7 @@
                         public Zflag: number = 0,
                         public isExecuting: boolean = false,
                         public IR: string = '',
-                        public PID: number = 0,
-                        public currentPCB: number = 0) {
+                        public PID: number = 0) {
     
             }
     
@@ -38,89 +37,133 @@
                 _Kernel.krnTrace('CPU cycle');
                 if(this.isExecuting){
                     //this.updateCPU();
+                    //_PCB.state = "Running";
                     var index = _MemoryManager.memIndex(this.PID);
                     var op = _MemoryManager.getOp(index);
                     this.runCode(op);
-                    this.PC++;
+                    //this.PC++;
                 }
             }
 
             public runCode(op){ 
-                if(this.PC + 1 >= op.length){
-                    this.endProgram();
-                }else{
                     var i = this.PC;
-                    if(op[i] == 'A9'){
-                        _StdOut.putText("i hate this");
-                        //this.loadAccumulator(op[i+1]);
-                    }else if(op[i] == 'AD'){
-                        var loc = _MemoryManager.endianAddress(op[i + 1], op[i + 2]);
-                        loc += _PCB.base;
-                        this.loadAccumulator(loc);
+                    //console.log(op[0][i]);
+                    if(op[0][i] == 'A9'){
+                        this.loadAccumulator(op[0][i+1]);
+                        this.PC += 2;
+                    }else if(op[0][i] == 'AD'){
+                        //var loc = _MemoryManager.endianAddress(op[0][i + 1], op[0][i + 2]);
+                        //loc += _PCB.base;
+                        this.loadAccumulator(op[0][i + 1]);
+                        this.PC += 3;
+                    }else if(op[0][i] == 'A2'){
+                        this.loadXReg(op[0][i+1]);
+                        this.PC += 2;
+                    }else if(op[0][i] == 'A0'){
+                        this.loadYReg(op[0][i+1]);
+                        this.PC += 2;
+                    }else if(op[0][i] == '8D'){
+                        var loc = _MemoryManager.endianAddress(op[0][i + 1], op[0][i + 2]);
+                        //loc += _PCB.base;
+                        this.storeAcc(loc);
+                        this.PC += 3;
+                    }else if(op[0][i] == 'AE'){
+                        var loc = _MemoryManager.endianAddress(op[0][i + 1], op[0][i + 2]);
+                        //loc += _PCB.base;
+                        this.loadXRegMem(loc);  
+                        this.PC = 3;
+                    }else if(op[0][i] == 'AC'){
+                        var loc = _MemoryManager.endianAddress(op[0][i + 1], op[0][i + 2]);
+                        //loc += _PCB.base;
+                        this.loadYRegMem(loc);
+                        this.PC += 3;
+                    }else if(op[0][i] == '6D'){
+                        var loc = _MemoryManager.endianAddress(op[0][i + 1], op[0][i + 2]);
+                        //loc += _PCB.base;
+                        this.addCarry(loc);
+                        this.PC += 3;
+                    }else if(op[0][i] == 'EC'){
+                        var loc = _MemoryManager.endianAddress(op[0][i + 1], op[0][i + 2]);
+                        //loc += _PCB.base;
+                        this.zFlag(loc);
+                        this.PC += 3;
+                    }else if(op[0][i] == 'D0'){
+                        this.PC += 2;
+                        //this.branchNotEqual(op[0][i+1], _PCB.limit, op);
+                    }else if(op[0][i] == 'FF'){
+                        _KernelInputQueue.enqueue(new TSOS.Interrupt(SYSTEM_CALL_IRQ, op)); // call interrupt
+                        var loc = _MemoryManager.endianAddress(op[0][i + 1], op[0][i + 2]);
+                        this.systemCall(loc);
+                        this.PC += 1;
+                    }else if(op[0][i] == 'EE'){
+                        var loc = _MemoryManager.endianAddress(op[0][i + 1], op[0][i + 2]);
+                        //loc += _PCB.base;
+                        this.PC += 3;
+                        this.incrementByte(loc);
+                    }else if(op[0][i] == '00'){
+                        this.endProgram();
                     }else{
-                        _StdOut.putText("this trash doesnt work");
+                        this.endProgram();
                     }
-                }
+                    //TSOS.Control.updateMemoryTable();
+                    TSOS.Control.displayPCB();
             }
 
             public loadAccumulator(addr){
                 this.Acc= _MemoryManager.hexDecimal(addr);
                 this.IR = 'A9';
-                return this.Acc;
             }
 
             public loadAccMem(addr){
-                addr += _currentPCB.base;
-                _PCB.IR = 'AD';
+                //addr += _currentPCB.base;
+                this.IR = 'AD';
                 this.Acc = _MemoryManager.writeOpCode(addr, _currentPCB);
             }
 
             public loadXReg(addr){
-                addr += _currentPCB.base;
-                _PCB.IR = 'A2';
+                //addr += _currentPCB.base;
+                this.IR = 'A2';
                 this.Xreg = _MemoryManager.hexDecimal(addr);   
             }
 
-            public loadYReg(addr){
-                 addr += _currentPCB.base;
-                _PCB.IR = '8D';
+            public loadYReg(addr){ 
+                this.IR = 'A0';
                 this.Yreg = _MemoryManager.hexDecimal(addr);  
             }
 
-            public storeAcc(){
-                _PCB.IR = 'A2';
-                this.Acc = _MemoryManager.hexDecimal(this.PID);   
+            public storeAcc(addr){
+                this.IR = '8D'; // change IR
+                _MemoryManager.writeOpCode(this.Acc, addr);   
             }
 
             public loadXRegMem(addr){
-                addr += _currentPCB.base;
-                _PCB.IR = 'AE';
-                this.Xreg = _MemoryManager.writeOpCode(addr, _currentPCB);   
+                //this.PC += 1; // change the program counter 
+                this.IR = 'AE'; // change the IR
+                this.Xreg = _MemoryManager.getVariable(addr);   
             }
 
             public loadYRegMem(addr){
-                addr += _currentPCB.base;
-                _PCB.IR = 'AC';
-                this.Yreg = _MemoryManager.writeOpCode(addr, _currentPCB);   
+                //this.PC += 1; // change the program counter 
+                this.IR = 'AC'; // change the IR 
+                this.Yreg = _MemoryManager.getVariable(addr);   
             }
 
             public addCarry(addr){
-                addr += _currentPCB.base;
-                _PCB.IR = '6D';
-                this.Acc = this.Acc + _MemoryManager.writeOpCode(addr, _currentPCB);
+                this.IR = '6D'; // change the IR
+                var variable = _MemoryManager.getVariable(addr);
+                //_PCB.Acc += parseInt(variable);
             }
 
-            public zFlag(){
-                _PCB.PC += 3;
-                _PCB.IR = 'EC';
-                var byte = _MemoryManager.getVar(this.PID)
-                if(parseInt(byte) != _PCB.X){
-                    _PCB.Z = 0;
+            public zFlag(addr){
+                this.IR = 'EC'; // change the IR
+                var byte = _MemoryManager.getVariable(addr);
+                if(parseInt(byte) != this.Xreg){
+                    this.Zflag = 0; // change z flag if not equal
                 }else{
-                    _PCB.Z = 1;
+                    this.Zflag = 1; // change z flag
                 }
             }
-
+/** 
             public branchNotEqual(lim, op, dist){
                 var dist = _MemoryManager.hexDecimal(dist);
                 var base = _PCB.base;
@@ -137,19 +180,18 @@
                     _PCB.IR = 'D0';
                 }
             }
-
-            public systemCall(){
-                if(_PCB.X == 1){
-                    _PCB.PC += 1;
-                    _PCB.IR = 'FF';
-                    _StdOut.putText(_PCB.Y + "");
+*/
+            public systemCall(addr){
+                if(this.Xreg == 1){
+                    this.IR = 'FF';
+                    _StdOut.putText(addr + "");
                     _Console.advanceLine();
-                }else if(_PCB.X == 2){
+                }else if(this.Xreg == 2){
                     var term = false;
-                    var loc = _PCB.Y + _PCB.base;
+                    var loc = 0;//this.Yreg; 
                     var str = "";
                     while(!term){
-                        var char = _MemoryManager.getVariable(loc);
+                        var char = _MemoryManager.getOp(loc);
                         if(char == 0){
                             term = true;
                             break;
@@ -160,25 +202,21 @@
                     }
                     _StdOut.putText(str);
                     _Console.advanceLine();
-                    _PCB.PC += 1;
-                    _PCB.IR = 'FF';
+                    this.IR = 'FF';
                 }
             }
 
             public incrementByte(loc){
-                _PCB.PC += 3;
-                _PCB.IR = 'EE';
-                var b = _MemoryManager.getVar(loc);
+                this.IR = 'EE';
+                var b = _MemoryManager.getVariable(loc);
                 _MemoryManager.writeOpCode(_MemoryManager.hexDecimal(b+1), loc);
             }
 
             public endProgram(){
-                var table = document.getElementById("cpuTable");
-                table.getElementsByTagName("tr")[1].getElementsByTagName("td")[2].innerHTML = '00';
-                _MemoryManager.executePID.push(this.PID);
-                _StdOut.putText("PID: " + this.PID + " done.");
+               // _MemoryManager.executePID.push(this.PID);
+                _StdOut.putText("PID: " + this.PID + " done running."); //+ _cpuScheduler.turnAroundTime);
                 _Console.advanceLine();
-                _PCB.clearPCB();
+                //_PCB.clearPCB();
                 this.isExecuting = false;
                 _Console.putText(_OsShell.promptStr);
             }

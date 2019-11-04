@@ -4,11 +4,8 @@ var TSOS;
         function Memory(memory) {
             if (memory === void 0) { memory = []; }
             this.memory = memory;
-            if (memory == void 0) {
-                memory = [];
-            }
         }
-        //
+        // sets memory to 0 
         Memory.prototype.init = function () {
             for (var i = 0; i < 768; i++) {
                 this.memory.push(0);

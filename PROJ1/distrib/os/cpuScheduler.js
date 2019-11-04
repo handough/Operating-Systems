@@ -63,6 +63,9 @@ var TSOS;
             for (var j = 0; j < sortPCB.length; j++) {
                 sortPCB[j][0].rowNum = i + 1;
             }
+            for (var i = 0; i < sortPCB.length; i++) {
+                this.readyQueue.enqueue(sortPCB[i[0]]);
+            }
         };
         CpuScheduler.prototype.checkCount = function (params) {
             if (this.count < this.quantum) {
@@ -79,7 +82,7 @@ var TSOS;
                     this.readyQueue.q[i].rowNum -= 1;
                 }
             }
-            if (_PCB.pid > 1) {
+            if (_CPU.PID > 1) {
                 _PCB.rowNum -= 1;
             }
         };

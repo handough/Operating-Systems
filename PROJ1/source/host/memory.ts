@@ -1,12 +1,9 @@
 module TSOS {
     export class Memory {
         constructor(public memory = []){
-            if(memory == void 0){
-                memory = [];
-            }
         }
 
-        //
+        // sets memory to 0 
         public init(): void{
             for(var i = 0; i < 768; i++){
                 this.memory.push(0);

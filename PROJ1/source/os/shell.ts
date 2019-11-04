@@ -84,10 +84,20 @@ module TSOS {
                                   "- Clears the screen and resets the cursor position.");
             this.commandList[this.commandList.length] = sc;
 
+            sc = new ShellCommand(this.shellClearMem,
+                                  "clearMem",
+                                  "- Clears memory");
+            this.commandList[this.commandList.length] = sc;    
+
             // kill
             sc = new ShellCommand(this.shellKill,
                             "kill",
                             "- kills the current running process");
+            this.commandList[this.commandList.length] = sc;
+
+            sc = new ShellCommand(this.shellPS,
+                                    "ps",
+                                    "- display the PID and state of all processes");
             this.commandList[this.commandList.length] = sc;
 
             // status <string>
@@ -108,6 +118,12 @@ module TSOS {
                                   "<on | off> - Turns the OS trace on or off.");
             this.commandList[this.commandList.length] = sc;
 
+            // runs all user programs
+            sc = new ShellCommand(this.shellRunAll,
+                                "runAll",
+                                "- runs all user programs");
+            this.commandList[this.commandList.length] = sc;
+
             // rot13 <string>
             sc = new ShellCommand(this.shellRot13,
                                   "rot13",
@@ -118,6 +134,11 @@ module TSOS {
             sc = new ShellCommand(this.shellPrompt,
                                   "prompt",
                                   "<string> - Sets the prompt.");
+            this.commandList[this.commandList.length] = sc;
+
+            sc = new ShellCommand(this.shellQuantum,
+                                  "quantum",
+                                  "- let the user set the Round Robin quantum");
             this.commandList[this.commandList.length] = sc;
 
             // ps  - list the running processes and their IDs
@@ -285,17 +306,55 @@ module TSOS {
             }
         }
 
+        public shellPS(){
+            var str = "Active processes: ";
+            // if cpu scheduler ready queue is empty 
+            if(_cpuScheduler.readyQueue.isEmpty() && _CPU.isExecuting == false){
+                _StdOut.putText("No active processes");
+            }else{
+                if(_cpuScheduler.readyQueue.isEmpty() && _CPU.isExecuting == true){
+                    str += _CPU.PID + " ";
+                }else{
+                    str += _CPU.PID + " ";
+                    for(var i = 0; i < _cpuScheduler.readyQueue.getSize(); i++){
+                        var tempPID = _cpuScheduler.readyQueue.q[i].PID;
+                        str += tempPID +  " ";
+                    }
+                }
+                _StdOut.putText(str);
+            }
+        }
+
         // run all processes 
         public shellRunAll(){
             // round robin scheduling 
-            _cpuScheduler.RR = true;
-            _cpuScheduler.quantum = 6;
+            if(!_cpuScheduler.RR){
+                _cpuScheduler.RR = true;
+                _cpuScheduler.quantum = 6;
+            }
             // if it is one, just perform a single run
             var singleRun = 0;
             var index = 0;
             for(var i = 0; i < _cpuScheduler.residentList.length; i++){
                 if(_cpuScheduler.residentList[i].state){
-
+                    singleRun++;
+                    index = i;
+                }
+            }
+            if(singleRun == 1){
+                this.shellRun(_cpuScheduler.residentList[index].PID);
+            }else{
+                var x = false;
+                for(var i = 0; i < _cpuScheduler.residentList.length; i++){
+                    if(_cpuScheduler.residentList[i].state == ''){
+                        x = true;
+                    }
+                }
+                if(x){
+                    _cpuScheduler.loadReadyQueue();
+                    _CPU.isExecuting = true; // execute cpu to true
+                }else{
+                    _StdOut.putText("No programs loaded to execute.");
                 }
             }
         }
@@ -305,16 +364,18 @@ module TSOS {
                 _StdOut.putText("Running PID: " + args);
                 _StdOut.advanceLine();
                 _CPU.PID = args;
-                _CPU.PC++;
+                //_CPU.PC++;
                 _CPU.isExecuting = true;
             }else{
                 _StdOut.putText("Please enter valid input!");
             }
             TSOS.Control.updateMemoryTable();
+            //TSOS.Control.displayPCB();
         }
 
         public shellLoad(){
             var input = (<HTMLInputElement>document.getElementById("taProgramInput")).value;
+            console.log(input);
             var letterNum = ['0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F',' '];  // instead of checking for a regular expression
             var validInput = 0;
             for(var i = 0; i < input.length; i++){
@@ -332,7 +393,7 @@ module TSOS {
             }else if(validInput == input.length){
                 var op = (<HTMLInputElement>document.getElementById("taProgramInput")).value;
                 // index of block being displayed
-                var index = _MemoryManager.displayBlock(op);
+                var index = TSOS.Control.displayProcMem(op);
                 // writes op codes to memory
                 _MemoryManager.writeToMemory(index, op);
                 //increment current PID
@@ -341,8 +402,8 @@ module TSOS {
                 // create new PCB object
                 var newPCB = new TSOS.ProcessControlBlock();
                 // push new process control block to resident list
-                _cpuScheduler.residentList.push(newPCB);
-                _StdOut.putText("Program loaded. PID " + (_MemoryManager.PIDList[_MemoryManager.PIDList.length - 1]));
+                //_cpuScheduler.residentList.push(newPCB);
+                _StdOut.putText("Program loaded. PID " + (_MemoryManager.pidList[_MemoryManager.pidList.length - 1]));
             } 
         }
 
@@ -350,6 +411,7 @@ module TSOS {
         public shellQuantum(params){
             if(params == ''){
                 _StdOut.putText("please provide a quantum");
+                _Console.advanceLine();
             }else{
                 _cpuScheduler.quantum = parseInt(params); // get PID as an integer
                 _StdOut.putText("Quantum set to " + params);
@@ -358,8 +420,22 @@ module TSOS {
 
         // kill all active processes
         public shellKill(params){
-            var PID = parseInt(params);
+            var PID = parseInt(params); // gets the PID as int
             _KernelInputQueue.enqueue(new TSOS.Interrupt(KILL_IRQ, params));
+        }
+
+        public shellClearMem(){
+            if(_CPU.isExecuting){
+                _StdOut.putText("The CPU is executing, try again.")
+            }else{
+                _MemoryManager.clearAll();
+                for(var i = 0; i < _cpuScheduler.residentList.length; i++){
+                    if(_cpuScheduler.residentList[i].state == ''){
+                        _MemoryManager.executePid.push(_cpuScheduler.residentList[i].PID);
+                        _cpuScheduler.residentList[i].state = "TERMINATED";
+                    }
+                }
+            }
         }
 
         public shellHelp(args: string[]) {
@@ -407,14 +483,26 @@ module TSOS {
                     case "man <topic>":
                         _StdOut.putText("man <topic> displays the manual page for <topic>");
                         break;
+                    case "quantum":
+                        _StdOut.putText("let the user set the Round Robin quantum");
+                        break;
                     case "location":
                         _StdOut.putText("Displays the current location of the user.");
                         break;
                     case "sky":
                         _StdOut.putText("Displays the color of the sky.");
                         break;
+                    case "ps":
+                        _StdOut.putText("displays the PID and state of all processes");
+                        break;
+                    case "clearMem":
+                        _StdOut.putText("Clears memory.");
+                        break;
                     case "Date":
                         _StdOut.putText("Date displays the current date and time.");
+                        break;
+                    case "runAll":
+                        _StdOut.putText("runs all user programs");
                         break;
                     case "bsod":
                         _StdOut.putText("BSOD displays the blue screen of death");

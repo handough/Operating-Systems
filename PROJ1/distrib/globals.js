@@ -38,6 +38,7 @@ var _KernelInputQueue = null;
 var _KernelBuffers = null;
 var KILL_IRQ = 6;
 var CONTEXT_SWITCH_IRQ;
+var SYSTEM_CALL_IRQ;
 var _wrap;
 // Standard input and output
 var _StdIn = null;

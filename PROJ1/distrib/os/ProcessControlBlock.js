@@ -1,7 +1,7 @@
 var TSOS;
 (function (TSOS) {
     var ProcessControlBlock = /** @class */ (function () {
-        function ProcessControlBlock(PC, Acc, X, Y, Z, base, limit, part, pid, IR, rowNum, state, clockTicks) {
+        function ProcessControlBlock(PC, Acc, X, Y, Z, base, limit, part, pid, IR, rowNum, state) {
             if (PC === void 0) { PC = 0; }
             if (Acc === void 0) { Acc = 0; }
             if (X === void 0) { X = 0; }
@@ -13,8 +13,7 @@ var TSOS;
             if (pid === void 0) { pid = 0; }
             if (IR === void 0) { IR = ''; }
             if (rowNum === void 0) { rowNum = 0; }
-            if (state === void 0) { state = "Running"; }
-            if (clockTicks === void 0) { clockTicks = 0; }
+            if (state === void 0) { state = ""; }
             this.PC = PC;
             this.Acc = Acc;
             this.X = X;
@@ -27,7 +26,6 @@ var TSOS;
             this.IR = IR;
             this.rowNum = rowNum;
             this.state = state;
-            this.clockTicks = clockTicks;
             if (rowNum == void 0) {
                 rowNum = 1;
             }
@@ -43,8 +41,9 @@ var TSOS;
             this.state = 'TERMINATED';
             var table = document.getElementById("pcbTable");
             table.deleteRow(this.rowNum);
-            _cpuScheduler.RR;
-            _cpuScheduler.deIncrementRowNum();
+            if (_cpuScheduler.RR) {
+                _cpuScheduler.deIncrementRowNum();
+            }
         };
         ProcessControlBlock.prototype.getPID = function () {
             this.pid = _CPU.PID;

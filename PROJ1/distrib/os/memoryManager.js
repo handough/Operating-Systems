@@ -33,35 +33,6 @@ var TSOS;
                 }
             }
         };
-        MemoryManager.prototype.displayBlock = function (op) {
-            var fullCount = 0;
-            var index = -1;
-            // check if there is space in memory to display operation
-            for (var i = 0; i < this.memoryUsed.length; i++) {
-                if (this.memoryUsed[i] == 0) {
-                    if (i == 0) {
-                        index = i;
-                        TSOS.Control.displayProcMem(op);
-                        this.memoryUsed[0] = 1; // memory is used in the 1st block
-                    }
-                    else if (i == 1) {
-                        index = i;
-                        TSOS.Control.displayProcMem(op);
-                        this.memoryUsed[1] = 1; // memory is used in the 2nd block
-                    }
-                    else if (i == 2) {
-                        index = i;
-                        TSOS.Control.displayProcMem(op);
-                        this.memoryUsed[2] = 1; // memory is used in the 3rd block
-                    }
-                    break; // leave loop
-                }
-                else {
-                    fullCount += 1;
-                }
-            }
-            return index;
-        };
         // clear all display of memory blocks
         MemoryManager.prototype.clearDisplay = function () {
             var table = document.getElementById("processMemTable");
@@ -84,14 +55,9 @@ var TSOS;
                 }
             }
         };
-        // returns memory from the specified location 
-        MemoryManager.prototype.getVariable = function (location) {
-            if ((location > _PCB.limit || location < _PCB.base)) {
-                _StdOut.putText("Cannot access that part memory");
-            }
-            else {
-                return _Memory.memory[location];
-            }
+        // returns OP codes from memory
+        MemoryManager.prototype.getVariable = function (index) {
+            return _Memory.memory[0][index];
         };
         // returns OP codes from memory
         MemoryManager.prototype.getOp = function (index) {
@@ -99,12 +65,11 @@ var TSOS;
         };
         // writes operation codes to memory
         MemoryManager.prototype.writeOpCode = function (con, addr) {
-            if (addr > _PCB.limit || addr < _PCB.base) {
-                _StdOut.putText("cannot access that memory!");
-            }
-            else {
-                _Memory.memory[addr] = con;
-            }
+            //if(addr > _CPU.limit || addr < _PCB.base){
+            //_StdOut.putText("cannot access that memory!");
+            //}else{
+            _Memory.memory[addr] = con;
+            //}
         };
         // write memory from the memory manager
         MemoryManager.prototype.writeMem = function (index, op) {
