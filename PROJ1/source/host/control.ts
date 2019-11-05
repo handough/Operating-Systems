@@ -89,6 +89,9 @@ module TSOS {
             _Memory.init();
             _MemoryAccessor = new MemoryAccessor();
 
+           //_cpuScheduler = new TSOS.CpuScheduler();
+            _PCB = new TSOS.ProcessControlBlock();
+
             // ... then set the host clock pulse ...
             _hardwareClockID = setInterval(Devices.hostClockPulse, CPU_CLOCK_INTERVAL);
             // .. and call the OS Kernel Bootstrap routine.
@@ -154,7 +157,7 @@ module TSOS {
                     }else if(i == 1){
                         index = i;
                         var opCount = 0;
-                        for(var j = 33; j < 64; j++){ // while j < 32 to make 256 positions in memory
+                        for(var j = 0; j < 32; j++){ // while j < 32 to make 256 positions in memory
                             var row = (<HTMLTableRowElement>table.getElementsByTagName("tr")[j]);
                             var cell1 = row.insertCell(1);
                             var hexRow = j.toString(16);
@@ -184,7 +187,7 @@ module TSOS {
                     }else if(i == 2){
                         index = i;
                         var opCount = 0;
-                        for(var j = 65; j < 96; j++){ // while j < 32 to make 256 positions in memory
+                        for(var j = 0; j < 32; j++){ // while j < 32 to make 256 positions in memory
                             var row = (<HTMLTableRowElement>table.getElementsByTagName("tr")[j]);
                             var cell1 = row.insertCell(1);
                             var hexRow = j.toString(16);
@@ -245,9 +248,9 @@ module TSOS {
             cell8.innerHTML = _CPU.Zflag + '';
             cell9.innerHTML = "Memory";
 
-            //_PCB.getBase(_PCB.pid);
-            //_PCB.getLimit(_PCB.pid);
-            //_PCB.getPart(_PCB.pid);
+            _PCB.getBase(_CPU.PID);
+            _PCB.getLimit(_CPU.PID);
+            _PCB.getPart(_CPU.PID);
         }
         public static displayPCB(){
             var table = (<HTMLTableElement>document.getElementById("pcbTable"));
@@ -261,9 +264,9 @@ module TSOS {
             row.getElementsByTagName("td")[6].innerHTML = _CPU.Yreg + '';
             row.getElementsByTagName("td")[7].innerHTML = _CPU.Zflag + '';
             row.getElementsByTagName("td")[8].innerHTML = 'Memory';
-            //_PCB.getBase(_PCB.pid);
-            //_PCB.getLimit(_PCB.pid);
-            //_PCB.getPart(_PCB.pid);
+            _PCB.getBase(_CPU.PID);
+            _PCB.getLimit(_CPU.PID);
+            _PCB.getPart(_CPU.PID);
         }
     }
 }

@@ -2,9 +2,9 @@ var TSOS;
 (function (TSOS) {
     var CpuScheduler = /** @class */ (function () {
         function CpuScheduler(quantum, residentList, count, readyQueue, turnAroundTime, RR) {
-            if (quantum === void 0) { quantum = 6; }
+            if (quantum === void 0) { quantum = 0; }
             if (residentList === void 0) { residentList = []; }
-            if (count === void 0) { count = 1; }
+            if (count === void 0) { count = 0; }
             if (turnAroundTime === void 0) { turnAroundTime = 0; }
             if (RR === void 0) { RR = false; }
             this.quantum = quantum;
@@ -14,6 +14,13 @@ var TSOS;
             this.turnAroundTime = turnAroundTime;
             this.RR = RR;
         }
+        CpuScheduler.prototype.init = function () {
+            this.quantum = 6;
+            this.residentList = 0;
+            this.count = 1;
+            this.turnAroundTime = 0;
+            this.RR = false;
+        };
         CpuScheduler.prototype.clearMem = function () {
             // create new array to clear memory
             this.readyQueue.q = new Array();

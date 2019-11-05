@@ -2,13 +2,20 @@ module TSOS {
 
     export class CpuScheduler {
 
-        public constructor(public quantum: number = 6, 
-                           public residentList: any = [],
-                           public count: number = 1,
+        public constructor(public quantum: number = 0,                    public residentList: any = [],
+                           public count: number = 0,
                            public readyQueue: TSOS.Queue,
                            public turnAroundTime: number = 0,
                            public RR: boolean = false){
     
+        }
+
+        public init(): void{
+            this.quantum = 6;
+            this.residentList = 0;
+            this.count = 1;
+            this.turnAroundTime = 0;
+            this.RR = false;
         }
 
         public clearMem(){
