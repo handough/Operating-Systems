@@ -29,6 +29,11 @@ var TSOS;
             _krnKeyboardDriver = new TSOS.DeviceDriverKeyboard(); // Construct it.
             _krnKeyboardDriver.driverEntry(); // Call the driverEntry() initialization routine.
             this.krnTrace(_krnKeyboardDriver.status);
+            // loading the HDD device driver
+            this.krnTrace("Loading the HDD driver");
+            _krnHardDriveDriver = new TSOS.deviceDriverHDD();
+            //_krnHardDriveDriver.driverEntry(); *** need to check this
+            this.krnTrace(_krnHardDriveDriver.status);
             // load the memory manager 
             _MemoryManager = new TSOS.MemoryManager();
             //
@@ -123,6 +128,9 @@ var TSOS;
                                 _MemoryManager.executedPID.push(PID); //Increment that this PID has been executed
                                 _StdOut.putText("PID: " + PID + " done. Turnaround Time = " + _cpuScheduler.turnAroundTime + ". Wait Time = " + (_cpuScheduler.turnAroundTime - _cpuScheduler.readyQueue.q[i].waitTime));
                                 _cpuScheduler.readyQueue.q[i].clearPCB(); //Clear the PCB
+                                if (_cpuScheduler.readyQueue.q[i].inHDD) {
+                                    _krnHardDriveDriver.krnHDDDeleteFile('process' + _cpuScheduler.readyQueue.q[i].PID.toString());
+                                }
                                 _cpuScheduler.readyQueue.q.splice(i, 1); //Remove this PCB from the ready queue
                                 _Console.advanceLine();
                                 break;
@@ -185,6 +193,35 @@ var TSOS;
             _DrawingContext.fillRect(0, 0, 500, 500); // filling canvas
             // TODO: Display error on console, perhaps in some sort of colored screen. (Maybe blue?)
             this.krnShutdown();
+        };
+        Kernel.prototype.krnSwap = function () {
+            var op = _krnHardDriveDriver.krnHDDReadFile('process' + _CPU.PID); //Get op codes from file
+            _krnHardDriveDriver.krnHDDDeleteFile('process' + _CPU.PID); //Delete the file
+            var index = TSOS.Control.displayProcMem(op);
+            if (index == -1) {
+                var opMemArray = _MemoryManager.getOp(0);
+                //Create and write file for that process going into the HDD out of memory
+                _krnHardDriveDriver.krnHDDCreateFile('process' + _MemoryManager.pidLoc[0].toString());
+                _krnHardDriveDriver.krnHDDWriteFile('process' + _MemoryManager.pidLoc[0].toString(), opMemArray.join(" "));
+                // change PCB of file to record location
+                for (var i = 0; i < _cpuScheduler.residentList.length; i++) {
+                    if (_cpuScheduler.residentList[i].PID == _MemoryManager.pidLoc[0]) {
+                        _cpuScheduler.residentList[i].inHDD = true;
+                        var table = document.getElementById("pcbTable");
+                        var row = table.getElementsByTagName("tr")[_cpuScheduler.residentList[i].rowNumber];
+                        row.getElementsByTagName("td")[8].innerHTML = 'Hard Drive';
+                    }
+                }
+                _MemoryManager.writeToMemory(0, op);
+                _MemoryManager.pidLoc[0] = _CPU.PID;
+                //_CPU.inHDD = false; * need to check this
+            }
+            else {
+                // write all ops to memory
+                _MemoryManager.writeToMemory(index, op);
+                _MemoryManager.pidLoc[0] = _CPU.PID;
+                //_CPU.inHDD = false;
+            }
         };
         return Kernel;
     }());

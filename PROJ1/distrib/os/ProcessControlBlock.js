@@ -1,7 +1,7 @@
 var TSOS;
 (function (TSOS) {
     var ProcessControlBlock = /** @class */ (function () {
-        function ProcessControlBlock(PC, Acc, X, Y, Z, base, limit, part, pid, IR, rowNum, state) {
+        function ProcessControlBlock(PC, Acc, X, Y, Z, base, limit, part, pid, IR, rowNum, state, inHDD) {
             if (PC === void 0) { PC = 0; }
             if (Acc === void 0) { Acc = 0; }
             if (X === void 0) { X = 0; }
@@ -14,6 +14,7 @@ var TSOS;
             if (IR === void 0) { IR = ''; }
             if (rowNum === void 0) { rowNum = 0; }
             if (state === void 0) { state = ""; }
+            if (inHDD === void 0) { inHDD = false; }
             this.PC = PC;
             this.Acc = Acc;
             this.X = X;
@@ -26,6 +27,7 @@ var TSOS;
             this.IR = IR;
             this.rowNum = rowNum;
             this.state = state;
+            this.inHDD = inHDD;
             if (rowNum == void 0) {
                 rowNum = 1;
             }

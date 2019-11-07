@@ -13,6 +13,12 @@ var TSOS;
             this.readyQueue = readyQueue;
             this.turnAroundTime = turnAroundTime;
             this.RR = RR;
+            if (quantum == void 0) {
+                quantum = 6;
+            }
+            if (residentList == void 0) {
+                residentList = [];
+            }
         }
         CpuScheduler.prototype.init = function () {
             this.quantum = 6;
@@ -34,15 +40,18 @@ var TSOS;
                     this.turnAroundTime = 0;
                     this.clearMem();
                 }
-            }
-            else {
-                if (_PCB.state != "TERMINATED") {
-                    _PCB.state = "Ready";
-                    // _PCB.displayPCB();
-                    this.readyQueue.enqueue(_PCB);
+                else {
+                    if (_PCB.state != "TERMINATED") {
+                        _PCB.state = "Ready";
+                        // _PCB.displayPCB();
+                        this.readyQueue.enqueue(_PCB);
+                    }
+                    _PCB = this.readyQueue.dequeue();
+                    _PCB.state = "Running";
+                    if (_PCB.inHDD) {
+                        _Kernel.krnSwap();
+                    }
                 }
-                _PCB = this.readyQueue.dequeue();
-                _PCB.state = "Running";
             }
         };
         CpuScheduler.prototype.loadReadyQueue = function () {
@@ -56,6 +65,9 @@ var TSOS;
             }
             _PCB = this.readyQueue.dequeue();
             _PCB.state = "Running"; // set PCB state to running 
+            if (_PCB.inHDD) {
+                _Kernel.krnSwap();
+            }
         };
         CpuScheduler.prototype.sortReadyQueue = function () {
             var PCBB = [];

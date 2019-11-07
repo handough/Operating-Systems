@@ -72,6 +72,7 @@ var TSOS;
             _Memory = new TSOS.Memory();
             _Memory.init();
             _MemoryAccessor = new TSOS.MemoryAccessor();
+            _hardDrive = new TSOS.hardDrive();
             //_cpuScheduler = new TSOS.CpuScheduler();
             _PCB = new TSOS.ProcessControlBlock();
             // ... then set the host clock pulse ...
@@ -239,7 +240,12 @@ var TSOS;
             cell6.innerHTML = _CPU.Xreg + '';
             cell7.innerHTML = _CPU.Yreg + '';
             cell8.innerHTML = _CPU.Zflag + '';
-            cell9.innerHTML = "Memory";
+            if (_PCB.inHDD) {
+                cell9.innerHTML = "Hard Drive";
+            }
+            else {
+                cell9.innerHTML = "Memory";
+            }
             _PCB.getBase(_CPU.PID);
             _PCB.getLimit(_CPU.PID);
             _PCB.getPart(_CPU.PID);
@@ -259,6 +265,38 @@ var TSOS;
             _PCB.getBase(_CPU.PID);
             _PCB.getLimit(_CPU.PID);
             _PCB.getPart(_CPU.PID);
+        };
+        Control.createHDDTable = function () {
+            var table = document.getElementById("hardDriveTable");
+            var x = 1;
+            // elements of TSB display
+            var track = 0;
+            var sector = 0;
+            var block = 0;
+            //create actual table
+            for (var i = 0; i <= 999; i++) {
+                if (track == 3 && sector == 7 && block == 8) {
+                    break;
+                }
+                var row = table.insertRow(x);
+                var cell1 = row.insertCell(0);
+                var cell2 = row.insertCell(1);
+                // change the block sector and track
+                if (block == 8) {
+                    block = 0;
+                    sector++;
+                }
+                if (sector == 8) {
+                    block = 0;
+                    sector = 0;
+                    track++;
+                }
+                cell1.innerHTML = track.toString() + ":" + sector.toString() + ":" + block.toString();
+                var TSB = track.toString() + sector.toString() + block.toString();
+                cell2.innerHTML = _hardDrive.read(TSB);
+                block++;
+                x++;
+            }
         };
         return Control;
     }());

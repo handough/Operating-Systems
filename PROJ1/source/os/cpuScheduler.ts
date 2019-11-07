@@ -1,12 +1,13 @@
 module TSOS {
-
     export class CpuScheduler {
-
-        public constructor(public quantum: number = 0,                    public residentList: any = [],
-                           public count: number = 0,
-                           public readyQueue: TSOS.Queue,
-                           public turnAroundTime: number = 0,
-                           public RR: boolean = false){
+        constructor(public quantum: number = 0,              
+                    public residentList: any = [],
+                    public count: number = 0,
+                    public readyQueue: TSOS.Queue,
+                    public turnAroundTime: number = 0,
+                    public RR: boolean = false){
+            if(quantum == void 0){quantum = 6;}
+            if(residentList == void 0){residentList = [];}
     
         }
 
@@ -31,16 +32,18 @@ module TSOS {
                     _CPU.isExecuting = false;  // if is executing is false the turnaround time is set to 0
                     this.turnAroundTime = 0;   
                     this.clearMem();
+                }else{
+                    if(_PCB.state != "TERMINATED"){
+                        _PCB.state = "Ready";
+                    // _PCB.displayPCB();
+                        this.readyQueue.enqueue(_PCB);
+                    }
+                    _PCB = this.readyQueue.dequeue();
+                    _PCB.state = "Running";
+                    if(_PCB.inHDD){
+                        _Kernel.krnSwap();
+                    }
                 }
-            }else{
-                if(_PCB.state != "TERMINATED"){
-                    _PCB.state = "Ready";
-                   // _PCB.displayPCB();
-                    this.readyQueue.enqueue(_PCB);
-                }
-                _PCB = this.readyQueue.dequeue();
-                _PCB.state = "Running";
-
             }
         }
 
@@ -55,6 +58,9 @@ module TSOS {
             }
             _PCB = this.readyQueue.dequeue();
             _PCB.state = "Running"; // set PCB state to running 
+            if(_PCB.inHDD){
+                _Kernel.krnSwap();
+            }
             
         }
 

@@ -16,6 +16,7 @@
    <script type="text/javascript" src="distrib/host/devices.js"></script>
    <script type="text/javascript" src="distrib/host/cpu.js"></script>
    <script type="text/javascript" src="distrib/host/memory.js"></script>
+   <script type="text/javascript" src="distrib/host/hardDrive.js"></script>
    <script type="text/javascript" src="distrib/host/memoryAccessor.js"></script>
 
    <!-- Virtual OS Routines: Make sure Kernel code is last, since it needs those above it. -->
@@ -32,6 +33,7 @@
    <script type="text/javascript" src="distrib/os/kernel.js"></script>
    <script type="text/javascript" src="distrib/os/processControlBlock.js"></script>
    <script type="text/javascript" src="distrib/os/memoryManager.js"></script>
+   <script type="text/javascript" src="distrib/os/deviceDriverHDD.js"></script>
 
 
    <!-- Other Routines -->
@@ -166,6 +168,21 @@
           </tbody>
         </table>
       </div>
+
+      <div id= "hardDrive">
+        <label id ="hardDriveLabel"> Hard Drive </label>
+        <table id = "hardDriveTable" cellpadding="15">
+          <tbody>
+            <th>TSB</th>
+            <th>Data</th>
+          </tbody>
+          <tbody id = "body">
+            <tr>
+            </tr>
+          </tbody>
+        </table>
+       </div>
+
       <div id="divLog" style="margin-left:520px;">
          <label>
             Host Log

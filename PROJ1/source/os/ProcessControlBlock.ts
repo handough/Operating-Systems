@@ -11,7 +11,8 @@ module TSOS{
                     public pid: number = 0, 
                     public IR: string = '',  
                     public rowNum: number = 0,
-                    public state: string = ""){
+                    public state: string = "",
+                    public inHDD: boolean = false){
                         if(rowNum == void 0){rowNum = 1;}
         }   
         

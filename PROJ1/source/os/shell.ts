@@ -60,10 +60,28 @@ module TSOS {
                                   "- validates the user code in the HTML5 text area.");
             this.commandList[this.commandList.length] = sc;
 
+            // format a file
+            sc = new ShellCommand(this.shellFormat,
+                            "format",
+                            "- initialize all blocks in all sectors in all tracks.");
+            this.commandList[this.commandList.length] = sc;
+
             // run
             sc = new ShellCommand(this.shellRun,
                                     "run",
                                      "- runs the user input program.");
+            this.commandList[this.commandList.length] = sc;
+
+            // create file
+            sc = new ShellCommand(this.shellCreate,
+                                    "create",
+                                    "- create a file name.");
+            this.commandList[this.commandList.length] = sc;
+
+            // delete a file
+            sc = new ShellCommand(this.shellDelete,
+                                    "delete",
+                                    "- delete a file.");
             this.commandList[this.commandList.length] = sc;
 
             // help
@@ -325,6 +343,49 @@ module TSOS {
             }
         }
 
+        public shellFormat(){
+            _krnHardDriveDriver.krnHDDFormat();
+            _StdOut.putText("Hard drive has been formatted.");
+        }
+
+        public shellCreate(params){
+            if(!_krnHardDriveDriver.formatted){
+                _StdOut.putText("format hard drive first!");
+            }else if(params == ''){
+                _StdOut.putText("please put a file name!");
+            }else if(params.length > 1){
+                _StdOut.putText("No spaces allowed in file name");
+            }else if(params[0].length > 30){
+                _StdOut.putText("file name too large");
+            }else{
+                var result = _krnHardDriveDriver.krnHDDCreateFile(params.toString());
+                // check if there is space for new files
+                if(result == -1){
+                    _StdOut.putText("No file space available!");
+                }else if(result == 0){
+                    _StdOut.putText("That file already exists!");
+                }else{
+                    _StdOut.putText("File created " + params);
+                }
+            }
+        }
+
+        public shellDelete(params){
+            // check if the HDD is formatted first 
+            if(!_krnHardDriveDriver.formatted){
+                _StdOut.putText("Format the HDD first!");
+            }else if(params == ''){
+                _StdOut.putText("please put a file name!");
+            }else if(params.length > 1){
+                _StdOut.putText("No spaces allowed in file name");
+            }else if(_krnHardDriveDriver.krnHDDCheckFileExists(params[0].toString()) == false){
+                _StdOut.putText("file does not exist");
+            }else{
+                _StdOut.putText("Deleted file " + params[0].toString());
+                _krnHardDriveDriver.krnHDDDeleteFile(params[0].toString());
+            }
+        }
+
         // run all processes 
         public shellRunAll(){
             // round robin scheduling 
@@ -501,8 +562,17 @@ module TSOS {
                     case "Date":
                         _StdOut.putText("Date displays the current date and time.");
                         break;
+                    case "delete":
+                        _StdOut.putText("Delete a file.");
+                        break;
                     case "runAll":
                         _StdOut.putText("runs all user programs");
+                        break;
+                    case "format":
+                        _StdOut.putText("initializes all block in all sectors in all tracks");
+                        break;
+                    case "create":
+                        _StdOut.putText("create file name");
                         break;
                     case "bsod":
                         _StdOut.putText("BSOD displays the blue screen of death");
