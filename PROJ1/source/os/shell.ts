@@ -425,7 +425,6 @@ module TSOS {
                 _StdOut.putText("Running PID: " + args);
                 _StdOut.advanceLine();
                 _CPU.PID = args;
-                //_CPU.PC++;
                 _CPU.isExecuting = true;
             }else{
                 _StdOut.putText("Please enter valid input!");
@@ -434,38 +433,101 @@ module TSOS {
             //TSOS.Control.displayPCB();
         }
 
-        public shellLoad(){
+        public shellLoad(params){
+            // get op codes from user text area 
             var input = (<HTMLInputElement>document.getElementById("taProgramInput")).value;
-            console.log(input);
             var letterNum = ['0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F',' '];  // instead of checking for a regular expression
-            var validInput = 0;
-            for(var i = 0; i < input.length; i++){
-                var charInput = input.charAt(i);
-                for(var x = 0; x < letterNum.length; x++){
-                    if(charInput == letterNum[x]){
-                        validInput++
+            // if input is empty, send error message
+            if(input = ''){
+                _StdOut.putText("Error! No input!");
+            }else{
+                var validInput = 0;
+                for(var i = 0; i < input.length; i++){
+                    var charInput = input.charAt(i);
+                    for(var x = 0; x < letterNum.length; x++){
+                        // if input = valid chars then increase the valid input element
+                        if(charInput == letterNum[x]){
+                            validInput++
+                        }
                     }
                 }
+                if(validInput == input.length){
+                    var op = (<HTMLInputElement>document.getElementById("taProgramInput")).value; // op codes
+                    // index of block being displayed
+                    var index = TSOS.Control.displayProcMem(op);
+                    console.log(index);
+                    // if all memory spaces are full, they must be formatted 
+                    if(index == -1 && !_krnHardDriveDriver.formatted){
+                        _StdOut.putText("Format the HDD!");
+                    }else{
+                        if(op.split(" ").length > 256){
+                            _StdOut.putText("This program is too large!");
+                        }else{
+                            if(URLSearchParams.length >= 1 && _cpuScheduler.priority){
+                                _StdOut.putText("Please set scheduler to priority!");
+                            }else if(params.length > 1){
+                                _StdOut.putText("Please set a priority!");
+                            }else{
+                                // check if memory is available or if HDD needs to be used 
+                                if(index == -1){
+                                    _MemoryManager.pidReturn(); // increments PID
+                                    var PID = _MemoryManager.PIDList[_MemoryManager.PIDList.length - 1]; // file name PID
+                                    var fileName = 'process' + PID.toString();
+                                    // create file with new file name
+                                    _krnHardDriveDriver.krnHDDCreateFile(fileName);
+                                    //Write to file
+                                    _krnHardDriveDriver.krnHDDWriteFile(fileName, op);
+                                    //Push PCB to resident list, be sure to mark that it is in the HDD
+                                    //Create new PCB object, initialize, and put in resident list
+                                    var newPCB = new TSOS.ProcessControlBlock();
+                                    if (_cpuScheduler.priority) {
+                                        var priority;
+                                        if (params.length == 0) {
+                                            priority = 32;
+                                        }
+                                        else {
+                                            priority = parseInt(params[0]);
+                                        }
+                                        newPCB.init(_MemoryManager.PIDList[_MemoryManager.PIDList.length - 1], priority);
+                                    }else {
+                                        newPCB.init(_MemoryManager.PIDList[_MemoryManager.PIDList.length - 1], priority);
+                                    }
+                                    newPCB.inHDD = true;
+                                    if (!_cpuScheduler.RR) {
+                                        newPCB.rowNum = 1;
+                                    }
+                                    _cpuScheduler.residentList.push(newPCB);
+                                    _StdOut.putText("Program loaded. PID " + (PID));
+                                }else{
+                                    //Write operations to memory
+                                    _MemoryManager.writeToMemory(index, op); // write to memory
+                                    _MemoryManager.pidReturn(); // increment PID
+                                    _MemoryManager.pidLoc[index] = _MemoryManager.pidList[_MemoryManager.pidList.length - 1]; //
+                                    // create new PCB object, initialize, and put in resident list
+                                    var newPCB = new TSOS.ProcessControlBlock();
+                                    if (_cpuScheduler.priority) {
+                                        var priority;
+                                        if (params.length == 0) {
+                                            priority = 32;
+                                        }
+                                        else {
+                                            priority = parseInt(params[0]);
+                                        }
+                                        newPCB.init(_MemoryManager.pidList[_MemoryManager.pidList.length - 1], priority);
+                                    }
+                                    else {
+                                        newPCB.init(_MemoryManager.pidList[_MemoryManager.pidList.length - 1], priority);
+                                    }
+                                    _cpuScheduler.residentList.push(newPCB);
+                                    _StdOut.putText("Program loaded. PID " + (_MemoryManager.pidList[_MemoryManager.pidList.length - 1]));
+                                }
+                            }
+                        }
+                    }
+                }else{
+                    _StdOut.putText("Input not valid!");
+                }
             }
-            // check for valid input 
-            if(input == ''){ 
-                // if there is no user input display error
-                _StdOut.putText("No input, please enter valid characters");
-            }else if(validInput == input.length){
-                var op = (<HTMLInputElement>document.getElementById("taProgramInput")).value;
-                // index of block being displayed
-                var index = TSOS.Control.displayProcMem(op);
-                // writes op codes to memory
-                _MemoryManager.writeToMemory(index, op);
-                //increment current PID
-                _MemoryManager.pidReturn();
-                _MemoryManager.pidLoc[index] = _MemoryManager.pidList[_MemoryManager.pidList.length - 1];
-                // create new PCB object
-                var newPCB = new TSOS.ProcessControlBlock();
-                // push new process control block to resident list
-                //_cpuScheduler.residentList.push(newPCB);
-                _StdOut.putText("Program loaded. PID " + (_MemoryManager.pidList[_MemoryManager.pidList.length - 1]));
-            } 
         }
 
         // change the quantum for round robin scheduling 

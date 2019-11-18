@@ -46,7 +46,7 @@ var _wrap;
 var _StdIn = null;
 var _StdOut = null;
 var _currentPCB = null;
-var _cpuScheduler;
+var _cpuScheduler; //: TSOS.CpuScheduler;
 // UI
 var _Console;
 var _OsShell;

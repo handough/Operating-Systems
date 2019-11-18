@@ -53,7 +53,7 @@ module TSOS {
 
         // returns OP codes from memory
         public getVariable(index){
-            return _Memory.memory[0][index];
+            return _Memory.memory[_CPU.PID][index];
         }
 
         // returns OP codes from memory
@@ -66,13 +66,8 @@ module TSOS {
             //if(addr > _CPU.limit || addr < _PCB.base){
                 //_StdOut.putText("cannot access that memory!");
             //}else{
-                _Memory.memory[addr] = con;
+                _Memory.memory[_CPU.PID][addr] = con;
             //}
-        }
-
-        // write memory from the memory manager
-        public writeMem(index, op){
-            _MemoryAccessor.write(index, op);
         }
 
         public endianAddress(addrB, addrE){
@@ -96,10 +91,11 @@ module TSOS {
             if(this.pidList[0] == null){
                 this.pidList.push(0);
             }else{
-                this.pidList.push(this.pidList[this.pidList.length - 1] + 1);
+                this.pidList.push(this.pidList[_CPU.PID][this.pidList.length - 1] + 1);
             }
         }
 
+        // write to memory in memory accessor 
         public writeToMemory(index, op){
             _MemoryAccessor.write(index, op);
         }

@@ -90,8 +90,9 @@ module TSOS {
             _MemoryAccessor = new MemoryAccessor();
 
             _hardDrive = new TSOS.hardDrive();
+            _MemoryManager = new MemoryManager();
 
-            //_cpuScheduler = new TSOS.CpuScheduler();
+            _cpuScheduler = new TSOS.CpuScheduler();
             _PCB = new TSOS.ProcessControlBlock();
 
             // ... then set the host clock pulse ...
@@ -120,12 +121,13 @@ module TSOS {
         }
 
         public static displayProcMem(op){
+            var memoryUsed = [0,0,0]
             // change the data in the process memory table
             var table = <HTMLTableElement>document.getElementById("processMemTable");
             var fullCount = 0; // holds operation position
             var index = -1;
-            for(var i = 0; i < _MemoryManager.memoryUsed.length; i++){
-                if(_MemoryManager.memoryUsed[i] == 0){
+            for(var i = 0; i < 3; i++){
+                if(memoryUsed[i] == 0){
                     if(i == 0){
                         index = i;
                         var opCount = 0;
@@ -185,7 +187,7 @@ module TSOS {
                                 }
                             }
                         }
-                        _MemoryManager.memoryUsed[1] = 1;
+                        memoryUsed[1] = 1;
                     }else if(i == 2){
                         index = i;
                         var opCount = 0;
@@ -215,7 +217,7 @@ module TSOS {
                                 }
                             }
                         }
-                        _MemoryManager.memoryUsed[2] = 1;
+                        memoryUsed[2] = 1;
                     }
                     break; // leave loop
                 }else{
@@ -240,11 +242,11 @@ module TSOS {
             var cell7 = row.insertCell(6);
             var cell8 = row.insertCell(7);
             var cell9 = row.insertCell(8);
-            cell1.innerHTML = _CPU.PID + '';
-            cell2.innerHTML = 'Running';
+            cell1.innerHTML = _PCB.pid + '';
+            cell2.innerHTML = _PCB.state + '';
             cell3.innerHTML = _CPU.PC + '';
             cell4.innerHTML = _CPU.Acc +'';
-            cell5.innerHTML = _CPU.IR + '';
+            cell5.innerHTML = _PCB.IR + '';
             cell6.innerHTML = _CPU.Xreg + '';
             cell7.innerHTML = _CPU.Yreg + '';
             cell8.innerHTML = _CPU.Zflag + '';

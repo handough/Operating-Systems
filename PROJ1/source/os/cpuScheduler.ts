@@ -1,22 +1,14 @@
 module TSOS {
     export class CpuScheduler {
-        constructor(public quantum: number = 0,              
+        constructor(public quantum: number = 6,              
                     public residentList: any = [],
-                    public count: number = 0,
-                    public readyQueue: TSOS.Queue,
+                    public count: number = 1,
+                    public readyQueue: TSOS.Queue = null,
                     public turnAroundTime: number = 0,
-                    public RR: boolean = false){
-            if(quantum == void 0){quantum = 6;}
-            if(residentList == void 0){residentList = [];}
+                    public RR: boolean = false,
+                    public fcfs: boolean = false,
+                    public priority: boolean = false){
     
-        }
-
-        public init(): void{
-            this.quantum = 6;
-            this.residentList = 0;
-            this.count = 1;
-            this.turnAroundTime = 0;
-            this.RR = false;
         }
 
         public clearMem(){
@@ -27,19 +19,17 @@ module TSOS {
         }
 
         public contextSwitch(){
-            if(this.RR){
+            if(this.RR || this.fcfs || this.priority){
                 if(this.readyQueue.isEmpty()){ // if the ready queue is empty set is executing to false
                     _CPU.isExecuting = false;  // if is executing is false the turnaround time is set to 0
                     this.turnAroundTime = 0;   
                     this.clearMem();
                 }else{
-                    if(_PCB.state != "TERMINATED"){
-                        _PCB.state = "Ready";
-                    // _PCB.displayPCB();
+                    if(_CPU.isExecuting == true){
                         this.readyQueue.enqueue(_PCB);
                     }
                     _PCB = this.readyQueue.dequeue();
-                    _PCB.state = "Running";
+                    //_PCB.state = "Running";
                     if(_PCB.inHDD){
                         _Kernel.krnSwap();
                     }
@@ -51,10 +41,17 @@ module TSOS {
             var rowCounter = 1; // keeps track of the row the PCB is being displayed in ready queue
             for(var i = 0; i < this.residentList.length; i++){
                 if(this.residentList[i].state != "TERMINATED"){
-                    this.residentList[i].rowNum = 1;
+                    if(!this.fcfs && ! this.priority){
+                        this.residentList[i].rowNum = rowCounter;
+                    }else{
+                        this.residentList[i].rowNum  = 1;
+                    }
                     this.readyQueue.enqueue(this.residentList[i]);
                     rowCounter++; // increment row counter for each loop
                 }
+            }
+            if(this.priority){
+                this.sortReadyQueue();
             }
             _PCB = this.readyQueue.dequeue();
             _PCB.state = "Running"; // set PCB state to running 
@@ -66,13 +63,25 @@ module TSOS {
 
         public sortReadyQueue(){
             var PCBB = [];
+            var pri = [];
             var fixLen = this.readyQueue.getSize();
             // dequeue the ready queue into an array
             for(var i = 0; i < fixLen; i++){
                 var PCBBB = this.readyQueue.dequeue();
                 PCBB.push(PCBBB);
+                pri.push(this.priority);
             }
             var sortPCB = [];
+            pri = pri.sort();
+            // sort PCB based on priority
+            for(var x = 0; x < fixLen; x++){
+                var prio = pri[i];
+                for(var r = 0; r < PCBB.length; r++){
+                    if(PCBB[r].priority == prio){
+                        sortPCB.push(PCBB.splice(r,1));
+                    }
+                }
+            }
             // changing row number to display the sorted PCBs
             for(var j = 0; j < sortPCB.length; j++){
                 sortPCB[j][0].rowNum = i + 1;

@@ -64,7 +64,7 @@ var _StdIn:  TSOS.Console = null;
 var _StdOut: TSOS.Console = null;
 
 var _currentPCB = null;
-var _cpuScheduler: TSOS.CpuScheduler;
+var _cpuScheduler;//: TSOS.CpuScheduler;
 
 // UI
 var _Console: TSOS.Console;

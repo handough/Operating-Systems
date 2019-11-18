@@ -16,7 +16,8 @@ module TSOS{
                         if(rowNum == void 0){rowNum = 1;}
         }   
         
-        public init(pid){
+        public init(pid, priority){
+            if(priority == void 0){priority = 32;}
             this.pid = pid;
             this.base = this.getBase(_MemoryManager.pidList[_MemoryManager.pidList.length - 1]);
             this.limit = this.getLimit(_MemoryManager.pidList[_MemoryManager.pidList.length - 1]);

@@ -32,10 +32,10 @@ var TSOS;
             // loading the HDD device driver
             this.krnTrace("Loading the HDD driver");
             _krnHardDriveDriver = new TSOS.deviceDriverHDD();
-            //_krnHardDriveDriver.driverEntry(); *** need to check this
+            //_krnHardDriveDriver.driverEntry(); 
             this.krnTrace(_krnHardDriveDriver.status);
             // load the memory manager 
-            _MemoryManager = new TSOS.MemoryManager();
+            //_MemoryManager = new MemoryManager();
             //
             // ... more?
             //

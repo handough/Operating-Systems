@@ -57,7 +57,7 @@ var TSOS;
         };
         // returns OP codes from memory
         MemoryManager.prototype.getVariable = function (index) {
-            return _Memory.memory[0][index];
+            return _Memory.memory[_CPU.PID][index];
         };
         // returns OP codes from memory
         MemoryManager.prototype.getOp = function (index) {
@@ -68,12 +68,8 @@ var TSOS;
             //if(addr > _CPU.limit || addr < _PCB.base){
             //_StdOut.putText("cannot access that memory!");
             //}else{
-            _Memory.memory[addr] = con;
+            _Memory.memory[_CPU.PID][addr] = con;
             //}
-        };
-        // write memory from the memory manager
-        MemoryManager.prototype.writeMem = function (index, op) {
-            _MemoryAccessor.write(index, op);
         };
         MemoryManager.prototype.endianAddress = function (addrB, addrE) {
             if (addrB == '00' && addrE == '00') {
@@ -96,9 +92,10 @@ var TSOS;
                 this.pidList.push(0);
             }
             else {
-                this.pidList.push(this.pidList[this.pidList.length - 1] + 1);
+                this.pidList.push(this.pidList[_CPU.PID][this.pidList.length - 1] + 1);
             }
         };
+        // write to memory in memory accessor 
         MemoryManager.prototype.writeToMemory = function (index, op) {
             _MemoryAccessor.write(index, op);
         };
