@@ -121,110 +121,115 @@ module TSOS {
         }
 
         public static displayProcMem(op){
-            var memoryUsed = [0,0,0]
-            // change the data in the process memory table
-            var table = <HTMLTableElement>document.getElementById("processMemTable");
-            var fullCount = 0; // holds operation position
-            var index = -1;
-            for(var i = 0; i < 3; i++){
-                if(memoryUsed[i] == 0){
-                    if(i == 0){
+            var table = document.getElementById("processMemTable");
+            var fullCount = 0; // keep track if the count is full (full at 3)
+            var index = -1; // where PID is being loaded, checked if there is anymore space 
+            // displays data in process mem table 
+            for (var i = 0; i < _MemoryManager.memoryUsed.length; i++) {
+                if (_MemoryManager.memoryUsed[i] == 0) {
+                    if (i == 0) {
                         index = i;
-                        var opCount = 0;
-                        for(var j = 0; j < 32; j++){ // while j < 32 to make 256 positions in memory
-                            var row = (<HTMLTableRowElement>table.getElementsByTagName("tr")[j]);
-                            var cell1 = row.insertCell(1);
-                            var hexRow = j.toString(16);
-                            if(j != 0){
-                                cell1.innerHTML = "0x";
-                                if(hexRow.length == 1){
-                                    cell1.innerHTML += "00" + hexRow;
-                                }else if(hexRow.length == 2){
-                                    cell1.innerHTML += "0" + hexRow;
-                                }else{
-                                    cell1.innerHTML += hexRow;
+                        var opCount = 0; // substring position 
+                        for (var i = 0; i <= 32; i++) {
+                            var row = table.getElementsByTagName("tr")[i];
+                            for (var j = 1; j < 9; j++) {
+                                if (opCount + 2 > op.length) {
+                                    row.getElementsByTagName("td")[j].innerHTML = '0';
                                 }
-                            }
-                            for(var i = 0; i < 9; i++){
-                                var rowss = (<HTMLTableRowElement>table.getElementsByTagName("tr")[j]);
-                                if(opCount + 2 > op.length){
-                                    rowss.getElementsByTagName("td")[j].innerHTML = '0';
-                                }else if(opCount < 96){
-                                    rowss.getElementsByTagName("td")[i+1].innerHTML = op.toString().substring(opCount, opCount + 2);
+                                else {
+                                    row.getElementsByTagName("td")[j].innerHTML = op.substring(opCount, opCount + 2);
                                     opCount += 3;
-                                }else{
-                                    opCount = 0;
                                 }
                             }
                         }
-                        _MemoryManager.memoryUsed[0] = 1; //memory used
-                    }else if(i == 1){
-                        index = i;
-                        var opCount = 0;
-                        for(var j = 0; j < 32; j++){ // while j < 32 to make 256 positions in memory
-                            var row = (<HTMLTableRowElement>table.getElementsByTagName("tr")[j]);
-                            var cell1 = row.insertCell(1);
-                            var hexRow = j.toString(16);
-                            if(j != 0){
-                                cell1.innerHTML = "0x";
-                                if(hexRow.length == 1){
-                                    cell1.innerHTML += "00" + hexRow;
-                                }else if(hexRow.length == 2){
-                                    cell1.innerHTML += "0" + hexRow;
-                                }else{
-                                    cell1.innerHTML += hexRow;
-                                }
-                            }
-                            for(var i = 0; i < 9; i++){
-                                var rowss = (<HTMLTableRowElement>table.getElementsByTagName("tr")[j]);
-                                if(opCount + 2 > op.length){
-                                    rowss.getElementsByTagName("td")[j].innerHTML = '0';
-                                }else if(opCount > 192){
-                                    rowss.getElementsByTagName("td")[i+1].innerHTML = op.toString().substring(opCount, opCount + 2);
-                                    opCount += 3;
-                                }else{
-                                    opCount = 0;
-                                }
-                            }
-                        }
-                        memoryUsed[1] = 1;
-                    }else if(i == 2){
-                        index = i;
-                        var opCount = 0;
-                        for(var j = 0; j < 32; j++){ // while j < 32 to make 256 positions in memory
-                            var row = (<HTMLTableRowElement>table.getElementsByTagName("tr")[j]);
-                            var cell1 = row.insertCell(1);
-                            var hexRow = j.toString(16);
-                            if(j != 0){
-                                cell1.innerHTML = "0x";
-                                if(hexRow.length == 1){
-                                    cell1.innerHTML += "00" + hexRow;
-                                }else if(hexRow.length == 2){
-                                    cell1.innerHTML += "0" + hexRow;
-                                }else{
-                                    cell1.innerHTML += hexRow;
-                                }
-                            }
-                            for(var i = 0; i < 9; i++){
-                                var rowss = (<HTMLTableRowElement>table.getElementsByTagName("tr")[j]);
-                                if(opCount + 2 > op.length){
-                                    rowss.getElementsByTagName("td")[j].innerHTML = '0';
-                                }else if(opCount > 288){
-                                    rowss.getElementsByTagName("td")[i+1].innerHTML = op.toString().substring(opCount, opCount + 2);
-                                    opCount += 3;
-                                }else{
-                                    opCount = 0;
-                                }
-                            }
-                        }
-                        memoryUsed[2] = 1;
+                        _MemoryManager.memoryUsed[0] = 1; // memory used 
                     }
-                    break; // leave loop
-                }else{
+                    else if (i == 1) {
+                        index = i;
+                        var opCount = 0; // sub string position 
+                        for (var i = 33; i <= 64; i++) {
+                            var row = table.getElementsByTagName("tr")[i];
+                            for (var j = 1; j < 9; j++) {
+                                if (opCount + 2 > op.length) {
+                                    row.getElementsByTagName("td")[j].innerHTML = '0';
+                                }
+                                else {
+                                    row.getElementsByTagName("td")[j].innerHTML = op.substring(opCount, opCount + 2);
+                                    opCount += 3;
+                                }
+                            }
+                        }
+                        _MemoryManager.memoryUsed[1] = 1; // 2nd block of memory used 
+                    }
+                    else if (i == 2) {
+                        index = i;
+                        var opCount = 0; // substring position 
+                        for (var i = 65; i <= 96; i++) {
+                            var row = table.getElementsByTagName("tr")[i];
+                            for (var j = 1; j < 9; j++) {
+                                if (opCount + 2 > op.length) {
+                                    row.getElementsByTagName("td")[j].innerHTML = '0';
+                                }
+                                else {
+                                    row.getElementsByTagName("td")[j].innerHTML = op.substring(opCount, opCount + 2);
+                                    opCount += 3;
+                                }
+                            }
+                        }
+                        _MemoryManager.memoryUsed[2] = 1; // 3rd block of memory space used 
+                    }
+                    break; //Leave loop
+                }
+                else {
                     fullCount += 1;
                 }
             }
             return index;
+        }
+
+        public static updateProcessMem(PID){
+            var memoryIndex = _MemoryManager.memIndex(PID); 
+            var opIndex = 0; 
+            var table = document.getElementById("processMemTable");
+            var a = _MemoryManager.getOp(_CPU.PID);
+            if (memoryIndex == 0) {
+                for (var i = 0; i < 32; i++) {
+                    var row = table.getElementsByTagName("tr")[i];
+                    for (var j = 1; j < 9; j++) {
+                        var opCount = 0;
+                        if (opCount + 2 > a.length) {
+                            row.getElementsByTagName("td")[j].innerHTML = '0';
+                        }
+                        else {
+                            row.getElementsByTagName("td")[j].innerHTML = a[_CPU.PID][opIndex]+ '';
+                            opIndex++;
+                            opCount += 3;
+                        }
+                    }
+                }
+            }
+            else if (memoryIndex == 1) {
+                opIndex += 256;
+                for (var i = 32; i < 64; i++) {
+                    var row = table.getElementsByTagName("tr")[i];
+                    for (var j = 1; j < 9; j++) {
+                        var a = _MemoryManager.getOp(_CPU.PID);
+                        row.getElementsByTagName("td")[j].innerHTML = a[_CPU.PID][opIndex] + '';
+                        opIndex++;
+                    }
+                }
+            }
+            else if (memoryIndex == 2) {
+                opIndex += 512;
+                for (var i = 64; i < 96; i++) {
+                    var row = table.getElementsByTagName("tr")[i];
+                    for (var j = 1; j < 9; j++) {
+                        var a = _MemoryManager.getOp(_CPU.PID);
+                        row.getElementsByTagName("td")[j].innerHTML = a[_CPU.PID][opIndex] + '';
+                        opIndex++;
+                    }
+                }
+            }
         }
  
         public static updateMemoryTable(){

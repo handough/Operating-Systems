@@ -12,6 +12,9 @@ var TSOS;
             this.pidList = pidList;
             this.opIndex = opIndex;
             this.executePid = executePid;
+            if (pidList == void 0) {
+                pidList = [];
+            }
         }
         // clear all memory and displays 
         MemoryManager.prototype.clearAll = function () {
@@ -92,7 +95,7 @@ var TSOS;
                 this.pidList.push(0);
             }
             else {
-                this.pidList.push(this.pidList[_CPU.PID][this.pidList.length - 1] + 1);
+                this.pidList.push(this.pidList[this.pidList.length - 1] + 1);
             }
         };
         // write to memory in memory accessor 

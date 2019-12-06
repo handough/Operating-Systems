@@ -108,11 +108,10 @@
              </tr>
            </tbody>
          </table>
-        </div>
         <script>
             var table = document.getElementById("processMemTable");
             var j = 1;
-              for(var i = 0; i <= 256; i+=8){
+              for(var i = 0; i <= 760; i+=8){
                   var row = table.insertRow(j);
                   var cell1 = row.insertCell(0);
                   var cell2 = row.insertCell(1);
@@ -147,21 +146,22 @@
                   }    
               }
           </script>
+      </div>
      <!-- PCB table display -->
      <div id="divPCB">
-      <label id = "pcbLabel"> Processes </label>
-      <table id = "pcbTable" cellpadding="20">    
-          <tbody>
-            <tr>
-              <th> PID </th>
-              <th> State </th>
-              <th> PC </th>
-              <th> AC </th>
-              <th> IR </th>
-              <th> X </th>
-              <th> Y </th>
-              <th> Z </th>
-              <th> Location </th>
+        <label id = "pcbLabel"> Processes </label>
+        <table id = "pcbTable" cellpadding="20">    
+            <tbody>
+              <tr>
+                <th> PID </th>
+                <th> State </th>
+                <th> PC </th>
+                <th> AC </th>
+                <th> IR </th>
+                <th> X </th>
+                <th> Y </th>
+                <th> Z </th>
+                <th> Location </th>
             </tr>
             <tr>
             </tr>
@@ -170,8 +170,11 @@
       </div>
 
       <div id= "hardDrive">
-        <label id ="hardDriveLabel"> Hard Drive </label>
-        <table id = "hardDriveTable" cellpadding="15">
+        <table id = "hardDriveTable" cellpadding="15"
+                  bgcolor = "white"
+                  style = "color: black"
+                  class = "table table-striped table-bordered"
+                  display: block>
           <tbody>
             <th>TSB</th>
             <th>Data</th>
@@ -181,7 +184,7 @@
             </tr>
           </tbody>
         </table>
-       </div>
+      </div>
 
       <div id="divLog" style="margin-left:520px;">
          <label>
@@ -193,8 +196,8 @@
                       cols="48"
             ></textarea>
          </label>
-      </div>
-   </div>
+    </div>
+
 
    <!-- date and time -->
    <p>Date/Time: <span id="datetime"></span></p>
@@ -218,7 +221,7 @@
                    id  ="taProgramInput"
                    rows="8"
                    cols="48"
-         ></textarea>
+         >A9 00 8D 00 00 A9 00 8D 4B 00 A9 00 8D 4B 00 A2 03 EC 4B 00 D0 07 A2 01 EC 00 00 D0 05 A2 00 EC 00 00 D0 26 A0 4C A2 02 FF AC 4B 00 A2 01 FF A9 01 6D 4B 00 8D 4B 00 A2 02 EC 4B 00 D0 05 A0 55 A2 02 FF A2 01 EC 00 00 D0 C5 00 00 63 6F 75 6E 74 69 6E 67 00 68 65 6C 6C 6F 20 77 6F 72 6C 64 00</textarea>
       </label>
    </div>
 </div>

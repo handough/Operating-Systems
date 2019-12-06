@@ -46,12 +46,12 @@ var _wrap;
 var _StdIn = null;
 var _StdOut = null;
 var _currentPCB = null;
-var _cpuScheduler; //: TSOS.CpuScheduler;
+var _cpuScheduler;
 // UI
 var _Console;
 var _OsShell;
 // OS memory manager
-var _MemoryManager = null;
+var _MemoryManager; //any = null;
 var _PCB;
 // hardware (host)
 var _Memory;

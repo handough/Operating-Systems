@@ -38,6 +38,15 @@ table, th, td{
   overflow-y: scroll;
   display: block;
 }
+#hardDrive{
+  position: relative;
+  color: black;
+  border: 2px solid;
+  height: 200px;
+  width: 675px;
+  overflow-y: scroll;
+  display: block;
+}
 #pcbLabel{
   color: black;
   border: 2px solid;

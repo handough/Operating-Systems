@@ -4,10 +4,6 @@ var TSOS;
         function hardDrive(TSBList) {
             if (TSBList === void 0) { TSBList = []; }
             this.TSBList = TSBList;
-            if (TSBList == void 0) {
-                TSBList = [];
-            }
-            this.TSBList = TSBList;
         }
         hardDrive.prototype.write = function (tsb, data) {
             sessionStorage[tsb] = data;

@@ -119,13 +119,13 @@ var TSOS;
                         _StdOut.putText("No Active Processes");
                     }
                     else if (PID == _PCB.pid) {
-                        _CPU.endProgram();
+                        _CPU.endProgram(PID);
                     }
                     else {
                         for (var i = 0; i < _cpuScheduler.readyQueue.getSize(); i++) {
                             if (_cpuScheduler.readyQueue.q[i].PID == PID) {
-                                _MemoryManager.clearBlock(PID); //Clear memory block
-                                _MemoryManager.executedPID.push(PID); //Increment that this PID has been executed
+                                //_MemoryManager.clearBlock(PID); //Clear memory block
+                                _MemoryManager.executePid.push(PID); //Increment that this PID has been executed
                                 _StdOut.putText("PID: " + PID + " done. Turnaround Time = " + _cpuScheduler.turnAroundTime + ". Wait Time = " + (_cpuScheduler.turnAroundTime - _cpuScheduler.readyQueue.q[i].waitTime));
                                 _cpuScheduler.readyQueue.q[i].clearPCB(); //Clear the PCB
                                 if (_cpuScheduler.readyQueue.q[i].inHDD) {

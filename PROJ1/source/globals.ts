@@ -36,8 +36,8 @@ var _Mode: number = 0;     // (currently unused)  0 = Kernel Mode, 1 = User Mode
 
 var _PID = 0;
 
-var _krnHardDriveDriver;
-var _hardDrive;
+var _krnHardDriveDriver: TSOS.deviceDriverHDD;
+var _hardDrive: TSOS.hardDrive;
 
 var _Canvas: HTMLCanvasElement;          // Initialized in Control.hostInit().
 var _DrawingContext: any;                // = _Canvas.getContext("2d");  // Assigned here for type safety, but re-initialized in Control.hostInit() for OCD and logic.
@@ -64,14 +64,14 @@ var _StdIn:  TSOS.Console = null;
 var _StdOut: TSOS.Console = null;
 
 var _currentPCB = null;
-var _cpuScheduler;//: TSOS.CpuScheduler;
+var _cpuScheduler: TSOS.CpuScheduler;
 
 // UI
 var _Console: TSOS.Console;
 var _OsShell: TSOS.Shell;
 
 // OS memory manager
-var _MemoryManager: any = null;
+var _MemoryManager: TSOS.MemoryManager;//any = null;
 var _PCB: TSOS.ProcessControlBlock;
 
 

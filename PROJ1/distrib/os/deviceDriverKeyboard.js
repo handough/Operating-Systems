@@ -180,13 +180,12 @@ var TSOS;
                 }
                 _KernelInputQueue.enqueue(chr);
             }
-            else if (keyCode == 222) { // '"
-                if (isShifted == true) {
-                    chr = String.fromCharCode(keyCode - 188);
-                }
-                else {
-                    chr = String.fromCharCode(keyCode - 183);
-                }
+            else if (keyCode == 222 && (isShifted == true)) { // '"
+                chr = String.fromCharCode(keyCode - 188);
+                _KernelInputQueue.enqueue(chr);
+            }
+            else if (keyCode == 222) {
+                chr = String.fromCharCode(keyCode - 183);
                 _KernelInputQueue.enqueue(chr);
             }
             else if (((keyCode >= 48) && (keyCode <= 57)) || // digits

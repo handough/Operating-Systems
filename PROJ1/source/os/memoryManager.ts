@@ -5,6 +5,7 @@ module TSOS {
             public pidList = [], 
             public opIndex:number = 0, 
             public executePid = [],){
+                if(pidList == void 0){pidList = []}
         }
         // clear all memory and displays 
         public clearAll(){
@@ -91,7 +92,7 @@ module TSOS {
             if(this.pidList[0] == null){
                 this.pidList.push(0);
             }else{
-                this.pidList.push(this.pidList[_CPU.PID][this.pidList.length - 1] + 1);
+                this.pidList.push(this.pidList[this.pidList.length - 1] + 1);
             }
         }
 
