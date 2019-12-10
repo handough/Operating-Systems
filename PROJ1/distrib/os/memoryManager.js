@@ -68,11 +68,15 @@ var TSOS;
         };
         // writes operation codes to memory
         MemoryManager.prototype.writeOpCode = function (con, addr) {
-            //if(addr > _CPU.limit || addr < _PCB.base){
-            //_StdOut.putText("cannot access that memory!");
-            //}else{
-            _Memory.memory[_CPU.PID][addr] = con;
-            //}
+            // send error if the addr is greater than the limit or less than the base
+            if (addr > _PCB.limit || addr < _PCB.base) {
+                _StdOut.putText("Cannot access that part of memory!");
+            }
+            else {
+                // if the addr is within the base and limit save in mem
+                _Memory.memory[addr] = con;
+                console.log(_Memory.memory[addr]);
+            }
         };
         MemoryManager.prototype.endianAddress = function (addrB, addrE) {
             if (addrB == '00' && addrE == '00') {
@@ -100,6 +104,8 @@ var TSOS;
         };
         // write to memory in memory accessor 
         MemoryManager.prototype.writeToMemory = function (index, op) {
+            // the index is the memory slot in mem
+            // the op is the operations being written to memory
             _MemoryAccessor.write(index, op);
         };
         return MemoryManager;

@@ -173,15 +173,8 @@ var TSOS;
                 for (var i = 0; i < 32; i++) {
                     var row = table.getElementsByTagName("tr")[i];
                     for (var j = 1; j < 9; j++) {
-                        var opCount = 0;
-                        if (opCount + 2 > a.length) {
-                            row.getElementsByTagName("td")[j].innerHTML = '0';
-                        }
-                        else {
-                            row.getElementsByTagName("td")[j].innerHTML = a[_CPU.PID][opIndex] + '';
-                            opIndex++;
-                            opCount += 3;
-                        }
+                        row.getElementsByTagName("td")[j].innerHTML = a[_CPU.PID][opIndex] + '';
+                        opIndex++;
                     }
                 }
             }
@@ -210,8 +203,6 @@ var TSOS;
         };
         Control.updateMemoryTable = function () {
             var table = document.getElementById("pcbTable");
-            //var input = (<HTMLInputElement>document.getElementById("taProgramInput")).value;
-            // _CPU.IR = input.substring(0,3);
             //Display current PCB
             var row = table.insertRow(1);
             var cell1 = row.insertCell(0);
@@ -223,11 +214,11 @@ var TSOS;
             var cell7 = row.insertCell(6);
             var cell8 = row.insertCell(7);
             var cell9 = row.insertCell(8);
-            cell1.innerHTML = _PCB.pid + '';
+            cell1.innerHTML = _CPU.PID + '';
             cell2.innerHTML = _PCB.state + '';
             cell3.innerHTML = _CPU.PC + '';
             cell4.innerHTML = _CPU.Acc + '';
-            cell5.innerHTML = _PCB.IR + '';
+            cell5.innerHTML = _CPU.IR + '';
             cell6.innerHTML = _CPU.Xreg + '';
             cell7.innerHTML = _CPU.Yreg + '';
             cell8.innerHTML = _CPU.Zflag + '';
@@ -245,17 +236,69 @@ var TSOS;
             var table = document.getElementById("pcbTable");
             var row = table.getElementsByTagName("tr")[1];
             row.getElementsByTagName("td")[0].innerHTML = _CPU.PID + '';
-            row.getElementsByTagName("td")[1].innerHTML = "Running";
+            row.getElementsByTagName("td")[1].innerHTML = _PCB.state + '';
             row.getElementsByTagName("td")[2].innerHTML = _CPU.PC + '';
             row.getElementsByTagName("td")[3].innerHTML = _CPU.Acc + '';
             row.getElementsByTagName("td")[4].innerHTML = _CPU.IR;
             row.getElementsByTagName("td")[5].innerHTML = _CPU.Xreg + '';
             row.getElementsByTagName("td")[6].innerHTML = _CPU.Yreg + '';
             row.getElementsByTagName("td")[7].innerHTML = _CPU.Zflag + '';
-            row.getElementsByTagName("td")[8].innerHTML = 'Memory';
+            if (_PCB.inHDD) {
+                row.getElementsByTagName("td")[8].innerHTML = 'Hard Drive';
+            }
+            else {
+                row.getElementsByTagName("td")[8].innerHTML = 'Memory';
+            }
             _PCB.getBase(_CPU.PID);
             _PCB.getLimit(_CPU.PID);
             _PCB.getPart(_CPU.PID);
+        };
+        Control.clearBlock = function (pidder) {
+            // pidder is the current PID sent from the CPU
+            var index = -1; // starting index used to clear block
+            // looping through all of the pid loc in mem
+            for (var i = 0; i < _MemoryManager.pidLoc.length; i++) {
+                // if the current pidLoc == the PID that is being cleared 
+                if (_MemoryManager.pidLoc[i] == pidder) {
+                    var table = document.getElementById("processMemTable");
+                    if (i == 0) { // if i == 0 clear pidLoc[0] position 
+                        _MemoryManager.pidLoc[0] = -1; // clear the PID locs
+                        _MemoryManager.memoryUsed[0] = 0; // clear the used mem
+                        index = 0; // used to clear block
+                        for (var i = 0; i < 32; i++) {
+                            var row = table.getElementsByTagName("tr")[i];
+                            for (var j = 1; j < 9; j++) {
+                                row.getElementsByTagName("td")[j].innerHTML = '0';
+                            }
+                        }
+                    }
+                    else if (i == 1) { // if i == 1 clear pidLoc[1] position
+                        _MemoryManager.pidLoc[1] = -1; // clear the PID locs
+                        _MemoryManager.memoryUsed[1] = 0; // clear the used mem
+                        index = 1; // used to clear block
+                        for (var i = 32; i < 64; i++) {
+                            var row = table.getElementsByTagName("tr")[i];
+                            for (var j = 1; j < 9; j++) {
+                                row.getElementsByTagName("td")[j].innerHTML = '0';
+                            }
+                        }
+                    }
+                    else if (i == 2) { // if i == 2 clear pidLoc[2] position
+                        _MemoryManager.pidLoc[2] = -1; // clear the PID locs
+                        _MemoryManager.memoryUsed[2] = 0; // clear the used mem
+                        index = 2; // used to clear block
+                        for (var i = 64; i < 96; i++) {
+                            var row = table.getElementsByTagName("tr")[i];
+                            for (var j = 1; j < 9; j++) {
+                                row.getElementsByTagName("td")[j].innerHTML = '0';
+                            }
+                        }
+                    }
+                    break;
+                }
+            }
+            // erase memory at the indexes position 
+            _Memory.eraseBlock(index);
         };
         Control.createHDDTable = function () {
             var table = document.getElementById("hardDriveTable");
@@ -288,6 +331,8 @@ var TSOS;
                 block++;
                 x++;
             }
+        };
+        Control.displayReadyQueue = function () {
         };
         return Control;
     }());

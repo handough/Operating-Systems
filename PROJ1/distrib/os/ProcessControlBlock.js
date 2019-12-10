@@ -46,8 +46,15 @@ var TSOS;
             this.state = 'TERMINATED';
             var table = document.getElementById("pcbTable");
             table.deleteRow(this.rowNum);
-            if (_cpuScheduler.RR) {
-                _cpuScheduler.deIncrementRowNum();
+            if (_cpuScheduler.fcfs) {
+                table.deleteRow(1);
+            }
+            else {
+                table.deleteRow(this.rowNum);
+                // if there are several PCB
+                if (_cpuScheduler.RR) {
+                    _cpuScheduler.deIncrementRowNum();
+                }
             }
         };
         ProcessControlBlock.prototype.getPID = function () {

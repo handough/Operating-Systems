@@ -33,7 +33,7 @@ table, th, td{
   position: relative;
   color: black;
   border: 2px solid;
-  height: 150px;
+  height:200px;
   width: 700px;
   overflow-y: scroll;
   display: block;

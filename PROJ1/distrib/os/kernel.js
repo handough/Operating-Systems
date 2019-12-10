@@ -114,11 +114,11 @@ var TSOS;
                     break;
                 case KILL_IRQ:
                     var PID = params;
-                    //If nothing is running then print no active process
+                    // if there is nothing running print no running process error
                     if (_CPU.isExecuting == false) {
                         _StdOut.putText("No Active Processes");
                     }
-                    else if (PID == _PCB.pid) {
+                    else if (PID == _CPU.PID) {
                         _CPU.endProgram(PID);
                     }
                     else {
@@ -212,15 +212,15 @@ var TSOS;
                         row.getElementsByTagName("td")[8].innerHTML = 'Hard Drive';
                     }
                 }
-                _MemoryManager.writeToMemory(0, op);
-                _MemoryManager.pidLoc[0] = _CPU.PID;
-                //_CPU.inHDD = false; * need to check this
+                _MemoryManager.writeToMemory(index, op);
+                _MemoryManager.pidLoc[index] = _CPU.PID;
+                _PCB.inHDD = false;
             }
             else {
                 // write all ops to memory
                 _MemoryManager.writeToMemory(index, op);
                 _MemoryManager.pidLoc[0] = _CPU.PID;
-                //_CPU.inHDD = false;
+                _PCB.inHDD = false;
             }
         };
         return Kernel;

@@ -21,7 +21,7 @@ var TSOS;
         MemoryAccessor.prototype.write = function (memSlot, op) {
             var opArray = new Array(op.toString().split(" "));
             var opCount = 0;
-            if (memSlot == 0) {
+            if (memSlot == 0) { // if the ops are being written to the first part of memory 
                 for (var i = 0; i < 256; i++) {
                     if (i == opArray.length) {
                         this.memory[i] = -1;
@@ -31,7 +31,7 @@ var TSOS;
                     opCount++;
                 }
             }
-            else if (memSlot == 1) {
+            else if (memSlot == 1) { // if the ops are being written to the second part of memory 
                 for (var i = 256; i < 512; i++) {
                     if (opCount == opArray.length) {
                         this.memory[i] = -1;
@@ -41,7 +41,7 @@ var TSOS;
                     opCount++;
                 }
             }
-            else if (memSlot == 2) {
+            else if (memSlot == 2) { // if the ops are being written to the third part of memory 
                 for (var i = 512; i < 768; i++) {
                     if (opCount == opArray.length) {
                         this.memory[i] = -1;

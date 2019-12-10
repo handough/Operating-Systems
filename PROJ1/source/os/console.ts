@@ -41,15 +41,12 @@
                         // ... and reset our buffer.
                         this.buffer = "";
                     }else if(chr == String.fromCharCode(8)){ // backspace
-                        this.backSpace(this.buffer);
+                        this.backSpace();
                     }
-                    else if(chr === String.fromCharCode(9)){ // the tab key
-                        // tab marks the end of a command
-                        _OsShell.handleInput(this.buffer); 
-                        // reset the buffer
-                        this.buffer = ""; 
+                    else if(chr == String.fromCharCode(9)){ // the tab key
+                        this.commandRecall(chr);
                     }else if(chr === String.fromCharCode(38)){
-                        this.commandRecall(this.buffer);
+                        this.commandRecall(chr);
                     }
                     else {
                     // This is a "normal" character, so ...
@@ -101,17 +98,23 @@
                 _Canvas.getContext("2d").putImageData(img, 0, - move); // re prints canvas 
             }
     
-            public backSpace(text): void{
-                var backSpace = text.split(''); // adds characters to an array of substrings
-                backSpace.pop(); // removes last char from array
-                _OsShell.shellCls(text); // clears screen and input - clears full screen still
-                _OsShell.putPrompt(); // shell prompt command to enter strings
-                this.buffer = backSpace.join(""); // returns array as a string
-                _StdOut.putText(this.buffer);
+            public backSpace(): void{
+                if (this.currentXPosition <= 0) {
+                    this.currentXPosition = _WrapLinePos[_WrapLinePos.length - 1].X;
+                    this.currentYPosition = _WrapLinePos[_WrapLinePos.length - 1].Y;
+                    _WrapLinePos.pop();
+                }
+                var lastCharacterLine = this.buffer[this.buffer.length - 1];
+                var xos = _DrawingContext.measureText(this.currentFont, this.currentFontSize, lastCharacterLine);
+                this.currentXPosition = this.currentXPosition - xos;
+                // redrawing the input in correct position 
+                _DrawingContext.clearRect(this.currentXPosition, this.currentYPosition - _DefaultFontSize, this.currentXPosition + xos, this.currentYPosition + _DrawingContext.fontDescent(this.currentFont, this.currentFontSize));
+                // actually doing the backspace 
+                this.buffer = this.buffer.slice(0, -1);
             }
 
             public lineWrap(){
-                _wrap.pus({ X: this.currentXPosition, Y: this.currentYPosition});
+                _WrapLinePos.push({ X: this.currentXPosition, Y: this.currentYPosition });
                 this.advanceLine();
                 this.currentXPosition = 0;
             }

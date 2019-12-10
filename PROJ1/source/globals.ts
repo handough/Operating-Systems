@@ -57,8 +57,6 @@ var KILL_IRQ = 6;
 var CONTEXT_SWITCH_IRQ;
 var SYSTEM_CALL_IRQ;
 
-var _wrap;
-
 // Standard input and output
 var _StdIn:  TSOS.Console = null; 
 var _StdOut: TSOS.Console = null;
@@ -74,6 +72,16 @@ var _OsShell: TSOS.Shell;
 var _MemoryManager: TSOS.MemoryManager;//any = null;
 var _PCB: TSOS.ProcessControlBlock;
 
+var _WrapLinePos = [];
+
+// variable for tab 
+var _ShellCommandList;
+var _TabList = _ShellCommandList;
+var _TabIndex = -1;
+
+// up and down keys
+var _CommandList = [];
+var _CommandIndex = 0;
 
 // hardware (host)
 var _Memory: TSOS.Memory;

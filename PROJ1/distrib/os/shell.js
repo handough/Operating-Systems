@@ -90,7 +90,7 @@ var TSOS;
             sc = new TSOS.ShellCommand(this.shellTrace, "trace", "<on | off> - Turns the OS trace on or off.");
             this.commandList[this.commandList.length] = sc;
             // runs all user programs
-            sc = new TSOS.ShellCommand(this.shellRunAll, "runAll", "- runs all user programs");
+            sc = new TSOS.ShellCommand(this.shellRunAll, "runall", "- runs all user programs");
             this.commandList[this.commandList.length] = sc;
             // rot13 <string>
             sc = new TSOS.ShellCommand(this.shellRot13, "rot13", "<string> - Does rot13 obfuscation on <string>.");
@@ -386,36 +386,43 @@ var TSOS;
         };
         // run all processes 
         Shell.prototype.shellRunAll = function () {
-            // round robin scheduling 
-            if (!_cpuScheduler.RR) {
+            // default algorithm round robin 
+            if (!_cpuScheduler.RR && !_cpuScheduler.fcfs && !_cpuScheduler.priority) {
                 _cpuScheduler.RR = true;
+                _cpuScheduler.fcfs = false;
+                _cpuScheduler.priority = false;
                 _cpuScheduler.quantum = 6;
             }
-            // if it is one, just perform a single run
-            var singleRun = 0;
+            // single run for only one program 
+            var singleRunCounter = 0;
             var index = 0;
             for (var i = 0; i < _cpuScheduler.residentList.length; i++) {
-                if (_cpuScheduler.residentList[i].state) {
-                    singleRun++;
+                // if the resident list is empty 
+                if (_cpuScheduler.residentList[i].State == '') {
+                    singleRunCounter++;
                     index = i;
                 }
             }
-            if (singleRun == 1) {
+            if (singleRunCounter == 1) {
                 this.shellRun(_cpuScheduler.residentList[index].PID);
             }
             else {
+                // initially x is set to false
                 var x = false;
                 for (var i = 0; i < _cpuScheduler.residentList.length; i++) {
+                    // if the resident list is emptu 
                     if (_cpuScheduler.residentList[i].state == '') {
                         x = true;
                     }
                 }
+                // checking if any programs can be run 
                 if (x) {
-                    _cpuScheduler.loadReadyQueue();
-                    _CPU.isExecuting = true; // execute cpu to true
+                    _cpuScheduler.loadReadyQueue(); // loading the ready queue 
+                    _CPU.isExecuting = true; // set the cpu to executing 
                 }
                 else {
-                    _StdOut.putText("No programs loaded to execute.");
+                    // if there aree no programs to execute send an error 
+                    _StdOut.putText("No programs to execute");
                 }
             }
         };
@@ -443,15 +450,15 @@ var TSOS;
                 }
                 else {
                     // change pcb to one in resident list
+                    /**
                     for (var i = 0; i < _cpuScheduler.residentList.length; i++) {
                         if (_cpuScheduler.residentList[i].PID == parseInt(pidString)) {
                             _PCB = _cpuScheduler.residentList[i];
                             break;
                         }
-                    }
+                    }*/
                     _PCB.state = "Ready";
                     TSOS.Control.updateMemoryTable();
-                    //_PCB.displayPCB();
                     // check if mem or HDD is being used 
                     if (_PCB.inHDD) {
                         _Kernel.krnSwap();
@@ -558,7 +565,7 @@ var TSOS;
                                     // increment PID
                                     _MemoryManager.pidReturn();
                                     var PID = _MemoryManager.pidList[_MemoryManager.pidList.length - 1]; //Naming purposes
-                                    var newFileName = 'process' + PID.toString();
+                                    var newFileName = 'filePID' + PID.toString();
                                     _krnHardDriveDriver.krnHDDCreateFile(newFileName);
                                     // actually writting to the file
                                     _krnHardDriveDriver.krnHDDWriteFile(newFileName, op);
@@ -708,7 +715,7 @@ var TSOS;
                     case "delete":
                         _StdOut.putText("Delete a file.");
                         break;
-                    case "runAll":
+                    case "runall":
                         _StdOut.putText("runs all user programs");
                         break;
                     case "format":

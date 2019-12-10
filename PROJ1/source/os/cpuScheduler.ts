@@ -25,12 +25,15 @@ module TSOS {
                     this.turnAroundTime = 0;   
                     this.clearMem();
                 }else{
-                    if(_CPU.isExecuting == true){
+                    if (_PCB.state != "TERMINATED") {
+                        _PCB.state = "Ready";
+                        TSOS.Control.displayPCB();
                         this.readyQueue.enqueue(_PCB);
                     }
                     _PCB = this.readyQueue.dequeue();
-                    //_PCB.state = "Running";
-                    if(_PCB.inHDD){
+                    _PCB.state = "Running";
+                    // must swap if in HDD
+                    if (_PCB.inHDD) {
                         _Kernel.krnSwap();
                     }
                 }
@@ -41,11 +44,12 @@ module TSOS {
             var rowCounter = 1; // keeps track of the row the PCB is being displayed in ready queue
             for(var i = 0; i < this.residentList.length; i++){
                 if(this.residentList[i].state != "TERMINATED"){
-                    if(!this.fcfs && ! this.priority){
+                    if(!this.fcfs && !this.priority){
                         this.residentList[i].rowNum = rowCounter;
                     }else{
                         this.residentList[i].rowNum  = 1;
                     }
+                    console.log('in cpuschc loadredq ' + this.residentList[i]);
                     this.readyQueue.enqueue(this.residentList[i]);
                     rowCounter++; // increment row counter for each loop
                 }
@@ -57,37 +61,37 @@ module TSOS {
             _PCB.state = "Running"; // set PCB state to running 
             if(_PCB.inHDD){
                 _Kernel.krnSwap();
-            }
-            
+            }  
         }
 
         public sortReadyQueue(){
-            var PCBB = [];
+            var PCBer = [];
             var pri = [];
-            var fixLen = this.readyQueue.getSize();
-            // dequeue the ready queue into an array
-            for(var i = 0; i < fixLen; i++){
-                var PCBBB = this.readyQueue.dequeue();
-                PCBB.push(PCBBB);
-                pri.push(this.priority);
+            var fixedSize = this.readyQueue.getSize();
+            // put ready queue into array 
+            for (var i = 0; i < fixedSize; i++) {
+                var PCB = this.readyQueue.dequeue();
+                PCBer.push(PCB);
+                pri.push(PCB.priority);
             }
             var sortPCB = [];
+            // sort list
             pri = pri.sort();
-            // sort PCB based on priority
-            for(var x = 0; x < fixLen; x++){
-                var prio = pri[i];
-                for(var r = 0; r < PCBB.length; r++){
-                    if(PCBB[r].priority == prio){
-                        sortPCB.push(PCBB.splice(r,1));
+            // sort based on priority 
+            for (var i = 0; i < fixedSize; i++) {
+                var priority = pri[i];
+                for (var j = 0; j < PCBer.length; j++) {
+                    if (PCBer[j].priority == priority) {
+                        sortPCB.push(PCBer.splice(j, 1));
                     }
                 }
             }
-            // changing row number to display the sorted PCBs
-            for(var j = 0; j < sortPCB.length; j++){
-                sortPCB[j][0].rowNum = i + 1;
+            // change row number
+            for (var i = 0; i < sortPCB.length; i++) {
+                sortPCB[i][0].rowNumber = i + 1;
             }
-            for(var i = 0; i < sortPCB.length; i++){
-                this.readyQueue.enqueue(sortPCB[i[0]]);
+            for (var i = 0; i < sortPCB.length; i++) {
+                this.readyQueue.enqueue(sortPCB[i][0]);
             }
         }
 
