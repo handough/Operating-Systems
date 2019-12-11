@@ -89,6 +89,43 @@ var TSOS;
             }
             return opArray;
         };
+        MemoryAccessor.prototype.writeOpCode = function (memSlot, op, pos, array) {
+            var ops = new Array(array.toString().split(" "));
+            var opCount = 0;
+            if (memSlot == 0) { // if the ops are being written to the first part of memory 
+                for (var i = 0; i < 256; i++) {
+                    if (i == ops.length) {
+                        this.memory[i] = -1;
+                        break;
+                    }
+                    else if (i == pos) {
+                        this.memory[i] = op;
+                        break;
+                    }
+                    this.memory[i] = ops[opCount];
+                    opCount++;
+                }
+                console.log(this.memory[i]);
+            }
+            else if (memSlot == 1) { // if the ops are being written to the second part of memory 
+                for (var i = 256; i < 512; i++) {
+                    if (opCount == pos) {
+                        this.memory[i] = op;
+                        break;
+                    }
+                    opCount++;
+                }
+            }
+            else if (memSlot == 2) { // if the ops are being written to the third part of memory 
+                for (var i = 512; i < 768; i++) {
+                    if (opCount == pos) {
+                        this.memory[i] = op;
+                        break;
+                    }
+                    opCount++;
+                }
+            }
+        };
         return MemoryAccessor;
     }(TSOS.Memory));
     TSOS.MemoryAccessor = MemoryAccessor;

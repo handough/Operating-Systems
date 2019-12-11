@@ -214,7 +214,7 @@ var TSOS;
             var cell7 = row.insertCell(6);
             var cell8 = row.insertCell(7);
             var cell9 = row.insertCell(8);
-            cell1.innerHTML = _CPU.PID + '';
+            cell1.innerHTML = _PCB.pid + '';
             cell2.innerHTML = _PCB.state + '';
             cell3.innerHTML = _CPU.PC + '';
             cell4.innerHTML = _CPU.Acc + '';
@@ -235,7 +235,7 @@ var TSOS;
         Control.displayPCB = function () {
             var table = document.getElementById("pcbTable");
             var row = table.getElementsByTagName("tr")[1];
-            row.getElementsByTagName("td")[0].innerHTML = _CPU.PID + '';
+            row.getElementsByTagName("td")[0].innerHTML = _PCB.pid + '';
             row.getElementsByTagName("td")[1].innerHTML = _PCB.state + '';
             row.getElementsByTagName("td")[2].innerHTML = _CPU.PC + '';
             row.getElementsByTagName("td")[3].innerHTML = _CPU.Acc + '';

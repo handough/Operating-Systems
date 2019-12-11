@@ -58,14 +58,14 @@ var TSOS;
                         this.residentList[i].rowNum = 1;
                     }
                     console.log('in cpuschc loadredq ' + this.residentList[i]);
-                    this.readyQueue.enqueue(this.residentList[i]);
+                    //this.readyQueue.enqueue(this.residentList[i]);
                     rowCounter++; // increment row counter for each loop
                 }
             }
             if (this.priority) {
                 this.sortReadyQueue();
             }
-            _PCB = this.readyQueue.dequeue();
+            //_PCB = this.readyQueue.dequeue();
             _PCB.state = "Running"; // set PCB state to running 
             if (_PCB.inHDD) {
                 _Kernel.krnSwap();
