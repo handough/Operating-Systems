@@ -5,7 +5,7 @@ var TSOS;
             if (quantum === void 0) { quantum = 6; }
             if (residentList === void 0) { residentList = []; }
             if (count === void 0) { count = 1; }
-            if (readyQueue === void 0) { readyQueue = null; }
+            if (readyQueue === void 0) { readyQueue = new TSOS.Queue; }
             if (turnAroundTime === void 0) { turnAroundTime = 0; }
             if (RR === void 0) { RR = false; }
             if (fcfs === void 0) { fcfs = false; }
@@ -57,15 +57,14 @@ var TSOS;
                     else {
                         this.residentList[i].rowNum = 1;
                     }
-                    console.log('in cpuschc loadredq ' + this.residentList[i]);
-                    //this.readyQueue.enqueue(this.residentList[i]);
+                    this.readyQueue.enqueue(this.residentList[i]);
                     rowCounter++; // increment row counter for each loop
                 }
             }
             if (this.priority) {
                 this.sortReadyQueue();
             }
-            //_PCB = this.readyQueue.dequeue();
+            _PCB = this.readyQueue.dequeue();
             _PCB.state = "Running"; // set PCB state to running 
             if (_PCB.inHDD) {
                 _Kernel.krnSwap();
@@ -101,13 +100,13 @@ var TSOS;
                 this.readyQueue.enqueue(sortPCB[i][0]);
             }
         };
-        CpuScheduler.prototype.checkCount = function (params) {
+        CpuScheduler.prototype.checkCount = function () {
             if (this.count < this.quantum) {
                 this.count++;
             }
             else {
                 this.count = 1;
-                _KernelInputQueue.enqueue(new TSOS.Interrupt(CONTEXT_SWITCH_IRQ, params));
+                _KernelInputQueue.enqueue(new TSOS.Interrupt(CONTEXT_SWITCH_IRQ, 'Scheduling Event'));
             }
         };
         CpuScheduler.prototype.deIncrementRowNum = function () {
@@ -116,7 +115,7 @@ var TSOS;
                     this.readyQueue.q[i].rowNum -= 1;
                 }
             }
-            if (_CPU.PID > 1) {
+            if (_PCB.pid > 1) {
                 _PCB.rowNum -= 1;
             }
         };

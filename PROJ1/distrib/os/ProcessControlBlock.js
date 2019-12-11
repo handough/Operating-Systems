@@ -84,8 +84,8 @@ var TSOS;
             this.Z = _CPU.Zflag;
             return _CPU.Zflag;
         };
-        ProcessControlBlock.prototype.getBase = function (pid) {
-            var index = _MemoryManager.memIndex(pid);
+        ProcessControlBlock.prototype.getBase = function (op) {
+            var index = _MemoryManager.memIndex(op);
             if (index == 0) {
                 this.base = 0;
                 return 0;
@@ -98,9 +98,12 @@ var TSOS;
                 this.base = 512;
                 return 512;
             }
+            else {
+                return;
+            }
         };
-        ProcessControlBlock.prototype.getLimit = function (pid) {
-            var index = _MemoryManager.memIndex(pid);
+        ProcessControlBlock.prototype.getLimit = function (op) {
+            var index = _MemoryManager.memIndex(op);
             if (index == 0) {
                 this.limit = 256;
                 return 256;
@@ -112,6 +115,9 @@ var TSOS;
             else if (index == 2) {
                 this.limit = 768;
                 return 768;
+            }
+            else {
+                return;
             }
         };
         ProcessControlBlock.prototype.getPart = function (pid) {

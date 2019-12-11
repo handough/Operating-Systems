@@ -51,11 +51,11 @@ module TSOS {
                 }
             }
         }
-
+/** 
         // returns OP codes from memory
         public getVariable(index){
             return _Memory.memory[_CPU.PID][index];
-        }
+        }*/
 
         // returns OP codes from memory
         public getOp(index){
@@ -70,7 +70,6 @@ module TSOS {
             }else{
                 // if the addr is within the base and limit save in mem
                 _Memory.memory[addr] = con;
-                console.log(_Memory.memory[addr])
             }
         }
 

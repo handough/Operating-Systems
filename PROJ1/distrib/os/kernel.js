@@ -118,8 +118,8 @@ var TSOS;
                     if (_CPU.isExecuting == false) {
                         _StdOut.putText("No Active Processes");
                     }
-                    else if (PID == _CPU.PID) {
-                        _CPU.endProgram(PID);
+                    else if (PID == _PCB.pid) {
+                        _CPU.endProgram();
                     }
                     else {
                         for (var i = 0; i < _cpuScheduler.readyQueue.getSize(); i++) {
@@ -195,8 +195,8 @@ var TSOS;
             this.krnShutdown();
         };
         Kernel.prototype.krnSwap = function () {
-            var op = _krnHardDriveDriver.krnHDDReadFile('process' + _CPU.PID); //Get op codes from file
-            _krnHardDriveDriver.krnHDDDeleteFile('process' + _CPU.PID); //Delete the file
+            var op = _krnHardDriveDriver.krnHDDReadFile('process' + _PCB.pid); //Get op codes from file
+            _krnHardDriveDriver.krnHDDDeleteFile('process' + _PCB.pid); //Delete the file
             var index = TSOS.Control.displayProcMem(op);
             if (index == -1) {
                 var opMemArray = _MemoryManager.getOp(0);
@@ -213,13 +213,13 @@ var TSOS;
                     }
                 }
                 _MemoryManager.writeToMemory(index, op);
-                _MemoryManager.pidLoc[index] = _CPU.PID;
+                _MemoryManager.pidLoc[index] = _PCB.pid;
                 _PCB.inHDD = false;
             }
             else {
                 // write all ops to memory
                 _MemoryManager.writeToMemory(index, op);
-                _MemoryManager.pidLoc[0] = _CPU.PID;
+                _MemoryManager.pidLoc[0] = _PCB.pid;
                 _PCB.inHDD = false;
             }
         };

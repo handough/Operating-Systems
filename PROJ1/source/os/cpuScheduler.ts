@@ -3,7 +3,7 @@ module TSOS {
         constructor(public quantum: number = 6,              
                     public residentList: any = [],
                     public count: number = 1,
-                    public readyQueue: TSOS.Queue = null,
+                    public readyQueue: TSOS.Queue = new Queue,
                     public turnAroundTime: number = 0,
                     public RR: boolean = false,
                     public fcfs: boolean = false,
@@ -49,15 +49,14 @@ module TSOS {
                     }else{
                         this.residentList[i].rowNum  = 1;
                     }
-                    console.log('in cpuschc loadredq ' + this.residentList[i]);
-                    //this.readyQueue.enqueue(this.residentList[i]);
+                    this.readyQueue.enqueue(this.residentList[i]);
                     rowCounter++; // increment row counter for each loop
                 }
             }
             if(this.priority){
                 this.sortReadyQueue();
             }
-            //_PCB = this.readyQueue.dequeue();
+            _PCB = this.readyQueue.dequeue();
             _PCB.state = "Running"; // set PCB state to running 
             if(_PCB.inHDD){
                 _Kernel.krnSwap();
@@ -95,12 +94,12 @@ module TSOS {
             }
         }
 
-        public checkCount(params){
+        public checkCount(){
             if(this.count < this.quantum){
                 this.count++;
             }else{
                 this.count = 1;
-                _KernelInputQueue.enqueue(new TSOS.Interrupt(CONTEXT_SWITCH_IRQ,params));
+                _KernelInputQueue.enqueue(new TSOS.Interrupt(CONTEXT_SWITCH_IRQ,'Scheduling Event'));
             }
         }
 
@@ -110,7 +109,7 @@ module TSOS {
                     this.readyQueue.q[i].rowNum -= 1;
                 }
             }
-            if(_CPU.PID > 1){
+            if(_PCB.pid > 1){
                 _PCB.rowNum -= 1;
             }
         }

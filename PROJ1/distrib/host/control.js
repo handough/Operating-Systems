@@ -173,7 +173,7 @@ var TSOS;
                 for (var i = 0; i < 32; i++) {
                     var row = table.getElementsByTagName("tr")[i];
                     for (var j = 1; j < 9; j++) {
-                        row.getElementsByTagName("td")[j].innerHTML = a[_CPU.PID][opIndex] + '';
+                        row.getElementsByTagName("td")[j].innerHTML = a[opIndex] + '';
                         opIndex++;
                     }
                 }
@@ -184,7 +184,7 @@ var TSOS;
                     var row = table.getElementsByTagName("tr")[i];
                     for (var j = 1; j < 9; j++) {
                         var a = _MemoryManager.getOp(_CPU.PID);
-                        row.getElementsByTagName("td")[j].innerHTML = a[_CPU.PID][opIndex] + '';
+                        row.getElementsByTagName("td")[j].innerHTML = a[opIndex] + '';
                         opIndex++;
                     }
                 }
@@ -195,7 +195,7 @@ var TSOS;
                     var row = table.getElementsByTagName("tr")[i];
                     for (var j = 1; j < 9; j++) {
                         var a = _MemoryManager.getOp(_CPU.PID);
-                        row.getElementsByTagName("td")[j].innerHTML = a[_CPU.PID][opIndex] + '';
+                        row.getElementsByTagName("td")[j].innerHTML = a[opIndex] + '';
                         opIndex++;
                     }
                 }
@@ -204,7 +204,7 @@ var TSOS;
         Control.updateMemoryTable = function () {
             var table = document.getElementById("pcbTable");
             //Display current PCB
-            var row = table.insertRow(1);
+            var row = table.insertRow(_PCB.rowNum);
             var cell1 = row.insertCell(0);
             var cell2 = row.insertCell(1);
             var cell3 = row.insertCell(2);
@@ -228,13 +228,13 @@ var TSOS;
             else {
                 cell9.innerHTML = "Memory";
             }
-            _PCB.getBase(_CPU.PID);
-            _PCB.getLimit(_CPU.PID);
-            _PCB.getPart(_CPU.PID);
+            _PCB.getBase(_PCB.pid);
+            _PCB.getLimit(_PCB.pid);
+            _PCB.getPart(_PCB.pid);
         };
         Control.displayPCB = function () {
             var table = document.getElementById("pcbTable");
-            var row = table.getElementsByTagName("tr")[1];
+            var row = table.getElementsByTagName("tr")[_PCB.rowNum];
             row.getElementsByTagName("td")[0].innerHTML = _PCB.pid + '';
             row.getElementsByTagName("td")[1].innerHTML = _PCB.state + '';
             row.getElementsByTagName("td")[2].innerHTML = _CPU.PC + '';
@@ -331,8 +331,6 @@ var TSOS;
                 block++;
                 x++;
             }
-        };
-        Control.displayReadyQueue = function () {
         };
         return Control;
     }());

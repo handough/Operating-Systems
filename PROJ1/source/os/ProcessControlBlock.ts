@@ -76,8 +76,8 @@ module TSOS{
             return _CPU.Zflag;
         }
 
-        public getBase(pid){
-            var index = _MemoryManager.memIndex(pid);
+        public getBase(op){
+            var index = _MemoryManager.memIndex(op);
             if(index == 0){
                 this.base = 0;
                 return 0;
@@ -87,11 +87,13 @@ module TSOS{
             }else if(index == 2){
                 this.base = 512;
                 return 512;
+            }else{
+                return;
             }
         }
 
-        public getLimit(pid){
-            var index = _MemoryManager.memIndex(pid);
+        public getLimit(op){
+            var index = _MemoryManager.memIndex(op);
             if(index == 0){
                 this.limit = 256;
                 return 256;
@@ -101,6 +103,8 @@ module TSOS{
             }else if(index == 2){
                 this.limit = 768;
                 return 768;
+            }else{
+                return;
             }
         }
 

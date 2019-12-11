@@ -398,7 +398,7 @@ var TSOS;
             var index = 0;
             for (var i = 0; i < _cpuScheduler.residentList.length; i++) {
                 // if the resident list is empty 
-                if (_cpuScheduler.residentList[i].State == '') {
+                if (_cpuScheduler.residentList[i].state == '') {
                     singleRunCounter++;
                     index = i;
                 }
@@ -427,6 +427,7 @@ var TSOS;
             }
         };
         Shell.prototype.shellRun = function (params) {
+            //_PCB.pid = params; 
             var pidString = '';
             for (var i = 0; i < params.length; i++) {
                 pidString += params[i];
@@ -450,13 +451,12 @@ var TSOS;
                 }
                 else {
                     // change pcb to one in resident list
-                    /**
                     for (var i = 0; i < _cpuScheduler.residentList.length; i++) {
                         if (_cpuScheduler.residentList[i].PID == parseInt(pidString)) {
                             _PCB = _cpuScheduler.residentList[i];
                             break;
                         }
-                    }*/
+                    }
                     _PCB.state = "Ready";
                     TSOS.Control.updateMemoryTable();
                     // check if mem or HDD is being used 
@@ -565,6 +565,7 @@ var TSOS;
                                     // increment PID
                                     _MemoryManager.pidReturn();
                                     var PID = _MemoryManager.pidList[_MemoryManager.pidList.length - 1]; //Naming purposes
+                                    _PCB.pid = PID;
                                     var newFileName = 'filePID' + PID.toString();
                                     _krnHardDriveDriver.krnHDDCreateFile(newFileName);
                                     // actually writting to the file
@@ -592,6 +593,7 @@ var TSOS;
                                     _StdOut.putText("Program loaded. PID " + (PID));
                                 }
                                 else {
+                                    _PCB.pid = index;
                                     // write ops to mem
                                     _MemoryManager.writeToMemory(index, op);
                                     _MemoryManager.pidReturn();
@@ -636,7 +638,7 @@ var TSOS;
         // kill all active processes
         Shell.prototype.shellKill = function (params) {
             var PID = parseInt(params); // gets the PID as int
-            _KernelInputQueue.enqueue(new TSOS.Interrupt(KILL_IRQ, params));
+            _KernelInputQueue.enqueue(new TSOS.Interrupt(KILL_IRQ, PID));
         };
         Shell.prototype.shellClearMem = function () {
             if (_CPU.isExecuting) {
