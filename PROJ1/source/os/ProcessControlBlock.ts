@@ -10,7 +10,7 @@ module TSOS{
                     public part: number = 0,
                     public pid: number = 0, 
                     public IR: string = '',  
-                    public rowNum: number = 0,
+                    public rowNum: number = 1,
                     public state: string = "",
                     public inHDD: boolean = false){
                         if(rowNum == void 0){rowNum = 1;}
@@ -29,12 +29,12 @@ module TSOS{
             // clearPCB terminates the cpu scheduler process
             this.state = 'TERMINATED';
             var table = <HTMLTableElement>document.getElementById("pcbTable");
-            table.deleteRow(this.rowNum);
+            //table.deleteRow(this.rowNum);
             if (_cpuScheduler.fcfs) {
                 table.deleteRow(1);
             }
             else {
-                table.deleteRow(this.rowNum);
+                //table.deleteRow(this.rowNum);
                 // if there are several PCB
                 if (_cpuScheduler.RR) {
                     _cpuScheduler.deIncrementRowNum();

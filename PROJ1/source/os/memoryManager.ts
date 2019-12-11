@@ -4,7 +4,8 @@ module TSOS {
             public memoryUsed = [0,0,0], 
             public pidList = [], 
             public opIndex:number = 0, 
-            public executePid = [],){
+            public executePid = [],
+            public pidder = []){
                 if(pidList == void 0){pidList = []}
         }
         // clear all memory and displays 

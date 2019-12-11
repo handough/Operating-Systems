@@ -483,6 +483,7 @@ module TSOS {
 
         // run all processes 
         public shellRunAll(){
+            _runAll = true;
             // default algorithm round robin 
             if (!_cpuScheduler.RR && !_cpuScheduler.fcfs && !_cpuScheduler.priority) {
                 _cpuScheduler.RR = true;
@@ -525,7 +526,7 @@ module TSOS {
         }
 
         public shellRun(params){  
-            //_PCB.pid = params; 
+            _Runner = params; 
             var pidString = '';
             for (var i = 0; i < params.length; i++) {
                 pidString += params[i];
@@ -662,6 +663,7 @@ module TSOS {
                                     _MemoryManager.pidReturn(); 
                                     var PID = _MemoryManager.pidList[_MemoryManager.pidList.length - 1]; //Naming purposes
                                     _PCB.pid = PID;
+                                    _MemoryManager.pidder.push(_PCB.pid);
                                     var newFileName = 'filePID' + PID.toString();
                                     _krnHardDriveDriver.krnHDDCreateFile(newFileName);
                                     // actually writting to the file
@@ -690,6 +692,7 @@ module TSOS {
                                 }
                                 else {
                                     _PCB.pid = index;
+                                    _MemoryManager.pidder.push(_PCB.pid);
                                     // write ops to mem
                                     _MemoryManager.writeToMemory(index, op); 
                                     _MemoryManager.pidReturn(); 
@@ -718,6 +721,7 @@ module TSOS {
                 else {
                     _StdOut.putText("Not Validated.");
                 }
+                _CPU.PC = 0;
             }
         }
 

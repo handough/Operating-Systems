@@ -12,7 +12,7 @@ var TSOS;
             if (part === void 0) { part = 0; }
             if (pid === void 0) { pid = 0; }
             if (IR === void 0) { IR = ''; }
-            if (rowNum === void 0) { rowNum = 0; }
+            if (rowNum === void 0) { rowNum = 1; }
             if (state === void 0) { state = ""; }
             if (inHDD === void 0) { inHDD = false; }
             this.PC = PC;
@@ -45,12 +45,12 @@ var TSOS;
             // clearPCB terminates the cpu scheduler process
             this.state = 'TERMINATED';
             var table = document.getElementById("pcbTable");
-            table.deleteRow(this.rowNum);
+            //table.deleteRow(this.rowNum);
             if (_cpuScheduler.fcfs) {
                 table.deleteRow(1);
             }
             else {
-                table.deleteRow(this.rowNum);
+                //table.deleteRow(this.rowNum);
                 // if there are several PCB
                 if (_cpuScheduler.RR) {
                     _cpuScheduler.deIncrementRowNum();

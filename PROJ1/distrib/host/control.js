@@ -234,7 +234,13 @@ var TSOS;
         };
         Control.displayPCB = function () {
             var table = document.getElementById("pcbTable");
-            var row = table.getElementsByTagName("tr")[_PCB.rowNum];
+            var row;
+            if (_PCB.inHDD) {
+                row = table.getElementsByTagName("tr")[1];
+            }
+            else {
+                row = table.getElementsByTagName("tr")[_PCB.rowNum];
+            }
             row.getElementsByTagName("td")[0].innerHTML = _PCB.pid + '';
             row.getElementsByTagName("td")[1].innerHTML = _PCB.state + '';
             row.getElementsByTagName("td")[2].innerHTML = _CPU.PC + '';
@@ -273,7 +279,7 @@ var TSOS;
                         }
                     }
                     else if (i == 1) { // if i == 1 clear pidLoc[1] position
-                        _MemoryManager.pidLoc[1] = -1; // clear the PID locs
+                        _MemoryManager.pidLoc[1] = -1; // clear the PID in use locs
                         _MemoryManager.memoryUsed[1] = 0; // clear the used mem
                         index = 1; // used to clear block
                         for (var i = 32; i < 64; i++) {

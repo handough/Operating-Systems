@@ -1,17 +1,19 @@
 var TSOS;
 (function (TSOS) {
     var MemoryManager = /** @class */ (function () {
-        function MemoryManager(pidLoc, memoryUsed, pidList, opIndex, executePid) {
+        function MemoryManager(pidLoc, memoryUsed, pidList, opIndex, executePid, pidder) {
             if (pidLoc === void 0) { pidLoc = [-1, -1, -1]; }
             if (memoryUsed === void 0) { memoryUsed = [0, 0, 0]; }
             if (pidList === void 0) { pidList = []; }
             if (opIndex === void 0) { opIndex = 0; }
             if (executePid === void 0) { executePid = []; }
+            if (pidder === void 0) { pidder = []; }
             this.pidLoc = pidLoc;
             this.memoryUsed = memoryUsed;
             this.pidList = pidList;
             this.opIndex = opIndex;
             this.executePid = executePid;
+            this.pidder = pidder;
             if (pidList == void 0) {
                 pidList = [];
             }

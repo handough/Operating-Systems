@@ -38,14 +38,22 @@ var TSOS;
             this.isExecuting = false;
         };
         Cpu.prototype.cycle = function () {
-            _Kernel.krnTrace('CPU cycle');
-            //if(this.isExecuting){
-            this.updateCPU();
-            _PCB.state = "Running";
-            // array of op codes 
-            var op = _MemoryManager.getOp(this.PID);
-            this.runCode(op);
-            //}
+            if (_runAll == true && this.isExecuting == true) {
+                this.PID = _runAllCount;
+                _Kernel.krnTrace('CPU cycle');
+                this.updateCPU();
+                _PCB.state = "Running";
+                var opper = _MemoryManager.getOp(this.PID);
+                this.runCode(opper);
+            }
+            else {
+                _Kernel.krnTrace('CPU cycle');
+                this.updateCPU();
+                _PCB.state = "Running";
+                // array of op codes 
+                var op = _MemoryManager.getOp(this.PID);
+                this.runCode(op);
+            }
         };
         Cpu.prototype.runCode = function (op) {
             var i = this.PC;
@@ -120,7 +128,7 @@ var TSOS;
                 else if (op[i] == '00') {
                     this.endProgram();
                 }
-                if (_PCB.state != "TERMINATED") {
+                if (_PCB.state != "TERMINATED" && _runAll != true) {
                     TSOS.Control.displayPCB();
                 }
                 TSOS.Control.updateProcessMem(_PCB.pid);
@@ -193,26 +201,24 @@ var TSOS;
             }
         };
         Cpu.prototype.branchNotEqual = function (oper, op) {
-            /**
-            var pidder = (_MemoryManager.pidList[_MemoryManager.pidList.length - 1]);
             var newPC = this.PC + dist;
-            if(pidder == 0){
+            var lim;
+            if (_Runner == 0) {
                 lim = 255;
-            }else if(pidder == 1){
+            }
+            else if (_Runner == 1) {
                 lim = 511;
                 newPC -= 255;
-            }else if(pidder == 2){
+            }
+            else if (_Runner == 2) {
                 lim = 767;
                 newPC -= 511;
-            }*/
-            //var base = _PCB.getBase(op);
-            //var lim = _PCB.getLimit(op);
+            }
             var dist = _MemoryManager.hexDecimal(oper);
             var newPC = this.PC + dist;
-            console.log(dist);
             if (this.Zflag == 0) {
                 if (this.PC + dist > 256) {
-                    newPC = newPC - 255 + 1;
+                    newPC = newPC - lim + 1;
                     this.PC = newPC;
                     this.IR = op[this.PC]; // changing the IR
                 }
@@ -240,7 +246,6 @@ var TSOS;
                 while (!term) {
                     var char = _MemoryManager.getOp(this.PID);
                     var c = char[loc];
-                    console.log(c);
                     if (c == 0) {
                         term = true;
                         break;
@@ -264,21 +269,54 @@ var TSOS;
             _MemoryManager.writeOpCode(_MemoryManager.hexDecimal(bb + 1), loc);
         };
         Cpu.prototype.endProgram = function () {
-            //var table = <HTMLTableElement>document.getElementById("pcbTable");
-            //table.getElementsByTagName("tr")[1].getElementsByTagName("td")[2].innerHTML = '00';
-            TSOS.Control.clearBlock(_PCB.pid);
-            _MemoryManager.executePid.push(_PCB.pid);
-            _StdOut.putText("PID: " + this.PID + " done running. " + "Turn around time: " + _cpuScheduler.turnAroundTime);
-            _Console.advanceLine();
-            this.PC = 0;
-            if (_cpuScheduler.count != _cpuScheduler.quantum) {
-                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(CONTEXT_SWITCH_IRQ, 'Scheduling Event'));
+            if (_runAll != true) {
+                TSOS.Control.clearBlock(this.PID);
+                _MemoryManager.executePid.push(_PCB.pid);
+                _StdOut.putText("PID: " + this.PID + " done running. " + "Turn around time: " + _cpuScheduler.turnAroundTime);
+                _Console.advanceLine();
+                _PCB.clearPCB();
+                this.PC = 0;
+                if (_cpuScheduler.count != _cpuScheduler.quantum) {
+                    _KernelInterruptQueue.enqueue(new TSOS.Interrupt(CONTEXT_SWITCH_IRQ, 'Scheduling Event'));
+                }
+                if (!_cpuScheduler.RR && !_cpuScheduler.fcfs) {
+                    this.isExecuting = false;
+                    _cpuScheduler.turnAroundTime = 0;
+                    _Console.putText(_OsShell.promptStr);
+                    _runAll = false;
+                }
+                this.clearCPU();
             }
-            if (!_cpuScheduler.RR && !_cpuScheduler.fcfs) {
+            else if (_runAll == true && _runAllCount != _MemoryManager.pidder.length) {
+                console.log(_MemoryManager.pidder.length);
+                console.log(_runAllCount);
+                _runAllCount++;
+                //_PCB.clearPCB();
+                this.clearCPU();
+                this.cycle();
+            }
+            else {
+                _runAll = false;
                 this.isExecuting = false;
-                _cpuScheduler.turnAroundTime = 0;
+                TSOS.Control.clearBlock(this.PID);
+                this.PC = 0;
+                this.clearCPU();
+                _Console.putText(_OsShell.promptStr);
+                this.endRunAll();
+            }
+        };
+        Cpu.prototype.endRunAll = function () {
+            for (var i = 0; i < _MemoryManager.pidder.length; i++) {
+                _StdOut.putText("PID: " + i + " done running. " + "Turn around time: " + _cpuScheduler.turnAroundTime);
+                _Console.advanceLine();
                 _Console.putText(_OsShell.promptStr);
             }
+            this.isExecuting = false;
+            TSOS.Control.clearBlock(this.PID);
+            _PCB.clearPCB();
+            this.clearCPU();
+            _runAll = false;
+            this.PC = 0;
         };
         Cpu.prototype.updateCPU = function () {
             this.PID = _PCB.pid;
@@ -288,6 +326,14 @@ var TSOS;
             _PCB.Y = this.Yreg;
             _PCB.Z = this.Zflag;
             _PCB.IR = this.IR;
+        };
+        Cpu.prototype.clearCPU = function () {
+            this.IR = '';
+            this.PC = 0;
+            this.Acc = 0;
+            this.Xreg = 0;
+            this.Yreg = 0;
+            this.Zflag = 0;
         };
         return Cpu;
     }());

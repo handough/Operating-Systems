@@ -53,6 +53,9 @@ var _OsShell;
 var _MemoryManager; //any = null;
 var _PCB;
 var _WrapLinePos = [];
+var _runAll = false;
+var _runAllCount = 1;
+var _Runner = 0;
 // variable for tab 
 var _ShellCommandList;
 var _TabList = _ShellCommandList;

@@ -27,7 +27,9 @@ module TSOS {
                 }else{
                     if (_PCB.state != "TERMINATED") {
                         _PCB.state = "Ready";
-                        TSOS.Control.displayPCB();
+                        if(_runAll != true){
+                            TSOS.Control.displayPCB();
+                        }
                         this.readyQueue.enqueue(_PCB);
                     }
                     _PCB = this.readyQueue.dequeue();
