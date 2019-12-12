@@ -1,7 +1,7 @@
 /* TSOS.css */
 
 body {
-  background: #909193 url(distrib/images/linen.png) repeat;
+  background: #909193 url(grey.jpg) top left repeat-x;
   font-family: Helvetica, Verdana, Arial, sans-serif;
   font-size: 12pt;
   font-weight: normal;
@@ -16,56 +16,75 @@ h1 {
   border-bottom: 1px solid black;
 }
 
-table, th, td{
+table, th, td,tr{
   border: 1px solid black;
   border-collapse: collapse;
+  background: #bcd0e4 url("widget-table-bg.jpg") top left repeat-x;
 }
 #cpuTable{
   position: relative;
   color: black;
-  background-color: white;
+  background: #bcd0e4 url("widget-table-bg.jpg") top left repeat-x;
 }
 #processLabel{
   color: black;
   border: 2px solid;
+  background: #bcd0e4 url("widget-table-bg.jpg") top left repeat-x;
 }
 #processMemTable{
   position: relative;
   color: black;
   border: 2px solid;
   height:200px;
-  width: 700px;
+  width: 650px;
   overflow-y: scroll;
   display: block;
+  background: #bcd0e4 url("widget-table-bg.jpg") top left repeat-x;
 }
-#hardDrive{
+#hardDriveLabel{
+  color: black;
+  border: 2px solid;
+  background: #bcd0e4 url("widget-table-bg.jpg") top left repeat-x;
+}
+#hardDriveTable{
   position: relative;
   color: black;
   border: 2px solid;
   height: 200px;
-  width: 675px;
+  width: 650px;
   overflow-y: scroll;
   display: block;
+  background: #bcd0e4 url("widget-table-bg.jpg") top left repeat-x;
 }
 #pcbLabel{
   color: black;
   border: 2px solid;
+  background: #bcd0e4 url("widget-table-bg.jpg") top left repeat-x;
 }
 
 #pcbTable{
   position: relative;
   color: black;
-  background-color: white;
+  background: #bcd0e4 url("widget-table-bg.jpg") top left repeat-x;
   border: 2px solid;
   overflow: scroll;
-  width: 650px;
+  width: 630px;
   display:block;
+}
+#divButtonBar{
+  font: bold 13px "Helvetica Neue", Helvetica, Arial;
+	color: #87CEFA;
+	white-space: nowrap;
+	cursor: pointer;
+	border-style: none;
+	overflow: visible;
 }
 h2 {
   color: black;
   font-size: 20pt;
   font-weight: normal;
   font-style: normal;
+  background: #bcd0e4 url("widget-table-bg.jpg") top left repeat-x;
 }
 
 h3 {
@@ -73,11 +92,12 @@ h3 {
   font-size: 16pt;
   font-weight: normal;
   font-style: normal;
+  background: url("widget-table-bg.jpg") top left repeat-x;
 }
 
 #display {
-  background-color:#DFDBC3;
-  border: 2px solid red;
+  background: #bcd0e4 url("widget-table-bg.jpg") top left repeat-x;
+  border: 2px solid black;
   cursor: default;
 }
 
