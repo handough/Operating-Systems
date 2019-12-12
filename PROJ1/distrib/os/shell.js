@@ -405,7 +405,7 @@ var TSOS;
                 }
             }
             if (singleRunCounter == 1) {
-                this.shellRun(_cpuScheduler.residentList[index].PID);
+                _StdOut.putText("Use the run command!");
             }
             else {
                 // initially x is set to false
@@ -428,6 +428,7 @@ var TSOS;
             }
         };
         Shell.prototype.shellRun = function (params) {
+            _Ran = true;
             _Runner = params;
             var pidString = '';
             for (var i = 0; i < params.length; i++) {
@@ -453,7 +454,7 @@ var TSOS;
                 else {
                     // change pcb to one in resident list
                     for (var i = 0; i < _cpuScheduler.residentList.length; i++) {
-                        if (_cpuScheduler.residentList[i].PID == parseInt(pidString)) {
+                        if (_cpuScheduler.residentList[i].pid == parseInt(pidString)) {
                             _PCB = _cpuScheduler.residentList[i];
                             break;
                         }
@@ -462,7 +463,8 @@ var TSOS;
                     TSOS.Control.updateMemoryTable();
                     // check if mem or HDD is being used 
                     if (_PCB.inHDD) {
-                        _Kernel.krnSwap();
+                        var pid = parseInt(pidString);
+                        _Kernel.krnSwap(pid);
                         _CPU.isExecuting = true;
                     }
                     else {
@@ -568,6 +570,7 @@ var TSOS;
                                     var PID = _MemoryManager.pidList[_MemoryManager.pidList.length - 1]; //Naming purposes
                                     _PCB.pid = PID;
                                     _MemoryManager.pidder.push(_PCB.pid);
+                                    _Runner = _PCB.pid;
                                     var newFileName = 'filePID' + PID.toString();
                                     _krnHardDriveDriver.krnHDDCreateFile(newFileName);
                                     // actually writting to the file
@@ -597,6 +600,7 @@ var TSOS;
                                 else {
                                     _PCB.pid = index;
                                     _MemoryManager.pidder.push(_PCB.pid);
+                                    _Runner = _PCB.pid;
                                     // write ops to mem
                                     _MemoryManager.writeToMemory(index, op);
                                     _MemoryManager.pidReturn();
@@ -625,7 +629,6 @@ var TSOS;
                 else {
                     _StdOut.putText("Not Validated.");
                 }
-                _CPU.PC = 0;
             }
         };
         // change the quantum for round robin scheduling 

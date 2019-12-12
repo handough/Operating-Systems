@@ -85,7 +85,7 @@ var TSOS;
             return _CPU.Zflag;
         };
         ProcessControlBlock.prototype.getBase = function (op) {
-            var index = _MemoryManager.memIndex(op);
+            var index = op; //_MemoryManager.memIndex(op);
             if (index == 0) {
                 this.base = 0;
                 return 0;
@@ -99,11 +99,12 @@ var TSOS;
                 return 512;
             }
             else {
-                return;
+                this.base = 0;
+                return 0;
             }
         };
         ProcessControlBlock.prototype.getLimit = function (op) {
-            var index = _MemoryManager.memIndex(op);
+            var index = _Runner; //_MemoryManager.memIndex(op);
             if (index == 0) {
                 this.limit = 256;
                 return 256;
@@ -117,11 +118,12 @@ var TSOS;
                 return 768;
             }
             else {
-                return;
+                this.limit = 256;
+                return 256;
             }
         };
         ProcessControlBlock.prototype.getPart = function (pid) {
-            var index = _MemoryManager.memIndex(pid);
+            var index = _Runner; //_MemoryManager.memIndex(pid);
             if (index == 0) {
                 this.part = 1;
                 return 1;
@@ -132,6 +134,10 @@ var TSOS;
             }
             else if (index == 2) {
                 this.part = 3;
+                return 3;
+            }
+            else {
+                this.part = 1;
                 return 3;
             }
         };

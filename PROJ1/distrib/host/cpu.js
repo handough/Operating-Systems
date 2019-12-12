@@ -38,22 +38,14 @@ var TSOS;
             this.isExecuting = false;
         };
         Cpu.prototype.cycle = function () {
-            if (_runAll == true && this.isExecuting == true) {
-                this.PID = _runAllCount;
-                _Kernel.krnTrace('CPU cycle');
-                this.updateCPU();
-                _PCB.state = "Running";
-                var opper = _MemoryManager.getOp(this.PID);
-                this.runCode(opper);
-            }
-            else {
-                _Kernel.krnTrace('CPU cycle');
-                this.updateCPU();
-                _PCB.state = "Running";
-                // array of op codes 
-                var op = _MemoryManager.getOp(this.PID);
-                this.runCode(op);
-            }
+            _Kernel.krnTrace('CPU cycle');
+            //if(this.isExecuting){
+            this.updateCPU();
+            _PCB.state = "Running";
+            // array of op codes 
+            var op = _MemoryAccessor.read(_Runner);
+            //console.log(op)
+            this.runCode(op);
         };
         Cpu.prototype.runCode = function (op) {
             var i = this.PC;
@@ -61,20 +53,21 @@ var TSOS;
                 this.endProgram();
             }
             else {
+                console.log(op[i]);
                 if (op[i] == 'A9') {
-                    var h = _Memory.memory[i + 1];
                     this.loadAccumulator(op[i + 1]);
                     this.PC += 2;
                 }
                 else if (op[i] == 'AD') {
                     var loc = _MemoryManager.endianAddress(op[i + 1], op[i + 2]);
-                    loc += _PCB.base;
+                    var b = _PCB.getBase(_Runner);
+                    loc += b;
                     this.loadAccMem(loc);
-                    //this.loadAccumulator(loc);
                     this.PC += 3;
                 }
                 else if (op[i] == 'A2') {
                     this.loadXReg(op[i + 1]);
+                    console.log(op[this.PC + 2]);
                     this.PC += 2;
                 }
                 else if (op[i] == 'A0') {
@@ -83,31 +76,39 @@ var TSOS;
                 }
                 else if (op[i] == '8D') {
                     var loc = _MemoryManager.endianAddress(op[i + 1], op[i + 2]);
-                    loc += _PCB.base;
+                    var b = _PCB.getBase(_Runner);
+                    console.log(b + ' the base of store acc');
+                    console.log(loc);
+                    loc += b;
                     this.storeAcc(loc);
                     this.PC += 3;
                 }
                 else if (op[i] == 'AE') {
                     var loc = _MemoryManager.endianAddress(op[i + 1], op[i + 2]);
-                    loc += _PCB.base;
+                    var b = _PCB.getBase(_Runner);
+                    loc += b;
                     this.loadXRegMem(loc);
                     this.PC += 3;
                 }
                 else if (op[i] == 'AC') {
                     var loc = _MemoryManager.endianAddress(op[i + 1], op[i + 2]);
-                    loc += _PCB.base;
+                    var b = _PCB.getBase(_Runner);
+                    loc += b;
                     this.loadYRegMem(loc);
                     this.PC += 3;
                 }
                 else if (op[i] == '6D') {
                     var loc = _MemoryManager.endianAddress(op[i + 1], op[i + 2]);
-                    loc += _PCB.base;
+                    var b = _PCB.getBase(_Runner);
+                    loc += b;
                     this.addCarry(loc);
                     this.PC += 3;
                 }
                 else if (op[i] == 'EC') {
                     var loc = _MemoryManager.endianAddress(op[i + 1], op[i + 2]);
-                    loc += _PCB.base; // base will be 0, 256, 512
+                    console.log(loc);
+                    var b = _PCB.getBase(_Runner);
+                    loc += b; // base will be 0, 256, 512
                     this.zFlag(loc); // calling zflag to compare the bytes
                     this.PC += 3; // add to program counter
                 }
@@ -121,7 +122,8 @@ var TSOS;
                 }
                 else if (op[i] == 'EE') {
                     var loc = _MemoryManager.endianAddress(op[i + 1], op[i + 2]);
-                    loc += _PCB.base;
+                    var b = _PCB.getBase(_Runner);
+                    loc += b;
                     this.incrementByte(loc);
                     this.PC += 3;
                 }
@@ -132,7 +134,7 @@ var TSOS;
                     TSOS.Control.displayPCB();
                 }
                 TSOS.Control.updateProcessMem(_PCB.pid);
-                this.updateCPU();
+                //this.updateCPU();
                 //TSOS.Control.displayPCB();
                 if (_cpuScheduler.RR && _cpuScheduler.readyQueue.isEmpty() == false) {
                     _cpuScheduler.checkCount();
@@ -143,13 +145,17 @@ var TSOS;
             //this.PC += 2;
             // load the accumulator with the translated op code
             this.Acc = _MemoryManager.hexDecimal(addr);
+            console.log(this.Acc);
             this.IR = 'A9'; // change the IR
         };
         Cpu.prototype.loadAccMem = function (addr) {
             //this.PC += 3;
             this.IR = 'AD'; // change the IR
-            var a = _MemoryManager.getOp(this.PID); // getting array of op codes
+            var a = _MemoryAccessor.read(_Runner); // getting array of op codes
             this.Acc = a[addr]; // setting the accumulator to opcode
+            console.log(this.Acc);
+            console.log(a[addr]);
+            console.log(_Memory.memory[addr]);
         };
         Cpu.prototype.loadXReg = function (addr) {
             //this.PC += 2;
@@ -160,19 +166,26 @@ var TSOS;
             ///this.PC += 2;
             this.IR = 'A0'; // change the IR
             this.Yreg = _MemoryManager.hexDecimal(addr);
+            console.log(this.Yreg);
         };
         Cpu.prototype.storeAcc = function (addr) {
             //this.PC += 3;
             this.IR = '8D'; // change IR
             // writing op code 
-            _MemoryManager.writeOpCode(this.Acc, addr);
+            _MemoryManager.writeOpCode(this.Acc, addr, _Runner);
+            console.log(this.Acc);
+            console.log(addr);
+            console.log(_Runner);
+            var y = _MemoryAccessor.read(_Runner);
+            var bb = _Memory.memory[addr];
+            console.log(bb);
         };
         Cpu.prototype.loadXRegMem = function (addr) {
             //this.PC += 3; 
             this.IR = 'AE'; // change the IR
-            var x = _MemoryManager.getOp(this.PID);
             var xee = parseInt(_Memory.memory[addr]); //(x[this.PID][addr]); 
             this.Xreg = xee;
+            console.log(this.Xreg);
         };
         Cpu.prototype.loadYRegMem = function (addr) {
             //this.PC += 3;
@@ -180,6 +193,7 @@ var TSOS;
             var y = _MemoryManager.getOp(this.PID);
             var yee = parseInt(_Memory.memory[addr]); //(y[this.PID][addr]);
             this.Yreg = yee;
+            console.log(this.Yreg);
         };
         Cpu.prototype.addCarry = function (addr) {
             //this.PC += 3; // add to program counter
@@ -187,13 +201,13 @@ var TSOS;
             var y = _MemoryManager.getOp(this.PID);
             var v = _Memory.memory[addr]; //variable[this.PID][addr];
             this.Acc += parseInt(v);
+            console.log(this.Acc);
         };
         Cpu.prototype.zFlag = function (addr) {
             this.IR = 'EC'; // change the IR
             var byte = _MemoryManager.getOp(this.PID);
             var bs = _Memory.memory[addr]; //byte[this.PID][addr];
-            var b = parseInt(bs, 16);
-            if (b == this.Xreg) {
+            if (bs == this.Xreg) {
                 this.Zflag = 1; // change z flag if not equal
             }
             else {
@@ -201,24 +215,25 @@ var TSOS;
             }
         };
         Cpu.prototype.branchNotEqual = function (oper, op) {
-            var newPC = this.PC + dist;
-            var lim;
-            if (_Runner == 0) {
-                lim = 255;
-            }
-            else if (_Runner == 1) {
-                lim = 511;
-                newPC -= 255;
-            }
-            else if (_Runner == 2) {
-                lim = 767;
-                newPC -= 511;
-            }
             var dist = _MemoryManager.hexDecimal(oper);
             var newPC = this.PC + dist;
+            var lim;
+            var base;
+            if (_Runner == 0) {
+                lim = 256;
+                base = 0;
+            }
+            else if (_Runner == 1) {
+                lim = 512;
+                base = 256;
+            }
+            else if (_Runner == 2) {
+                lim = 768;
+                base = 512;
+            }
             if (this.Zflag == 0) {
-                if (this.PC + dist > 256) {
-                    newPC = newPC - lim + 1;
+                if (newPC + base > lim) {
+                    newPC = (newPC + base) - lim + 2;
                     this.PC = newPC;
                     this.IR = op[this.PC]; // changing the IR
                 }
@@ -234,17 +249,20 @@ var TSOS;
         };
         Cpu.prototype.systemCall = function () {
             if (this.Xreg == 1) {
+                console.log(this.Xreg);
                 this.PC += 1;
                 this.IR = 'FF';
                 _StdOut.putText(this.Yreg + "");
                 _Console.advanceLine();
             }
             else if (this.Xreg == 2) {
+                var base = 0; //_PCB.getBase(_Runner);
+                console.log(base + ' base in system call');
                 var term = false;
-                var loc = this.Yreg + _PCB.base;
+                var loc = this.Yreg + base;
                 var str = "";
                 while (!term) {
-                    var char = _MemoryManager.getOp(this.PID);
+                    var char = _MemoryAccessor.read(_Runner);
                     var c = char[loc];
                     if (c == 0) {
                         term = true;
@@ -266,43 +284,30 @@ var TSOS;
             this.IR = 'EE';
             var b = _MemoryManager.getOp(this.PID);
             var bb = _Memory.memory[loc]; //b[this.PID][loc];
-            _MemoryManager.writeOpCode(_MemoryManager.hexDecimal(bb + 1), loc);
+            _MemoryManager.writeOpCode(_MemoryManager.hexDecimal(bb + 1), loc, _Runner);
+            var b = _MemoryManager.getOp(this.PID);
+            var bb = _Memory.memory[loc];
+            console.log(bb);
         };
         Cpu.prototype.endProgram = function () {
-            if (_runAll != true) {
-                TSOS.Control.clearBlock(this.PID);
-                _MemoryManager.executePid.push(_PCB.pid);
-                _StdOut.putText("PID: " + this.PID + " done running. " + "Turn around time: " + _cpuScheduler.turnAroundTime);
-                _Console.advanceLine();
-                _PCB.clearPCB();
-                this.PC = 0;
-                if (_cpuScheduler.count != _cpuScheduler.quantum) {
-                    _KernelInterruptQueue.enqueue(new TSOS.Interrupt(CONTEXT_SWITCH_IRQ, 'Scheduling Event'));
-                }
-                if (!_cpuScheduler.RR && !_cpuScheduler.fcfs) {
-                    this.isExecuting = false;
-                    _cpuScheduler.turnAroundTime = 0;
-                    _Console.putText(_OsShell.promptStr);
-                    _runAll = false;
-                }
+            if (_Ran == true) {
                 this.clearCPU();
+                _Ran = false;
             }
-            else if (_runAll == true && _runAllCount != _MemoryManager.pidder.length) {
-                console.log(_MemoryManager.pidder.length);
-                console.log(_runAllCount);
-                _runAllCount++;
-                //_PCB.clearPCB();
-                this.clearCPU();
-                this.cycle();
+            _PCB.clearPCB();
+            TSOS.Control.clearBlock(_PCB.pid);
+            _MemoryManager.executePid.push(_PCB.pid);
+            _StdOut.putText("PID: " + this.PID + " done running. " + "Turn around time: " + _cpuScheduler.turnAroundTime);
+            _Console.advanceLine();
+            _Console.putText(_OsShell.promptStr);
+            this.PC = 0;
+            if (_cpuScheduler.count != _cpuScheduler.quantum) {
+                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(CONTEXT_SWITCH_IRQ, 'Scheduling Event'));
             }
-            else {
-                _runAll = false;
+            if (!_cpuScheduler.RR && !_cpuScheduler.fcfs) {
                 this.isExecuting = false;
-                TSOS.Control.clearBlock(this.PID);
-                this.PC = 0;
-                this.clearCPU();
+                _cpuScheduler.turnAroundTime = 0;
                 _Console.putText(_OsShell.promptStr);
-                this.endRunAll();
             }
         };
         Cpu.prototype.endRunAll = function () {

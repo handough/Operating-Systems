@@ -70,9 +70,12 @@ var TSOS;
             return _MemoryAccessor.read(index);
         };
         // writes operation codes to memory
-        MemoryManager.prototype.writeOpCode = function (con, addr) {
+        MemoryManager.prototype.writeOpCode = function (con, addr, pid) {
+            var l = _PCB.getLimit(pid);
+            var b = _PCB.getBase(pid);
+            console.log(addr);
             // send error if the addr is greater than the limit or less than the base
-            if (addr > _PCB.limit || addr < _PCB.base) {
+            if (addr > l || addr < b) {
                 _StdOut.putText("Cannot access that part of memory!");
             }
             else {

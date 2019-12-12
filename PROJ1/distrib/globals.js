@@ -56,6 +56,7 @@ var _WrapLinePos = [];
 var _runAll = false;
 var _runAllCount = 1;
 var _Runner = 0;
+var _Ran = false;
 // variable for tab 
 var _ShellCommandList;
 var _TabList = _ShellCommandList;

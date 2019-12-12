@@ -18,7 +18,7 @@ module TSOS {
             this.count = 1;
         }
 
-        public contextSwitch(){
+        public contextSwitch(params){
             if(this.RR || this.fcfs || this.priority){
                 if(this.readyQueue.isEmpty()){ // if the ready queue is empty set is executing to false
                     _CPU.isExecuting = false;  // if is executing is false the turnaround time is set to 0
@@ -36,13 +36,14 @@ module TSOS {
                     _PCB.state = "Running";
                     // must swap if in HDD
                     if (_PCB.inHDD) {
-                        _Kernel.krnSwap();
+                        _Kernel.krnSwap(params);
                     }
                 }
             }
         }
 
         public loadReadyQueue(){
+            var pid;
             var rowCounter = 1; // keeps track of the row the PCB is being displayed in ready queue
             for(var i = 0; i < this.residentList.length; i++){
                 if(this.residentList[i].state != "TERMINATED"){
@@ -51,6 +52,7 @@ module TSOS {
                     }else{
                         this.residentList[i].rowNum  = 1;
                     }
+                    pid = this.residentList[i].pid;
                     this.readyQueue.enqueue(this.residentList[i]);
                     rowCounter++; // increment row counter for each loop
                 }
@@ -61,7 +63,7 @@ module TSOS {
             _PCB = this.readyQueue.dequeue();
             _PCB.state = "Running"; // set PCB state to running 
             if(_PCB.inHDD){
-                _Kernel.krnSwap();
+                _Kernel.krnSwap(pid);
             }  
         }
 

@@ -139,7 +139,8 @@ var TSOS;
                     }
                     break;
                 case CONTEXT_SWITCH_IRQ:
-                    _cpuScheduler.contextSwitch();
+                    var PID = params;
+                    _cpuScheduler.contextSwitch(PID);
                     break;
                 case SYSTEM_CALL_IRQ:
                     break;
@@ -194,32 +195,33 @@ var TSOS;
             // TODO: Display error on console, perhaps in some sort of colored screen. (Maybe blue?)
             this.krnShutdown();
         };
-        Kernel.prototype.krnSwap = function () {
-            var op = _krnHardDriveDriver.krnHDDReadFile('process' + _PCB.pid); //Get op codes from file
-            _krnHardDriveDriver.krnHDDDeleteFile('process' + _PCB.pid); //Delete the file
+        Kernel.prototype.krnSwap = function (pid) {
+            var op = _krnHardDriveDriver.krnHDDReadFile('filePID' + 3); //Get op codes from file
+            _krnHardDriveDriver.krnHDDDeleteFile('filePID' + 3); //Delete the file
             var index = TSOS.Control.displayProcMem(op);
             if (index == -1) {
+                // ops from position 0
                 var opMemArray = _MemoryManager.getOp(0);
                 //Create and write file for that process going into the HDD out of memory
-                _krnHardDriveDriver.krnHDDCreateFile('process' + _MemoryManager.pidLoc[0].toString());
-                _krnHardDriveDriver.krnHDDWriteFile('process' + _MemoryManager.pidLoc[0].toString(), opMemArray.join(" "));
+                _krnHardDriveDriver.krnHDDCreateFile('filePID' + _MemoryManager.pidLoc[0].toString());
+                _krnHardDriveDriver.krnHDDWriteFile('filePID' + _MemoryManager.pidLoc[0].toString(), opMemArray.join(" "));
                 // change PCB of file to record location
                 for (var i = 0; i < _cpuScheduler.residentList.length; i++) {
-                    if (_cpuScheduler.residentList[i].PID == _MemoryManager.pidLoc[0]) {
+                    if (_cpuScheduler.residentList[i].pid == _MemoryManager.pidLoc[0]) {
                         _cpuScheduler.residentList[i].inHDD = true;
                         var table = document.getElementById("pcbTable");
-                        var row = table.getElementsByTagName("tr")[_cpuScheduler.residentList[i].rowNumber];
+                        var row = table.getElementsByTagName("tr")[_cpuScheduler.residentList[i].rowNum];
                         row.getElementsByTagName("td")[8].innerHTML = 'Hard Drive';
                     }
                 }
                 _MemoryManager.writeToMemory(index, op);
-                _MemoryManager.pidLoc[index] = _PCB.pid;
+                _MemoryManager.pidLoc[index] = pid;
                 _PCB.inHDD = false;
             }
             else {
                 // write all ops to memory
                 _MemoryManager.writeToMemory(index, op);
-                _MemoryManager.pidLoc[0] = _PCB.pid;
+                _MemoryManager.pidLoc[0] = pid;
                 _PCB.inHDD = false;
             }
         };

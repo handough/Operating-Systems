@@ -77,7 +77,7 @@ module TSOS{
         }
 
         public getBase(op){
-            var index = _MemoryManager.memIndex(op);
+            var index = op;//_MemoryManager.memIndex(op);
             if(index == 0){
                 this.base = 0;
                 return 0;
@@ -88,12 +88,13 @@ module TSOS{
                 this.base = 512;
                 return 512;
             }else{
-                return;
+                this.base = 0;
+                return 0;
             }
         }
 
         public getLimit(op){
-            var index = _MemoryManager.memIndex(op);
+            var index = _Runner;//_MemoryManager.memIndex(op);
             if(index == 0){
                 this.limit = 256;
                 return 256;
@@ -104,12 +105,13 @@ module TSOS{
                 this.limit = 768;
                 return 768;
             }else{
-                return;
+                this.limit = 256;
+                return 256;
             }
         }
 
         public getPart(pid){
-            var index = _MemoryManager.memIndex(pid);
+            var index = _Runner;//_MemoryManager.memIndex(pid);
             if(index == 0){
                 this.part = 1;
                 return 1;
@@ -118,6 +120,9 @@ module TSOS{
                 return 2;
             }else if(index == 2){
                 this.part = 3;
+                return 3;
+            }else{
+                this.part = 1;
                 return 3;
             }
         }
