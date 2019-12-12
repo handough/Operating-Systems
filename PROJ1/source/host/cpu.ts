@@ -35,20 +35,19 @@
 
             public cycle(): void{
                 _Kernel.krnTrace('CPU cycle');
-                //if(this.isExecuting){
-                    this.updateCPU();
-                    _PCB.state = "Running";
-                    // array of op codes 
-                    var op = _MemoryAccessor.read(_Runner);
-                    //console.log(op)
-                    this.runCode(op);
+                this.updateCPU();
+                _PCB.state = "Running";
+                // array of op codes 
+                var op = _MemoryAccessor.read(_Runner);
+                console.log(op)                    
+                this.runCode(op);
             }
 
             public runCode(op){ 
                     var i = this.PC;
-                    if(this.PC + 1 >= op.length){
-                        this.endProgram();
-                    }else{
+                    //if(this.PC + 1 >= op.length){
+                        //this.endProgram();
+                    //}else{
                         console.log(op[i])
                         if(op[i] == 'A9'){
                             this.loadAccumulator(op[i+1]);
@@ -123,7 +122,7 @@
                         if (_cpuScheduler.RR && _cpuScheduler.readyQueue.isEmpty() == false) {
                            _cpuScheduler.checkCount();
                         }
-                }
+                //}
             }
 
             public loadAccumulator(addr){
@@ -162,9 +161,6 @@
                 this.IR = '8D'; // change IR
                 // writing op code 
                 _MemoryManager.writeOpCode(this.Acc, addr, _Runner); 
-                console.log(this.Acc)
-                console.log(addr) 
-                console.log(_Runner)
                 var y = _MemoryAccessor.read(_Runner);
                 var bb = _Memory.memory[addr]
                 console.log(bb)
@@ -300,20 +296,6 @@
                     _cpuScheduler.turnAroundTime = 0; 
                     _Console.putText(_OsShell.promptStr);
                 }
-            }
-
-            public endRunAll(){
-                for(var i = 0; i < _MemoryManager.pidder.length; i++){
-                    _StdOut.putText("PID: " + i + " done running. " + "Turn around time: " + _cpuScheduler.turnAroundTime);                        
-                    _Console.advanceLine();
-                    _Console.putText(_OsShell.promptStr);
-                }
-                this.isExecuting = false;
-                TSOS.Control.clearBlock(this.PID);
-                _PCB.clearPCB();
-                this.clearCPU();
-                _runAll = false;
-                this.PC = 0;
             }
 
             public updateCPU(){

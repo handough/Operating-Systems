@@ -42,6 +42,7 @@ var TSOS;
                     }
                     _PCB = this.readyQueue.dequeue();
                     _PCB.state = "Running";
+                    _CPU.isExecuting = true;
                     // must swap if in HDD
                     if (_PCB.inHDD) {
                         _Kernel.krnSwap(params);
@@ -70,7 +71,9 @@ var TSOS;
             }
             _PCB = this.readyQueue.dequeue();
             _PCB.state = "Running"; // set PCB state to running 
+            _CPU.isExecuting = true;
             if (_PCB.inHDD) {
+                pid = this.residentList[i].pid;
                 _Kernel.krnSwap(pid);
             }
         };

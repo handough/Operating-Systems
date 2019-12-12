@@ -131,12 +131,12 @@
                         // if there is nothing running print no running process error
                         if (_CPU.isExecuting == false) {
                             _StdOut.putText("No Active Processes");
-                        }else if (PID == _PCB.pid) {
+                        }else if (PID == _Runner) {
                             _CPU.endProgram();
                         }else {
                             for (var i = 0; i < _cpuScheduler.readyQueue.getSize(); i++) {
                                 if (_cpuScheduler.readyQueue.q[i].PID == PID) {
-                                    //_MemoryManager.clearBlock(PID); //Clear memory block
+                                    TSOS.Control.clearBlock(PID); //Clear memory block
                                     _MemoryManager.executePid.push(PID); //Increment that this PID has been executed
                                     _StdOut.putText("PID: " + PID + " done. Turnaround Time = " + _cpuScheduler.turnAroundTime + ". Wait Time = " + (_cpuScheduler.turnAroundTime - _cpuScheduler.readyQueue.q[i].waitTime));
                                     _cpuScheduler.readyQueue.q[i].clearPCB(); //Clear the PCB
@@ -218,10 +218,11 @@
                 var index = TSOS.Control.displayProcMem(op);
                 if(index == -1){
                     // ops from position 0
-                    var opMemArray = _MemoryManager.getOp(0);
+                    var opMemArray = _MemoryAccessor.read(0);
+                    var newPidder = 0;
                     //Create and write file for that process going into the HDD out of memory
-                    _krnHardDriveDriver.krnHDDCreateFile('filePID' + _MemoryManager.pidLoc[0].toString());
-                    _krnHardDriveDriver.krnHDDWriteFile('filePID' + _MemoryManager.pidLoc[0].toString(), opMemArray.join(" "));
+                    _krnHardDriveDriver.krnHDDCreateFile('filePID' + newPidder.toString());
+                    _krnHardDriveDriver.krnHDDWriteFile('filePID' + newPidder.toString(), opMemArray.join(" "));
                     // change PCB of file to record location
                     for(var i = 0; i < _cpuScheduler.residentList.length; i++){
                         if(_cpuScheduler.residentList[i].pid == _MemoryManager.pidLoc[0]){
@@ -231,8 +232,8 @@
                             row.getElementsByTagName("td")[8].innerHTML = 'Hard Drive';
                         }
                     }
-                    _MemoryManager.writeToMemory(index, op);
-                    _MemoryManager.pidLoc[index] = pid; 
+                    _MemoryManager.writeToMemory(newPidder, op);
+                    _MemoryManager.pidLoc[newPidder] = pid; 
                     _PCB.inHDD = false; 
                 }else{
                     // write all ops to memory
