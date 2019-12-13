@@ -43,101 +43,101 @@ var TSOS;
             _PCB.state = "Running";
             // array of op codes 
             var op = _MemoryAccessor.read(_Runner);
-            console.log(op);
             this.runCode(op);
         };
         Cpu.prototype.runCode = function (op) {
             var i = this.PC;
-            //if(this.PC + 1 >= op.length){
-            //this.endProgram();
-            //}else{
-            console.log(op[i]);
-            if (op[i] == 'A9') {
-                this.loadAccumulator(op[i + 1]);
-                this.PC += 2;
-            }
-            else if (op[i] == 'AD') {
-                var loc = _MemoryManager.endianAddress(op[i + 1], op[i + 2]);
-                var b = _PCB.getBase(_Runner);
-                loc += b;
-                this.loadAccMem(loc);
-                this.PC += 3;
-            }
-            else if (op[i] == 'A2') {
-                this.loadXReg(op[i + 1]);
-                console.log(op[this.PC + 2]);
-                this.PC += 2;
-            }
-            else if (op[i] == 'A0') {
-                this.loadYReg(op[i + 1]);
-                this.PC += 2;
-            }
-            else if (op[i] == '8D') {
-                var loc = _MemoryManager.endianAddress(op[i + 1], op[i + 2]);
-                var b = _PCB.getBase(_Runner);
-                console.log(b + ' the base of store acc');
-                console.log(loc);
-                loc += b;
-                this.storeAcc(loc);
-                this.PC += 3;
-            }
-            else if (op[i] == 'AE') {
-                var loc = _MemoryManager.endianAddress(op[i + 1], op[i + 2]);
-                var b = _PCB.getBase(_Runner);
-                loc += b;
-                this.loadXRegMem(loc);
-                this.PC += 3;
-            }
-            else if (op[i] == 'AC') {
-                var loc = _MemoryManager.endianAddress(op[i + 1], op[i + 2]);
-                var b = _PCB.getBase(_Runner);
-                loc += b;
-                this.loadYRegMem(loc);
-                this.PC += 3;
-            }
-            else if (op[i] == '6D') {
-                var loc = _MemoryManager.endianAddress(op[i + 1], op[i + 2]);
-                var b = _PCB.getBase(_Runner);
-                loc += b;
-                this.addCarry(loc);
-                this.PC += 3;
-            }
-            else if (op[i] == 'EC') {
-                var loc = _MemoryManager.endianAddress(op[i + 1], op[i + 2]);
-                console.log(loc);
-                var b = _PCB.getBase(_Runner);
-                loc += b; // base will be 0, 256, 512
-                this.zFlag(loc); // calling zflag to compare the bytes
-                this.PC += 3; // add to program counter
-            }
-            else if (op[i] == 'D0') {
-                this.branchNotEqual(op[i + 1], op);
-                //this.PC += 2;
-            }
-            else if (op[i] == 'FF') {
-                _KernelInputQueue.enqueue(new TSOS.Interrupt(SYSTEM_CALL_IRQ, '')); // call interrupt
-                this.systemCall();
-            }
-            else if (op[i] == 'EE') {
-                var loc = _MemoryManager.endianAddress(op[i + 1], op[i + 2]);
-                var b = _PCB.getBase(_Runner);
-                loc += b;
-                this.incrementByte(loc);
-                this.PC += 3;
-            }
-            else if (op[i] == '00') {
+            if (this.PC + 1 >= op.length) {
                 this.endProgram();
             }
-            if (_PCB.state != "TERMINATED" && _runAll != true) {
-                TSOS.Control.displayPCB();
+            else {
+                console.log(op[i]);
+                if (op[i] == 'A9') {
+                    this.loadAccumulator(op[i + 1]);
+                    this.PC += 2;
+                }
+                else if (op[i] == 'AD') {
+                    var loc = _MemoryManager.endianAddress(op[i + 1], op[i + 2]);
+                    var b = _PCB.getBase(_Runner);
+                    loc += b;
+                    this.loadAccMem(loc);
+                    this.PC += 3;
+                }
+                else if (op[i] == 'A2') {
+                    this.loadXReg(op[i + 1]);
+                    console.log(op[this.PC + 2]);
+                    this.PC += 2;
+                }
+                else if (op[i] == 'A0') {
+                    this.loadYReg(op[i + 1]);
+                    this.PC += 2;
+                }
+                else if (op[i] == '8D') {
+                    var loc = _MemoryManager.endianAddress(op[i + 1], op[i + 2]);
+                    var b = _PCB.getBase(_Runner);
+                    console.log(b + ' the base of store acc');
+                    console.log(loc);
+                    loc += b;
+                    this.storeAcc(loc);
+                    this.PC += 3;
+                }
+                else if (op[i] == 'AE') {
+                    var loc = _MemoryManager.endianAddress(op[i + 1], op[i + 2]);
+                    var b = _PCB.getBase(_Runner);
+                    loc += b;
+                    this.loadXRegMem(loc);
+                    this.PC += 3;
+                }
+                else if (op[i] == 'AC') {
+                    var loc = _MemoryManager.endianAddress(op[i + 1], op[i + 2]);
+                    var b = _PCB.getBase(_Runner);
+                    loc += b;
+                    this.loadYRegMem(loc);
+                    this.PC += 3;
+                }
+                else if (op[i] == '6D') {
+                    var loc = _MemoryManager.endianAddress(op[i + 1], op[i + 2]);
+                    var b = _PCB.getBase(_Runner);
+                    loc += b;
+                    this.addCarry(loc);
+                    this.PC += 3;
+                }
+                else if (op[i] == 'EC') {
+                    var loc = _MemoryManager.endianAddress(op[i + 1], op[i + 2]);
+                    console.log(loc);
+                    var b = _PCB.getBase(_Runner);
+                    loc += b; // base will be 0, 256, 512
+                    this.zFlag(loc); // calling zflag to compare the bytes
+                    this.PC += 3; // add to program counter
+                }
+                else if (op[i] == 'D0') {
+                    this.branchNotEqual(op[i + 1], op);
+                    //this.PC += 2;
+                }
+                else if (op[i] == 'FF') {
+                    _KernelInputQueue.enqueue(new TSOS.Interrupt(SYSTEM_CALL_IRQ, '')); // call interrupt
+                    this.systemCall();
+                }
+                else if (op[i] == 'EE') {
+                    var loc = _MemoryManager.endianAddress(op[i + 1], op[i + 2]);
+                    var b = _PCB.getBase(_Runner);
+                    loc += b;
+                    this.incrementByte(loc);
+                    this.PC += 3;
+                }
+                else if (op[i] == '00') {
+                    this.endProgram();
+                }
+                if (_PCB.state != "TERMINATED" && _runAll != true) {
+                    TSOS.Control.displayPCB();
+                }
+                TSOS.Control.updateProcessMem(_PCB.pid);
+                //this.updateCPU();
+                //TSOS.Control.displayPCB();
+                if (_cpuScheduler.RR && _cpuScheduler.readyQueue.isEmpty() == false) {
+                    _cpuScheduler.checkCount();
+                }
             }
-            TSOS.Control.updateProcessMem(_PCB.pid);
-            //this.updateCPU();
-            //TSOS.Control.displayPCB();
-            if (_cpuScheduler.RR && _cpuScheduler.readyQueue.isEmpty() == false) {
-                _cpuScheduler.checkCount();
-            }
-            //}
         };
         Cpu.prototype.loadAccumulator = function (addr) {
             //this.PC += 2;
@@ -287,14 +287,15 @@ var TSOS;
         Cpu.prototype.endProgram = function () {
             if (_Ran == true) {
                 this.clearCPU();
+                _Console.putText(_OsShell.promptStr);
                 _Ran = false;
             }
             _PCB.clearPCB();
             TSOS.Control.clearBlock(_PCB.pid);
-            _MemoryManager.executePid.push(_PCB.pid);
+            this.clearCPU();
+            //_MemoryManager.executePid.push(_PCB.pid);
             _StdOut.putText("PID: " + this.PID + " done running. " + "Turn around time: " + _cpuScheduler.turnAroundTime);
             _Console.advanceLine();
-            _Console.putText(_OsShell.promptStr);
             this.PC = 0;
             if (_cpuScheduler.count != _cpuScheduler.quantum) {
                 _KernelInterruptQueue.enqueue(new TSOS.Interrupt(CONTEXT_SWITCH_IRQ, 'Scheduling Event'));

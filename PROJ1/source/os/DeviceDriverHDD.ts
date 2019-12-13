@@ -75,10 +75,10 @@ module TSOS{
 
         public krnHDDCreateFile(fileName){
             // convert file name to hex 
-            var newFileName = fileName.split("");
-            var hexFileNameList = [];
-            for (var i = 0; i < newFileName.length; i++) {
-                hexFileNameList.push(newFileName[i].charCodeAt(0).toString(16));
+            var newer = fileName.split("");
+            var hexList = [];
+            for (var i = 0; i < newer.length; i++) {
+                hexList.push(newer[i].charCodeAt(0).toString(16));
             }
             // find first empty file 
             for (var j = 0; j < 999; j++) {
@@ -93,8 +93,8 @@ module TSOS{
                     var data = _hardDrive.read(TSB).split("").slice(4);
                     var compared = '';
                     // comparasion data
-                    for (var i = 0; i < hexFileNameList.length; i++) {
-                        compared += hexFileNameList[i];
+                    for (var i = 0; i < hexList.length; i++) {
+                        compared += hexList[i];
                     }
                     for (var x = compared.length - 1; x < 59; x++) {
                         compared += '0';
@@ -105,23 +105,22 @@ module TSOS{
                     }
                 }
                 else if (validInvalid == '0' && i > 0) {
-                    //Get empty data block and changed its bit to 1
+                    // get empty data 
                     var emptyDataTSB = this.krnHDDFindEmptyDataBlock();
                     var emptyData = _hardDrive.read(emptyDataTSB);
                     var emptyDataArray = emptyData.split("");
                     emptyDataArray[0] = '1';
                     emptyData = emptyDataArray.join("");
                     _hardDrive.write(emptyDataTSB, emptyData);
-                    //Create data for file(For some reason I have to use different variable names for compiling to work)
                     var data2 = '1' + emptyDataTSB;
-                    for (var i = 0; i < hexFileNameList.length; i++) {
-                        data2 += hexFileNameList[i];
+                    for (var i = 0; i < hexList.length; i++) {
+                        data2 += hexList[i];
                     }
-                    //Append 0s to the end of file name
+                    // put 0s at end of file
                     for (var i = data2.length - 1; i < 63; i++) {
                         data2 += '0';
                     }
-                    //Write to HDD and update HDD Table
+                    // write to HDD
                     _hardDrive.write(TSB, data2);
                     this.updateHDDTable();
                     return 1;
@@ -131,33 +130,31 @@ module TSOS{
 
         public krnHDDWriteFile(filename, data){
             // convert data to hex 
-            var upData = data.split("");
+            var up = data.split("");
             var hexData = [];
-            for (var i = 0; i < upData.length; i++) {
-                hexData.push(upData[i].charCodeAt(0).toString(16));
+            for (var i = 0; i < up.length; i++) {
+                hexData.push(up[i].charCodeAt(0).toString(16));
             }
-            //Convert to string to find how many bytes it is, and if you need to link files
+            // convert to a string
             var hexDataStringer = hexData.join("");
-            //Find out if you need to link the file, if so how many times
-            var linkCount = 1;
-            //Can not be more than 60 bytes
+            var links = 1;
+            // check if less than 60  bytes
             if (hexDataStringer.length > 60) {
-                //Round up
-                linkCount = Math.ceil(hexDataStringer.length / 60);
+                links = Math.ceil(hexDataStringer.length / 60);
             }
-            //Split string back into array to make life easier
+            // split string into an array 
             hexData = hexDataStringer.split("");
             var hexDataCount = 0;
-            //Get current TSB from file data
+            // get TSB from file data 
             var TSB = this.krnHDDFindFileBlock(filename);
-            var currentTSBData = _hardDrive.read(TSB);
-            var currentTSBDataArray = currentTSBData.split("");
+            var currentTSB = _hardDrive.read(TSB);
+            var currentTSBArray = currentTSB.split("");
             TSB = '';
-            TSB += currentTSBDataArray[1];
-            TSB += currentTSBDataArray[2];
-            TSB += currentTSBDataArray[3];
-            //Clear TSBs in case of updating the same file
-            var temporaryTSB = TSB; //Use for clearing data
+            TSB += currentTSBArray[1];
+            TSB += currentTSBArray[2];
+            TSB += currentTSBArray[3];
+            // clear tsb
+            var temporaryTSB = TSB; 
             var clearTSBList = [temporaryTSB];
             while (true) {
                 var TSBData = _hardDrive.read(temporaryTSB);
@@ -178,31 +175,31 @@ module TSOS{
                 }
             }
             // actually writing to the file
-            for (var i = 0; i < linkCount; i++) {
+            for (var i = 0; i < links; i++) {
                 var x = 0;
-                var inputData = '1';
-                currentTSBData = _hardDrive.read(TSB);
-                var currentTSBDataArray = currentTSBData.split("");
+                var input = '1';
+                currentTSB = _hardDrive.read(TSB);
+                var currentTSBDataArray = currentTSB.split("");
                 currentTSBDataArray[0] = '1';
                 _hardDrive.write(TSB, currentTSBDataArray.join(""));
                 // if there is no link 
-                if (i === linkCount - 1) {
-                    inputData += '---';
+                if (i === links - 1) {
+                    input += '---';
                 }
                 else {
-                    inputData += this.krnHDDFindEmptyDataBlock();
+                    input += this.krnHDDFindEmptyDataBlock();
                 }
                 while (x < 60) {
                     if (hexDataCount >= hexData.length) {
-                        inputData += '0';
+                        input += '0';
                     }
                     else {
-                        inputData += hexData[hexDataCount];
+                        input += hexData[hexDataCount];
                         hexDataCount++;
                     }
                     x++;
                 }
-                _hardDrive.write(TSB, inputData);
+                _hardDrive.write(TSB, input);
                 TSB = this.krnHDDFindEmptyDataBlock();
             }
             this.updateHDDTable();
@@ -210,10 +207,10 @@ module TSOS{
 
         public krnHDDCheckFileExists(fileName){
             // change file name to hex
-            var newFileName = fileName.split("");
-            var hexFileNameList = [];
-            for (var i = 0; i < newFileName.length; i++) {
-                hexFileNameList.push(newFileName[i].charCodeAt(0).toString(16));
+            var newer = fileName.split("");
+            var hexList = [];
+            for (var i = 0; i < newer.length; i++) {
+                hexList.push(newer[i].charCodeAt(0).toString(16));
             }
             // search all TSBs
             for (var j = 0; j < _hardDrive.TSBList.length; j++) {
@@ -223,16 +220,16 @@ module TSOS{
                     return false;
                 }
                 var data = _hardDrive.read(TSB).split("").slice(4);
-                var compareData = '';
+                var comparedData = '';
                 // comparasion data
-                for (var x = 0; x < hexFileNameList.length; x++) {
-                    compareData += hexFileNameList[x];
+                for (var x = 0; x < hexList.length; x++) {
+                    comparedData += hexList[x];
                 }
-                for (var y = compareData.length - 1; y < 59; y++) {
-                    compareData += '0';
+                for (var y = comparedData.length - 1; y < 59; y++) {
+                    comparedData += '0';
                 }
                 // if the data is the same as the compared data it already exists 
-                if (data.join("") == compareData) {
+                if (data.join("") == comparedData) {
                     return true;
                 }
             }

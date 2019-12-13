@@ -39,15 +39,14 @@
                 _PCB.state = "Running";
                 // array of op codes 
                 var op = _MemoryAccessor.read(_Runner);
-                console.log(op)                    
                 this.runCode(op);
             }
 
             public runCode(op){ 
                     var i = this.PC;
-                    //if(this.PC + 1 >= op.length){
-                        //this.endProgram();
-                    //}else{
+                    if(this.PC + 1 >= op.length){
+                        this.endProgram();
+                    }else{
                         console.log(op[i])
                         if(op[i] == 'A9'){
                             this.loadAccumulator(op[i+1]);
@@ -122,7 +121,7 @@
                         if (_cpuScheduler.RR && _cpuScheduler.readyQueue.isEmpty() == false) {
                            _cpuScheduler.checkCount();
                         }
-                //}
+                }
             }
 
             public loadAccumulator(addr){
@@ -279,14 +278,15 @@
             public endProgram(){
                 if(_Ran == true){
                     this.clearCPU();
+                    _Console.putText(_OsShell.promptStr);
                     _Ran = false;
                 }
                 _PCB.clearPCB();
                 TSOS.Control.clearBlock(_PCB.pid);
-                _MemoryManager.executePid.push(_PCB.pid);
+                this.clearCPU();
+                //_MemoryManager.executePid.push(_PCB.pid);
                 _StdOut.putText("PID: " + this.PID + " done running. " + "Turn around time: " + _cpuScheduler.turnAroundTime);
                 _Console.advanceLine();
-                _Console.putText(_OsShell.promptStr);
                 this.PC = 0;
                 if(_cpuScheduler.count != _cpuScheduler.quantum){
                     _KernelInterruptQueue.enqueue(new TSOS.Interrupt(CONTEXT_SWITCH_IRQ, 'Scheduling Event'));
