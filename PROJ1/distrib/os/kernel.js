@@ -128,9 +128,6 @@ var TSOS;
                                 _MemoryManager.executePid.push(PID); //Increment that this PID has been executed
                                 _StdOut.putText("PID: " + PID + " done. Turnaround Time = " + _cpuScheduler.turnAroundTime + ". Wait Time = " + (_cpuScheduler.turnAroundTime - _cpuScheduler.readyQueue.q[i].waitTime));
                                 _cpuScheduler.readyQueue.q[i].clearPCB(); //Clear the PCB
-                                if (_cpuScheduler.readyQueue.q[i].inHDD) {
-                                    _krnHardDriveDriver.krnHDDDeleteFile('process' + _cpuScheduler.readyQueue.q[i].PID.toString());
-                                }
                                 _cpuScheduler.readyQueue.q.splice(i, 1); //Remove this PCB from the ready queue
                                 _Console.advanceLine();
                                 break;
@@ -196,8 +193,7 @@ var TSOS;
             this.krnShutdown();
         };
         Kernel.prototype.krnSwap = function (pid) {
-            var op = _krnHardDriveDriver.krnHDDReadFile('filePID' + 3); //Get op codes from file
-            _krnHardDriveDriver.krnHDDDeleteFile('filePID' + 3); //Delete the file
+            var op = _krnHardDriveDriver.krnHDDReadFile(); //Get op codes from file
             var index = TSOS.Control.displayProcMem(op);
             if (index == -1) {
                 // ops from position 0

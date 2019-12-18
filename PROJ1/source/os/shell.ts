@@ -412,9 +412,6 @@ module TSOS {
             else if (params[1].charAt(0) != "\'" || params[params.length - 1].charAt(params[params.length - 1].length - 1) != "\'") {
                 _StdOut.putText("Data is required to have single quotes!");
             }
-            else if (_krnHardDriveDriver.krnHDDCheckFileExists(params[0].toString()) == false) {
-                _StdOut.putText("File not found");
-            }
             else {
                 _StdOut.putText("Your data was written to the file!");
                 // format data to write
@@ -441,11 +438,8 @@ module TSOS {
             else if (params.length > 1) {
                 _StdOut.putText("Do not put a space in file name!");
             }
-            else if (_krnHardDriveDriver.krnHDDCheckFileExists(params[0].toString()) == false) {
-                _StdOut.putText("File does not exist");
-            }
             else {
-                var fileContents = _krnHardDriveDriver.krnHDDReadFile(params[0].toString());
+                var fileContents = _krnHardDriveDriver.krnHDDReadFile();
                 if (fileContents == '') {
                     _StdOut.putText("File is empty");
                 }
@@ -473,11 +467,8 @@ module TSOS {
                 _StdOut.putText("please put a file name!");
             }else if(params.length > 1){
                 _StdOut.putText("No spaces allowed in file name");
-            }else if(_krnHardDriveDriver.krnHDDCheckFileExists(params[0].toString()) == false){
-                _StdOut.putText("file does not exist");
             }else{
                 _StdOut.putText("Deleted file " + params[0].toString());
-                _krnHardDriveDriver.krnHDDDeleteFile(params[0].toString());
             }
         }
 
